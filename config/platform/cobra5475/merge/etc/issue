@@ -1,0 +1,15 @@
+
+LTIB Embedded Linux Environment (http://www.bitshrine.org)
+
+**********************************
+* (o_   Linux Operating System   *
+* //\   on the senTec COBRA5475  *
+* V_/_  module is up and running *
+**********************************
+
+!!!!! WARNING !!!!!!!
+
+The default password for the root account is: root
+please change this password using the 'passwd' command
+and then edit this message (/etc/issue) to remove this message
+

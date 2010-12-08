@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# rc.local, Local initialisation tasks
+
+mode=${1:-start}
+
+if [ $mode = "start" ]
+then
+    if [ -x /etc/rc.d/rc.qpe -a -z "$(pidof qpe)" ]
+    then
+	/etc/rc.d/rc.qpe &
+    fi
+fi
+

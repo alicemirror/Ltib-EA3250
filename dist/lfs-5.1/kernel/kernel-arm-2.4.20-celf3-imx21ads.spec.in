@@ -1,0 +1,193 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define pversion 2.4.20_celf3
+%define bld_dir_name celinux-040503
+%define pkg_name linux
+%define kernel_series 2.4
+
+Summary         : Linux kernel (core of the Linux operating system)
+Name            : kernel
+Version         : 2.4.20_celf3
+Release         : 1
+License         : GPL
+Vendor          : Freescale Semiconductor
+Packager        : John Faith
+Group           : System Environment/Kernel
+Source          : celinux-040503-2.tar.gz
+Patch0          : celinux-040503-mw-core.patch
+Patch1          : celinux-040503-mw-mach-mx2ads-Makefile.patch
+Patch2          : celinux-040503-mw-mx2.h-2.patch
+Patch3          : celinux-040503-mw-cs89x0.patch
+Patch4          : celinux-040503-mw-mtd.patch
+Patch5          : celinux-040503-mw-uart.patch
+Patch6          : celinux-040503-mw-fb.patch
+Patch7          : celinux-040503-mw-wdog.patch
+Patch8          : celinux-040503-mw-dcache.patch
+Patch9          : celinux-040503-mw-power.patch
+Patch10         : celinux-040503-mw-keypad.patch
+Patch11         : celinux-040503-mw-clocks.patch
+Patch12         : celinux-040503-mw-i2c.patch
+Patch13         : celinux-040503-mw-instrumented-printk.patch
+Patch14         : celinux-040503-mw-freq.patch
+Patch15         : celinux-040503-mw-boottime.patch
+Patch16         : celinux-040503-mw-ide.h.patch
+Patch17         : celinux-040503-mw-sound.patch
+Patch18         : celinux-040503-mw-dma.patch
+Patch19         : celinux-040503-mw-video-config.in-patch
+Patch20         : celinux-040503-mw-touch.patch
+Patch21         : celinux-040503-mw-TO2-01.patch
+Patch22         : celinux-040503-mw-registers.patch
+Patch23         : celinux-040503-mw-cramfs-32Mb-limit.patch
+Patch24         : celinux-040503-mw-TO2-02.patch
+Patch25         : celinux-040503-mw-cs89x0.regs.patch
+Patch26         : celinux-040503-mw-irq.c.regs.patch
+Patch27         : celinux-040503-mw-gettimeoffset.patch
+Patch28         : celinux-040503-mw-mach-irq.c-regs.patch
+Patch29         : celinux-040503-mw-fb-regs.patch
+Patch30         : celinux-040503-mw-codetest-2.patch
+Patch31         : celinux-040503-mw-system.h.patch
+Patch32         : celinux-040503-mw-fb-TO2.patch
+Patch33         : celinux-040503-mw-termios.patch
+Patch34         : celinux-040503-mw-highres-timers.patch
+Patch35         : celinux-040503-mw-xconfig.patch
+Patch36         : celinux-040503-mw-help.patch
+Patch37         : celinux-040503-mw-dbmx21fb-1.patch
+Patch38         : celinux-040503-mw-dbmx21fb-2.patch
+Patch39         : celinux-040503-mw-dbmx21fb-3.patch
+Patch40         : celinux-040503-mw-2ddma-1.patch
+Patch41         : celinux-040503-mw-2ddma-2.patch
+Patch42         : celinux-040503-mw-2ddma-3.patch
+Patch43         : celinux-040503-mw-gwfix.patch
+Patch44         : celinux-040503-mw-v4l2-base-reversion.patch
+Patch45         : celinux-040503-mw-v4l2-kraxel.patch
+Patch46         : celinux-040503-mw-v4l2-1.patch
+Patch47         : celinux-040503-mw-v4l2-2.patch
+Patch48         : celinux-040503-mw-cs89x0-txbytes.patch
+Patch49         : celinux-040503-mw-cs89x0-module.patch
+Patch50         : celinux-040503-mw-dbmx21fb-gwdisable.patch
+Patch51         : celinux-040503-mw-vbufpool.patch
+Patch52         : celinux-040503-mw-dbmx21fb-tvout-1.patch
+Patch53         : celinux-040503-mw-dbmx21fb-tvout-2.patch
+Patch54         : celinux-040503-mw-dbmx21fb-fbset.patch
+Patch55         : celinux-040503-mw-cs89x0-module-int.patch
+Patch56         : celinux-040503-mw-i2c-1.patch
+Patch57         : celinux-040503-mw-jazz-conf-2.patch
+Patch58         : celinux-040503-mw-sound-msg.patch
+Patch59         : celinux-040503-mw-jazz-fb-1.patch
+Patch60         : celinux-040503-mw-jazz-fb-2.patch
+Patch61         : celinux-040503-mw-flash.patch
+Patch62         : celinux-040503-mw-fb-unload.patch
+Patch63         : celinux-040503-mw-jazz-brightness.patch
+Patch64         : celinux-040503-mw-dbmx21fb-tvout-3.patch
+Patch65         : celinux-040503-mw-dbmx21fb-adsonly.patch
+Patch66         : celinux-040503-mw-mtd-2.patch
+Patch67         : celinux-040503-mw-config-node-help-1.patch
+Patch68         : celinux-040503-mw-dbmx21fb-fbfree.patch
+Patch69         : celinux-040503-mw-dbmx21fb-tvout-4.patch
+Patch70         : celinux-040503-mw-pcmcia-headers.patch
+Patch71         : celinux-040503-mw-dbmx21fb-wolfdma.patch
+Patch72         : celinux-040503-mw-dbmx21fb-callback.patch
+Patch73         : celinux-040503-mw-sound-buf.patch
+Patch74         : celinux-040503-mw-sound-cracklefix.patch
+Patch75         : celinux-040503-mw-2.6-idle.patch
+Patch76         : celinux-040503-mw-usb.patch
+Patch77         : celinux-040503-mw-power2.patch
+Patch78         : celinux-040503-mw-nand.patch
+Patch79         : celinux-040503-mw-timer-fix.patch
+Patch80         : celinux-040503-mw-tvout-vga.patch
+Patch81         : celinux-040503-mw-rohs-flash.patch
+Patch82         : celinux-040503-mw-xip-textaddr.patch
+
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+%Prep
+%setup -n %{bld_dir_name}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1
+%patch18 -p1
+%patch19 -p1
+%patch20 -p1
+%patch21 -p1
+%patch22 -p1
+%patch23 -p1
+%patch24 -p1
+%patch25 -p1
+%patch26 -p1
+%patch27 -p1
+%patch28 -p1
+%patch29 -p1
+%patch30 -p1
+%patch31 -p1
+%patch32 -p1
+%patch33 -p1
+%patch34 -p1
+%patch35 -p1
+%patch36 -p1
+%patch37 -p1
+%patch38 -p1
+%patch39 -p1
+%patch40 -p1
+%patch41 -p1
+%patch42 -p1
+%patch43 -p1
+%patch44 -p1
+%patch45 -p1
+%patch46 -p1
+%patch47 -p1
+%patch48 -p1
+%patch49 -p1
+%patch50 -p1
+%patch51 -p1
+%patch52 -p1
+%patch53 -p1
+%patch54 -p1
+%patch55 -p1
+%patch56 -p1
+%patch57 -p1
+%patch58 -p1
+%patch59 -p1
+%patch60 -p1
+%patch61 -p1
+%patch62 -p1
+%patch63 -p1
+%patch64 -p1
+%patch65 -p1
+%patch66 -p1
+%patch67 -p1
+%patch68 -p1
+%patch69 -p1
+%patch70 -p1
+%patch71 -p0
+%patch72 -p1
+%patch73 -p1
+%patch74 -p1
+%patch75 -p1
+%patch76 -p1
+%patch77 -p1
+%patch78 -p1
+%patch79 -p1
+%patch80 -p1
+%patch81 -p1
+%patch82 -p1
+

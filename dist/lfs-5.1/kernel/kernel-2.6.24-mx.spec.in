@@ -1,0 +1,442 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define pversion 2.6.24_mx
+%define bld_dir_name	linux-2.6.24
+%define kernel arch/arm/boot/zImage
+%define pkg_name linux
+
+Summary         : Linux kernel (core of the Linux operating system)
+Name            : kernel
+Version         : 2.6.24_mx
+Release         : 1
+License         : GPL
+Vendor          : Freescale Semiconductor
+Packager        : Ross Wille
+Group           : System Environment/Kernel
+Source		: linux-2.6.24.tar.bz2
+Patch0		: patch-2.6.24.6.bz2
+Patch1		: linux-2.6.24-mx-Patch-to-add-basic-MX-platform-support-to.patch
+Patch2		: linux-2.6.22-mx-arm_oprofile.patch
+Patch3		: linux-2.6.24-mx-Add-CodeTEST-functionality-to-the-linux-2.patch
+Patch4		: linux-2.6.24-mx-This-patch-adds-the-watchdog-timer-driver.patch
+Patch5		: linux-2.6.22-mx-drivers_i2c.patch
+Patch6		: linux-2.6.24-mx-This-patch-adds-ATA-IDE-driver-to-the-linu.patch
+Patch7		: linux-2.6.24-mx-This-patch-adds-keypad-and-touchscreendriv.patch
+Patch8		: linux-2.6.22-mx-drivers_media.patch
+Patch9		: linux-2.6.24-mx-This-patch-adds-basic-mmc-driver-capabilit.patch
+Patch10		: linux-2.6.24-mx-This-patch-adds-mtd-NOR-and-NAND-capabilit.patch
+Patch11		: linux-2.6.24-mx-This-patch-adds-MX-specific-drivers-to-the.patch
+Patch12		: linux-2.6.22-mx-drivers_mxc_pmic.patch
+Patch13		: linux-2.6.22-mx-drivers_mxc_security.patch
+Patch14		: linux-2.6.24-mx-This-patch-adds-network-drivers-CS8900-FEC.patch
+Patch15		: linux-2.6.24-mx-This-patch-adds-PCMCIA-functionality-to-th.patch
+Patch16		: linux-2.6.24-mx-This-patch-adds-the-RTC-driver-to-the-linu.patch
+Patch17		: linux-2.6.22-mx-drivers_serial.patch
+Patch18		: linux-2.6.24-mx-This-patch-adds-the-SPI-driver-to-the-linu.patch
+Patch19		: linux-2.6.24-mx-This-patch-adds-USB-Host-Gadget-and-OTG-fu.patch
+Patch20		: linux-2.6.22-mx-drivers_video.patch
+Patch21		: linux-2.6.24-mx-This-patch-adds-Dallas-1-wire-to-the-linux.patch
+Patch22		: linux-2.6.24-mx-This-patch-adds-new-include-files-that-are.patch
+Patch23		: linux-2.6.24-mx-This-patch-updates-include-files-that-are.patch
+Patch24		: linux-2.6.22-mx-mach_mx27.patch
+Patch25		: linux-2.6.24-mx-This-patch-adds-updates-MX3-specific-files.patch
+Patch26		: linux-2.6.24-mx-This-patch-adds-updates-MX-platform-specif.patch
+Patch27		: linux-2.6.22-mx-sound.patch
+Patch28		: linux-2.6.22-mx-Additional-porting-changes-as-a-result-of-.patch
+Patch29		: linux-2.6.24-mx-Initial-port-for-mx31ads-to-2.6.24.-Boots.patch
+Patch30		: linux-2.6.24-mx-Add-MX27-MX31-and-MX32-splash-screens-to-k.patch
+Patch31		: linux-2.6.22-mx-Add-OV2640-camera-support.patch
+Patch32		: linux-2.6.22-mx-USB-disable-autosuspend.patch
+Patch33		: linux-2.6.22-mx-USB-port-to-2.6.22.patch
+Patch34		: linux-2.6.22-mx-USB-fix-OTGSC_IE_1ms_TIMER-bit-definition.patch
+Patch35		: linux-2.6.24-mx-USB-Miscellaneous-cleanup-porting.patch
+Patch36		: linux-2.6.22-mx-Fix-new-line-problems-on-printk-statements.patch
+Patch37		: linux-2.6.24-mx-Add-generic-clksource-and-clkevent-support.patch
+Patch38		: linux-2.6.22-mx-Bug-fix-of-Bugzilla-217-to-ensure-I2C-stop.patch
+Patch39		: linux-2.6.24-mx-Bug-fix-for-when-processor-enters-state-re.patch
+Patch40		: linux-2.6.22-mx-ARM926-MX27-D-cache-writethrough-bug-fix.patch
+Patch41		: linux-2.6.22-mx-Patch-to-fix-dma-errors-when-accessing-IDE.patch
+Patch42		: linux-2.6.22-mx-Patch-to-properly-reset-the-Focus-453-chip.patch
+Patch43		: linux-2.6.22-mx-Patch-to-fix-irda-mode-bug.patch
+Patch44		: linux-2.6.22-mx-Patch-to-enable-mxc-framebuffer-driver-to-.patch
+Patch45		: linux-2.6.22-mx-Add-interrogation-of-V4L2-or-Linux-udev-to.patch
+Patch46		: linux-2.6.22-mx-CR-SDCaa01608-I2C-uses-wrong-adapter-name.patch
+Patch47		: linux-2.6.22-mx-Bugzilla-422-Enable-second-MMC-SD-slot-for.patch
+Patch48		: linux-2.6.22-mx-Bugzilla-43-Fix-FIR-on-MX31.patch
+Patch49		: linux-2.6.24-mx-Bugzilla-562-Suspend-resumes-on-eth-activi.patch
+Patch50		: linux-2.6.22-mx-CR-ENGR00037631-Add-handling-of-prp-overfl.patch
+Patch51		: linux-2.6.22-mx-CR-34440439-Under-heavy-load-v4l2-ioctls-s.patch
+Patch52		: linux-2.6.22-mx-CR-ENGR37631-Adds-correct-signal-handling-.patch
+Patch53		: linux-2.6.22-mx-CR-ENGR00033520-Add-a-new-algorithm-to-the.patch
+Patch54		: linux-2.6.22-mx-CR-34439732-Camera-and-V4L2-improvements.patch
+Patch55		: linux-2.6.22-mx-CR-ENGR00038129-Add-vpu-latency-hiding-con.patch
+Patch56		: linux-2.6.22-mx-Fixed-coding-errors-in-the-mxc-v4l2-output.patch
+Patch57		: linux-2.6.22-mx-Make-the-latency-hiding-option-mx27-specif.patch
+Patch58		: linux-2.6.22-mx-Bugzilla-630.-Allow-rng-registers-to-be-re.patch
+Patch59		: linux-2.6.22-mx-Port-MXC-FIR-driver-forward-to-2.6.22.patch
+Patch60		: linux-2.6.22-mx-Bugzilla-627.-Prevent-DPM-from-calling-DVF.patch
+Patch61		: linux-2.6.22-mx-CR-ENGR00047179-fix-disable-console-on-mxc.patch
+Patch62		: linux-2.6.22-mx-CR-ENGR00043063-platform-device-for-scc-ad.patch
+Patch63		: linux-2.6.22-mx-CR-ENGR00049086-fix-scc-fail-fuse-not-blow.patch
+Patch64		: linux-2.6.24-mx-Prototype-FSL-PATA-LIBATA-driver.patch
+Patch65		: linux-2.6.22-mx-Workaround-for-IAPI-sleep-issue-spin-in-ia.patch
+Patch67		: linux-2.6.22-mx-Work-around-compile-breakage-for-mx27-on-o.patch
+Patch68		: linux-2.6.22-mx-Bug-fix-of-Bugzilla-363-to-enable-ATA-subs.patch
+Patch69		: linux-2.6.22-mx-Update-drivers-such-as-dpm-dvfs-ide-and-si.patch
+Patch70		: linux-2.6.22-mx-Bugzilla-510-Update-to-code-review-fixes-f.patch
+Patch71		: linux-2.6.22-mx-MXC-MMC-Remove-custom-error-codes.patch
+Patch72		: linux-2.6.22-mx-ioremap-control-reaches-end-of-non-void-fu.patch
+Patch73		: linux-2.6.22-mx-USB-check-return-codes-from-gpio_request_m.patch
+Patch74		: linux-2.6.22-mx-USB-check-the-return-value-of-clk_enable-u.patch
+Patch75		: linux-2.6.22-mx-USB-cleanup-Kconfig-options.patch
+Patch76		: linux-2.6.22-mx-USB-cleanup-Kconfig-options2.patch
+Patch77		: linux-2.6.22-mx-USB-More-descriptive-device-registration-m.patch
+Patch78		: linux-2.6.22-mx-USB-More-descriptive-device-registration-2.patch
+Patch79		: linux-2.6.22-mx-Fixed-a-problem-where-time-ran-too-slow-by.patch
+Patch80		: linux-2.6.22-mx-USB-Even-more-descriptive-device-registrat.patch
+Patch81		: linux-2.6.22-mx-USB-Even-more-descriptive-device-registra2.patch
+Patch82		: linux-2.6.22-mx-USB-Remove-extra-call-to-gpio_usbotg_hs_ac.patch
+Patch83		: linux-2.6.22-mx-USB-Restore-mainline-core-Kconfig-contents.patch
+Patch84		: linux-2.6.22-mx-USB-Part-of-the-descriptive-registration-m.patch
+Patch85		: linux-2.6.22-mx-USB-cleanup-Kconfig-options-some-more.patch
+Patch86		: linux-2.6.22-mx-Bugzilla-771-PATA_FSL-Remove-non-working-D.patch
+Patch87		: linux-2.6.22-mx-CR-DSPhl24421-Add-power-handlers-to-libata.patch
+Patch88		: linux-2.6.22-mx-Bugzilla-766-PATA_FSL-probe-not-called-whe.patch
+Patch89		: linux-2.6.22-mx-Bugzilla-771-Fix-pata_fsl-libata-driver-DM.patch
+Patch90		: linux-2.6.22-mx-CR-ENGR00046932-Sahara-build-warnings-are-.patch
+Patch91		: linux-2.6.22-mx-CR-ENGR00048159-Add-L2-flush-for-all-mxc-P.patch
+Patch92		: linux-2.6.22-mx-CR-ENGR00011205-Move-linux-includes-before.patch
+Patch93		: linux-2.6.22-mx-USB-USBCV-1.3-HaltEndpointTest-fails.patch
+Patch94		: linux-2.6.24-mx-CR-ENGR00050502-add-custom-ioremap.patch
+Patch95		: linux-2.6.22-mx-CR-ENGR00049720-mxc_pf-add-frame_size-limi.patch
+Patch96		: linux-2.6.24-mx-CR-ENGR00047074-Fix-FIR-functionality-brea.patch
+Patch97		: linux-2.6.22-mx-CR-ENGR00039921-v4l2-support-L1-writeback-.patch
+Patch98		: linux-2.6.22-mx-CR-ENGR00048608-Work-around-untrustworthy-.patch
+Patch99		: linux-2.6.22-mx-CR-ENGR00048068-mxc-add-clocksource-and-cl.patch
+Patch100	: linux-2.6.22-mx-CR-ENGR00013463-IPU-wait-for-SDC-flips-to-.patch
+Patch101	: linux-2.6.24-mx-CR-ENGR00048072-oprofile-updates-to-suppor.patch
+Patch102	: linux-2.6.22-mx-CR-ENGR00047020-MX27TO2-MMC-card-removal-s.patch
+Patch103	: linux-2.6.22-mx-Bugzilla-779-Fix-OV2460-camera-driver-oops.patch
+Patch104	: linux-2.6.22-mx-Bugzilla-784-Fixed-MMC-SD-error-110.patch
+Patch105	: linux-2.6.22-mx-Remove-vestigial-printk.patch
+Patch106	: linux-2.6.22-mx-CR-ENGR00043959-Merging-mxc-nand-driver-ac.patch
+Patch107	: linux-2.6.22-mx-CR-ENGR00052514-refresh-of-ENGR0045732-to-.patch
+Patch108	: linux-2.6.22-mx-CR-ENGR00050116-Fix-flawed-implementation-.patch
+Patch109	: linux-2.6.22-mx-CR-ENGR00052743-Reset-CSPI-On-MX27.patch
+Patch110	: linux-2.6.22-mx-CR-ENGR00053136-fix-mx27-v4l2-rotation-cac.patch
+Patch111	: linux-2.6.22-mx-CR-ENGR00053173-Fix-SDMA-Mask-Value-In-Sus.patch
+Patch112	: linux-2.6.22-mx-Bugzilla-802-Fix-MX3-DVFS-DPTC-table-initi.patch
+Patch113	: linux-2.6.22-mx-Bugzilla-803-Fix-Suspend-to-RAM.patch
+Patch114	: linux-2.6.22-mx-CR-ENGR00053192-MXC-Sahara2-Use-CONFIG_OUT.patch
+Patch115	: linux-2.6.22-mx-CR-ENGR00053563-Fix-Sahara-Issue-For-MX27.patch
+Patch116	: linux-2.6.22-mx-Bugzilla-804-Fix-Suspend-Resume-to-mem.patch
+Patch117	: linux-2.6.22-mx-Bugzilla-677.-Allow-FEC-MAC-address-overri.patch
+Patch118	: linux-2.6.22-mx-Bugzilla-605.-Fix-tearing-when-VPU-rotates.patch
+Patch119	: linux-2.6.22-mx-Bugzilla-833-MXC-Camera-flicker-control-io.patch
+Patch120	: linux-2.6.22-mx-Fix-Bugzilla-621-V4L2_CID_AUTO_WHITE_BALAN.patch
+Patch121	: linux-2.6.22-mx-CR-34813488-Bugzilla-647-Add-MX31-like-cro.patch
+Patch122	: linux-2.6.22-mx-CR-35009507-Support-V4L2-USERPTR-in-output.patch
+Patch123	: linux-2.6.22-mx-Fix-Bugzilla-857-2K-NAND-support-bug.patch
+Patch124	: linux-2.6.22-mx-CR-34813488-Bugzilla-647-MX31-like-crop-ca.patch
+Patch125	: linux-2.6.22-mx-Bugzilla-1005-Increase-MXC_DMA_ZONE_SIZE-b.patch
+Patch126	: linux-2.6.22-mx-Bugzilla-678-Add-gain-limitation-support-t.patch
+Patch127	: linux-2.6.24-mx-CR-ENGR00009303-DPTC-Tables-CKIH-27MHz-iMX.patch
+Patch128	: linux-2.6.24-mx-Fix-Bugzilla-1088-DVFS-DPM-is-broken.patch
+Patch129	: linux-2.6.24-mx-Fix-Bugzilla-1069-Resume-fails-if-key-held.patch
+Patch130	: linux-2.6.24-mx-Bugzilla-1088-Remove-DVFS-DPTC-kernel-conf.patch
+Patch131	: linux-2.6.24-mx-Fix-Bugzilla-1083-Disabled-DVFS-says-DVFS.patch
+Patch132	: linux-2.6.24-mx-Fix-Bugzilla-1086-framebuffer-bad-after-su.patch
+Patch133	: linux-2.6.24-mx-Bugzilla-1088-Fix-freq-changes-via-DPM.patch
+Patch134	: linux-2.6.24-mx-Update-pm_ops-for-2.6.24-changes.patch
+Patch135	: linux-2.6.24-mx-Fix-DPM-miscompilation-issues-for-2.6.24.patch
+Patch136	: linux-2.6.24-mx-Update-mx31-minimum-defconfig.patch
+Patch137	: linux-2.6.24-mx-Rename-INT_ATA-to-MXC_INT_ATA-for-2.6.24-p.patch
+Patch138	: linux-2.6.24-mx-PATA_FSL-remove-obsolete-methods-irq_ack-p.patch
+Patch139	: linux-2.6.24-mx-Updated-mxc_mmc-driver-to-use-sg-helpers.patch
+Patch140	: linux-2.6.24-mx-Update-porting-defconfig-to-include-pata_f.patch
+Patch141	: linux-2.6.24-mx-Apply-fs-splice-root-exploit-patch-commite.patch
+Patch142	: linux-2.6.24-mx-Changes-required-to-port-imx27ads-to-2.6.2.patch
+Patch143	: linux-2.6.24-mx-Kernel-porting.-Cleans-up-dvfs-dptc-by-rem.patch
+Patch144	: linux-2.6.24-mx-Bugzilla-1055.-Update-DPTC-tables.patch
+Patch145	: linux-2.6.24-mx-2.6.24-kernel-porting-remove-obsolete-VIRT.patch
+Patch146	: linux-2.6.24-mx-2.6.24-kernel-porting-remove-dev-power.pow.patch
+Patch147	: linux-2.6.24-mx-2.6.24-kernel-porting-update-pm-routine-na.patch
+Patch148	: linux-2.6.24-mx-2.6.24-kernel-porting-mxc_i2c-Switch-to-st.patch
+Patch149	: linux-2.6.24-mx-2.6.24-kernel-porting.-Clean-up-Kconfig-me.patch
+Patch150	: linux-2.6.24-mx-Make-the-keypad-driver-a-loadable-module.patch
+Patch151	: linux-2.6.24-mx-kernel-porting-remove-Magnachip-mc521da-dr.patch
+Patch152	: linux-2.6.24-mx-kernel-porting-add-dptc-to-makefile-for-th.patch
+Patch153	: linux-2.6.24-mx-kernel-porting-remove-DISCONTIGMEM.patch
+Patch154	: linux-2.6.24-mx-kernel-porting-unique-names-for-NOR-MTD-pa.patch
+Patch155	: linux-2.6.24-mx-kernel-port-plat-mxc-mx27-grammar-fix.patch
+Patch156	: linux-2.6.24-mx-kernel-porting-add-error-check-to-ts-regis.patch
+Patch157	: linux-2.6.24-mx-Access-NFC-main-spare-areas-as-half-words.patch
+Patch158	: linux-2.6.24-mx-Port-pcmcia-driver-to-2.6.24.patch
+Patch159	: linux-2.6.24-mx-kernel-porting-Remove-TZIC.patch
+Patch160	: linux-2.6.24-mx-kernel-porting-remove-unused-macro-definit.patch
+Patch161	: linux-2.6.24-mx-ENGR00059961-support-interrupt-mechanism-f.patch
+Patch162	: linux-2.6.24-mx-2.6.24-kernel-porting.-Remove-unneeded-bit.patch
+Patch163	: linux-2.6.24-mx-kernel-porting-fsl-usb.patch
+Patch164	: linux-2.6.24-mx-2.6.24-kernel-porting-move-PORT_MXC-to-end.patch
+Patch165	: linux-2.6.24-mx-Make-the-I2C-driver-a-loadable-module.patch
+Patch166	: linux-2.6.24-mx-Bugzilla-851.-unable-to-write-to-PWM-regis.patch
+Patch167	: linux-2.6.24-mx-Bugzilla-1238.-Watchdog-does-not-time-out.patch
+Patch168	: linux-2.6.24-mx-Fix-Bugzilla-846-kernel-build-fails-with-C.patch
+Patch169	: linux-2.6.24-mx-2.6.24-kernel-porting-fs453-change-kmalloc.patch
+Patch170	: linux-2.6.24-mx-Enable-MMC-build-as-module.patch
+Patch171	: linux-2.6.24-mx-Allow-the-IPU-driver-to-build-as-a-loadabl.patch
+Patch172	: linux-2.6.24-mx-Bugzilla-943.-Make-the-audio-driver-a-load.patch
+Patch173	: linux-2.6.24-mx-Bugzilla-1285-framebuffer-driver-needs-lic.patch
+Patch174	: linux-2.6.24-mx-2.6.24-kernel-porting-FEC-updated.patch
+Patch175	: linux-2.6.24-mx-Bugzilla-1181.-Work-around-ARM1136-WFI-cac.patch
+Patch176	: linux-2.6.24-ubifs.patch
+Patch177	: linux-2.6.24-mx-USB-Fix-RNDIS.patch
+Patch178	: linux-2.6.24-mx-USB-mxc-infrastructure-Bugzilla-1077.patch
+Patch179	: linux-2.6.24-mx-USB-mxc-host-support.patch
+Patch180	: linux-2.6.24-mx-USB-mxc-gadget-support-Bugzilla-1077.patch
+Patch181	: linux-2.6.24-mx-USB-mxc-otg-support.patch
+Patch182	: linux-2.6.24-mx-USB-mx3-platform_device-registration.patch
+Patch183	: linux-2.6.24-mx-USB-mx27-platform_device-registration.patch
+Patch184	: linux-2.6.24-mx-Bugzilla-1356.-ov264-camera-fails-to-initi.patch
+Patch185	: linux-2.6.24-mx-Bugzilla-1111.-Noise-on-audio-after-pause.patch
+Patch186	: linux-2.6.24-mx-Bugzilla-1085-SD-MMC-busywaits-in-write-pa.patch
+Patch187	: linux-2.6.24-mx-ENGR00064732-3DS-yaffs2-and-2kpage-support.patch
+Patch188	: linux-2.6.24-mx-ENGR00069209-use-flash-based-bbt-to-handle.patch
+Patch189	: linux-2.6.24-mx-ENGR00069349-enable-nand-flash-based-bad-b.patch
+Patch190	: linux-2.6.24-mx-ENGR00069546-Fix-MX31-3stack-board-boot-pr.patch
+Patch191	: linux-2.6.24-mx-ENGR00068619-Keep-JFFS2-from-using-OOB-on.patch
+Patch192	: linux-2.6.24-mx-USB-cleanup.patch
+Patch193	: linux-2.6.24-mx-usb-serial-gadget-CDC-ACM-fixes.patch
+Patch194	: linux-2.6.24-mx-Bugzilla-1169.-Add-USB-IRAM-support.patch
+Patch195	: linux-2.6.24-mx-USB-suspend-resume-support.patch
+Patch196	: linux-2.6.24-mx-Bugzilla-1439.-Lower-core-voltage-when-ent.patch
+Patch197	: linux-2.6.24-mx-Bugzilla-1143.-Fix-NFC-intialization-for-S.patch
+Patch198	: linux-2.6.24-mx-pmic_rtc-implement-standard-get-set-rtc-io.patch
+Patch199	: linux-2.6.24-mx-Bugzilla-1709-cs89x0-loadable.patch
+Patch200	: linux-2.6.24-mx-Bugzilla-1740-USB-remove-pdata-from-xcvr_o.patch
+Patch201	: linux-2.6.24-mx-Bugzilla-1747-mxcfb-fix-pan-test-failure.patch
+Patch202	: linux-2.6.24-mx-Bugzilla-1736.-mxc_nor-as-a-loadable-modul.patch
+Patch203	: linux-2.6.24-mx-Bugzilla-1741-Fix-watchdog-timer-off-by-1.patch
+Patch204	: linux-2.6.24-mx-Bugzilla-1764.-Update-the-imx31ads_defconf.patch
+
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+%Prep
+%setup -n %{bld_dir_name}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1
+%patch18 -p1
+%patch19 -p1
+%patch20 -p1
+%patch21 -p1
+%patch22 -p1
+%patch23 -p1
+%patch24 -p1
+%patch25 -p1
+%patch26 -p1
+%patch27 -p1
+%patch28 -p1
+%patch29 -p1
+%patch30 -p1
+%patch31 -p1
+%patch32 -p1
+%patch33 -p1
+%patch34 -p1
+%patch35 -p1
+%patch36 -p1
+%patch37 -p1
+%patch38 -p1
+%patch39 -p1
+%patch40 -p1
+%patch41 -p1
+%patch42 -p1
+%patch43 -p1
+%patch44 -p1
+%patch45 -p1
+%patch46 -p1
+%patch47 -p1
+%patch48 -p1
+%patch49 -p1
+%patch50 -p1
+%patch51 -p1
+%patch52 -p1
+%patch53 -p1
+%patch54 -p1
+%patch55 -p1
+%patch56 -p1
+%patch57 -p1
+%patch58 -p1
+%patch59 -p1
+%patch60 -p1
+%patch61 -p1
+%patch62 -p1
+%patch63 -p1
+%patch64 -p1
+%patch65 -p1
+%patch67 -p1
+%patch68 -p1
+%patch69 -p1
+%patch70 -p1
+%patch71 -p1
+%patch72 -p1
+%patch73 -p1
+%patch74 -p1
+%patch75 -p1
+%patch76 -p1
+%patch77 -p1
+%patch78 -p1
+%patch79 -p1
+%patch80 -p1
+%patch81 -p1
+%patch82 -p1
+%patch83 -p1
+%patch84 -p1
+%patch85 -p1
+%patch86 -p1
+%patch87 -p1
+%patch88 -p1
+%patch89 -p1
+%patch90 -p1
+%patch91 -p1
+%patch92 -p1
+%patch93 -p1
+%patch94 -p1
+%patch95 -p1
+%patch96 -p1
+%patch97 -p1
+%patch98 -p1
+%patch99 -p1
+%patch100 -p1
+%patch101 -p1
+%patch102 -p1
+%patch103 -p1
+%patch104 -p1
+%patch105 -p1
+%patch106 -p1
+%patch107 -p1
+%patch108 -p1
+%patch109 -p1
+%patch110 -p1
+%patch111 -p1
+%patch112 -p1
+%patch113 -p1
+%patch114 -p1
+%patch115 -p1
+%patch116 -p1
+%patch117 -p1
+%patch118 -p1
+%patch119 -p1
+%patch120 -p1
+%patch121 -p1
+%patch122 -p1
+%patch123 -p1
+%patch124 -p1
+%patch125 -p1
+%patch126 -p1
+%patch127 -p1
+%patch128 -p1
+%patch129 -p1
+%patch130 -p1
+%patch131 -p1
+%patch132 -p1
+%patch133 -p1
+%patch134 -p1
+%patch135 -p1
+%patch136 -p1
+%patch137 -p1
+%patch138 -p1
+%patch139 -p1
+%patch140 -p1
+#%patch141 -p1
+%patch142 -p1
+%patch143 -p1
+%patch144 -p1
+%patch145 -p1
+%patch146 -p1
+%patch147 -p1
+%patch148 -p1
+%patch149 -p1
+%patch150 -p1
+%patch151 -p1
+%patch152 -p1
+%patch153 -p1
+%patch154 -p1
+%patch155 -p1
+%patch156 -p1
+%patch157 -p1
+%patch158 -p1
+%patch159 -p1
+%patch160 -p1
+%patch161 -p1
+%patch162 -p1
+%patch163 -p1
+%patch164 -p1
+%patch165 -p1
+%patch166 -p1
+%patch167 -p1
+%patch168 -p1
+%patch169 -p1
+%patch170 -p1
+%patch171 -p1
+%patch172 -p1
+%patch173 -p1
+%patch174 -p1
+%patch175 -p1
+%patch176 -p1
+#%patch177 -p1
+%patch178 -p1
+%patch179 -p1
+%patch180 -p1
+%patch181 -p1
+%patch182 -p1
+%patch183 -p1
+%patch184 -p1
+%patch185 -p1
+%patch186 -p1
+%patch187 -p1
+%patch188 -p1
+%patch189 -p1
+%patch190 -p1
+%patch191 -p1
+%patch192 -p1
+%patch193 -p1
+%patch194 -p1
+%patch195 -p1
+%patch196 -p1
+%patch197 -p1
+%patch198 -p1
+%patch199 -p1
+%patch200 -p1
+%patch201 -p1
+%patch202 -p1
+%patch203 -p1
+%patch204 -p1
+
+# remove .orig files generated by re-using patches from previous kernel versions
+find arch drivers include -name '*.orig' -type f | xargs rm -f
+
+# keep ltib's kernel config and kernel source tree consistent
+if [ -f "$PLATFORM_PATH/$PKG_KERNEL_PRECONFIG" ]; then
+    cp $PLATFORM_PATH/$PKG_KERNEL_PRECONFIG arch/$LINTARCH/configs/${PLATFORM}_defconfig
+fi

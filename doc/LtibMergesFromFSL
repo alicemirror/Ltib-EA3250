@@ -1,0 +1,1613 @@
+---+ changelog for import-20070116 (previous import-20061124)
+   * .ltibrc
+      * add option to bypass proxy testing
+
+   * ltib
+      * Add a hint for debugging LWP (network connection tests)
+      * Remove x/y/{a,b,c} constructs (for the dash shell on ubuntu-edgy)
+      * Make MD5 sum tests apply even if the file is already local
+
+   * bin/Ltibutils.pm
+      * Aocally reset SIG{__DIE__} so we don't obscure LWP::UserAgent messages
+      during proxy tests
+      * Respect the .ltibrc option bypass_network_tests to disable network
+      tests (for misbehaving proxies)
+      * Add a check to see if the http_proxy has not been set if asking
+      for proxies and complain and then ignore.
+      * Improve proxy test error handling (report status_line from
+      $ua->request if it is not successful.
+      * Don't test gpp/ppp if their respective resources in .ltibrc are not set
+      * Add 10% pad size to created ramdisks so people can add stuff to their
+      running system.
+      * Add DEPLOYMENT_SREC (only appies to some platforms)
+
+   * bin/autobuild_ltib
+      * Add callout to mk_pkg_build_list, which is a new script that will
+      give a full listing of the packages built by the autobuilder (not
+      just the deltas)
+
+   * bin/device_genromfs.txt
+      * Update dsp,c,x,x
+
+   * bin/listpkginfo
+      * Add toolchain srpms to the output list
+
+   * bin/mk_pkg_build_list
+      * New script, it builts a list of all packages built/failed by the
+      autobuilder by parsing the build.log file
+
+   * config/defaults/busybox.config
+      * Add CONFIG_LFS, CONFIG_SEQ
+
+   * config/platform/mpc8360epb/defconfig
+      * Kernel default is kernel-2.6.11-mpc8360epb-rev2, the
+      kernel config is now linux-2.6.11-mpc8360epb-rev2-basic.config,
+      add CONFIG_PKG_PTPD 
+
+   * config/platform/mpc8360epb/defconfig-oib
+      * This is a new config that adds u-boot-1.1.6 and
+      linux-2.6.19-mpc8360epb-basic.config
+
+   * config/platform/mpc8360epb/linux-2.6.11-mpc8360epb-CodeTEST-SWIC.config
+      * Just comments
+
+   * config/platform/mpc8360epb/linux-2.6.11-mpc8360epb-SEC2.config
+      * Just comments
+
+   * config/platform/mpc8360epb/linux-2.6.11-mpc8360epb-atm.config
+      * Just comments
+
+   * config/platform/mpc8360epb/linux-2.6.11-mpc8360epb-basic.config
+      * Just comments
+
+   * config/platform/mpc8360epb/linux-2.6.11-mpc8360epb-pci-agent.config
+      * Just comments
+
+   * config/platform/mpc8360epb/linux-2.6.11-mpc8360epb-pci.config
+      * Just comments
+
+   * config/platform/mpc8360epb/linux-2.6.11-mpc8360epb-rev2-CodeTEST-SWIC.config
+      * Just comments
+
+   * config/platform/mpc8360epb/linux-2.6.11-mpc8360epb-rev2-SEC2.config
+      * add CONFIG_83xx_SPI, remove CONFIG_MPC83xx_SEC2x
+
+   * config/platform/mpc8360epb/linux-2.6.11-mpc8360epb-rev2-atm.config
+      * Just comments
+
+   * config/platform/mpc8360epb/linux-2.6.11-mpc8360epb-rev2-basic.config
+      * Just comments
+
+   * config/platform/mpc8360epb/linux-2.6.11-mpc8360epb-rev2-pci-agent.config
+      * Just comments
+
+   * config/platform/mpc8360epb/linux-2.6.11-mpc8360epb-rev2-pci.config
+      * Just comments
+
+   * config/platform/mpc8360epb/linux-2.6.11-mpc8360epb-rev2-spi.config
+      * Just comments
+
+   * config/platform/mpc8360epb/linux-2.6.11-mpc8360epb-rev2-usb-gadget.config
+      * Just comments
+
+   * config/platform/mpc8360epb/linux-2.6.11-mpc8360epb-rev2-usb-host.config
+      * Just comments
+
+   * config/platform/mpc8360epb/linux-2.6.11-mpc8360epb-spi.config
+      * Just comments
+
+   * config/platform/mpc8360epb/linux-2.6.11-mpc8360epb-usb-gadget.config
+      * Just comments
+
+   * config/platform/mpc8360epb/linux-2.6.11-mpc8360epb-usb-host.config
+      * Just comments
+
+   * config/platform/mpc8360epb/linux-2.6.19-mpc8360epb-basic.config
+      * New Linux config file for 2.6.19
+
+   * config/platform/mpc8360epb/main.lkc
+      * Add u-boot-1.1.6, add u-boot selections for General, PCI host 33M,
+      PCI host 66M, PCI agent.  Add linux 2.6.19
+
+   * config/platform/mpc8360epb/pkg_map
+      * New file, overrides ptpd package with a custom spec: ptpd-mpc8360r2
+
+   * config/userspace/deployment.lkc
+      * Add DEPLOYMENT_SREC (for ROMFS deployment)
+
+   * config/userspace/packages.lkc
+      * Add PKG_LINUX_WLAN, PKG_TIMEZONE_WANT_TZCODE, PKG_TIMEZONE_WANT_LIBTZ
+      and tighten up some constraints
+
+   * dist/lfs-5.1/XFree86/XFree86.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/apptrk/apptrk-m54x5.spec
+      * Update release (0 to 1).  This copes with toolchain variances
+      3.4 versus 4.1
+
+   * dist/lfs-5.1/base_libs/base_libs.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/base_libs/base_libs_mv.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/binutils/binutils.spec
+      * Update from 2.16.1 to 2.17 mainly for the benefit of imx and eabi 
+
+   * dist/lfs-5.1/boa/boa.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/busybox/busybox-1.00.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/busybox/busybox.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/colilo/colilo.spec
+      * Update some patches 
+
+   * dist/lfs-5.1/common/pkg_map
+      * Add blob, linux-wlan
+
+   * dist/lfs-5.1/coreutils/coreutils.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/cracklib/cracklib.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/db1/db1.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/dropbear/dropbear.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/fakeroot/fakeroot.spec
+      * fix typeo in the remove .la line
+
+   * dist/lfs-5.1/gdb/gdb.spec
+      * add m68k-bdm-build.patch
+
+   * dist/lfs-5.1/hardwaretest/hardwaretest-imx.spec
+      * Update to version 1.2 from 1.0
+
+   * dist/lfs-5.1/helloworld/helloworld.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/inetutils/inetutils.spec
+      * set group id to root for some files
+
+   * dist/lfs-5.1/iputils/iputils.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/irda-utils/irattach.spec
+      * Add startup code
+
+   * dist/lfs-5.1/kernel/kernel-2.6.10-rig.spec.in
+      * Update some patches
+
+   * dist/lfs-5.1/kernel/kernel-2.6.11-mpc8349.spec.in
+      * Update some patches
+
+   * dist/lfs-5.1/kernel/kernel-2.6.11-mpc8349ea.spec.in
+      * new spec file for the 8349
+
+   * dist/lfs-5.1/kernel/kernel-2.6.11-mpc8360epb-rev2.spec.in
+      * Update some patches
+
+   * dist/lfs-5.1/kernel/kernel-2.6.11-mpc8360epb.spec.in
+      * Update some patches
+
+   * dist/lfs-5.1/kernel/kernel-2.6.11-pq3.spec.in
+      * Add a eTSEC patch
+
+   * dist/lfs-5.1/kernel/kernel-2.6.13.4-mpc8349itx.spec.in
+      * Add kernel-2.6.13-gianfar-skb-recycle.patch
+
+   * dist/lfs-5.1/kernel/kernel-2.6.16-mpc5200.spec.in
+      * Update the MTD patch
+
+   * dist/lfs-5.1/kernel/kernel-2.6.17.7-uc1.spec.in
+      * Update from 1.1.4 to 1.2.0.  Note: I backed out of this
+        and reverted to 1.1.1.1 as the patches referenced are not
+        yet available.
+
+   * dist/lfs-5.1/kernel/kernel-2.6.18-mpc8641.spec.in
+      * Remove some spurious dtc items now in kernel-common.tmpl
+
+   * dist/lfs-5.1/kernel/kernel-2.6.19-mpc8313erdb.spec.in
+      * New spec file for the mpc8313erdb
+
+   * dist/lfs-5.1/kernel/kernel-2.6.19-mpc8360epb.spec.in
+      * New spec file for mpc8360epb
+
+   * dist/lfs-5.1/kernel/kernel-2.6.19-mpc8641.spec.in
+      * New spec file for mpc8641
+
+   * dist/lfs-5.1/kernel/kernel-common.tmpl
+      * Re-work the dtc stuff to be a bit smarter, fix the symlinks
+      in lib/modules/$KERNEL_VER (looks wrong?).  Run mkimage for
+      uImages to generate a .dtu files from the .dtb file
+
+   * dist/lfs-5.1/krb5/krb5.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/lfs-utils/lfs-utils.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/libjpeg/libjpeg.spec
+      * Add support for opteron build host
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/libtermcap/libtermcap.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/microwindows/microwindows.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/mxc-misc/mxc-misc-mx27.spec
+      * New spec file for the mx27
+
+   * dist/lfs-5.1/openssl/openssl-0.9.7g.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/openssl/openssl.spec
+      * Update the license tag (just a dash).  Support kernel architecture
+     powerpc.  Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/oprofile/oprofile.spec
+      * Update from 0.9.1 to 0.9.2
+
+   * dist/lfs-5.1/portmap/portmap.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/ptpd/ptpd-mpc8360r2.spec
+      * New platform specific version of ptpd
+
+   * dist/lfs-5.1/qtopia/qtopia-mpc5200.spec
+      * Escape the setting of $PATH to fix build problems
+
+   *  dist/lfs-5.1/qtopia/qtopia.spec
+      * Escape the setting of $PATH to fix build problems
+
+   * dist/lfs-5.1/rpm/rpm-fs.spec
+      * Fix issue wherby later Debian hosts have inconveniently moved bzip
+     to /bin  (they like to be different :-)
+
+   * dist/lfs-5.1/samba/samba.spec
+      * Update some the cross patch.  Add large file support.
+
+   * dist/lfs-5.1/sash/sash.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/schedutils/schedutils.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/shadow/shadow.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/skell/skell-mx27.spec
+      * A skell specific to mx27
+
+   * dist/lfs-5.1/strace/strace-nommu.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/sysconfig/sysconfig-mx21.spec
+      * Add some SMB/NMB stuff, add rootfs/etc/ltib-release
+
+   * dist/lfs-5.1/sysconfig/sysconfig-mx27.spec
+      * New file for the mx27
+
+   * dist/lfs-5.1/sysconfig/sysconfig.spec
+      * Remove umount -a -r and swapoff -a from the inittab
+
+   * dist/lfs-5.1/sysklogd/sysklogd.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+      Fix goofup with the 'chmod ... syslog.conf'
+
+   * dist/lfs-5.1/sysvinit/sysvinit.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/tcp_wrappers/tcp_wrappers.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/texinfo/texinfo.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/timezone/timezone.spec
+      * Pass the parameters on the make command line (instead of environment)
+      don't install date, which comes from busybox/coreutils.
+      Fix the TZDIR and TOPDIR prefix.
+      Copying the .a file on request.  Remove the timezone executable
+      unless requested (can come from glibc).  
+      Fixup the paths to match glibc (zic, zdump)
+      Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * dist/lfs-5.1/u-boot/u-boot-1.1.3-mpc8349eamds.spec
+      * New file for the 8349
+
+   * dist/lfs-5.1/u-boot/u-boot-1.1.3-mpc8349emds.spec
+      * Update some patches
+
+   * dist/lfs-5.1/u-boot/u-boot-1.1.5-mpc5200.spec
+      * New file for the mpc5200
+
+   * dist/lfs-5.1/u-boot/u-boot-1.1.6-mpc8313erdb.spec
+      * New file for the 8313
+
+   * dist/lfs-5.1/u-boot/u-boot-1.1.6-mpc8360epb.spec
+      * New file for the 8360
+
+   * dist/lfs-5.1/u-boot/u-boot-fsl-mpc8641hpcn.spec
+      * Update from 1.1.4 to 1.2.0.  Note: I backed out of this
+        and reverted to 1.1.1.1 as the patches referenced are not
+        yet available.
+ 
+   * dist/lfs-5.1/u-boot/u-boot-fsl-pq3.spec
+      * Add a couple of patches
+
+   * dist/lfs-5.1/u-boot-tools/u-boot-tools.spec
+      * Add a patch to fix inadvertent environment space pollution
+
+   * dist/lfs-5.1/udev/udev-mx27.spec
+      * New file for the mx27
+
+   * dist/lfs-5.1/util-linux/util-linux.spec
+      * Fix the LOCALE_DIR prefix, fix CURSESFLAGS i make_include
+
+   * dist/lfs-5.1/vsc7385-firmware/vsc7385-firmware-mpc8313erdb.spec
+      * New file
+
+   * dist/lfs-5.1/vsftpd/vsftpd.spec
+      * Replace x/y/z/{a,b,c} syntax to be dash compatibile (ubuntu-edgy)
+
+   * doc/LtibMerge24nov06
+      * Delete and move to LtibMergesFromFSL
+
+   * doc/LtibMergesFromFSL
+      * What was doc/LtibMerge24nov06
+
+
+---
+
+
+---+ changelog for import-20061124 (previous import-20060615)
+
+    * .ltibrc
+        * add template distcc support.
+    * ltib
+        * support older version of perl (5.006_000)
+        * support older host glibc (2.2.4)
+        * support older host binutils (2.11.90)
+        * add patch to the host dependency list
+        * add localstatedir=> "/var"
+        * update app version string
+        * add cvs version string
+        * add buildcxx/BUILDCXX.  BUILDCXX is exported in the build environment
+        * change the hash entry 'pkg' to 'sn' (more appropriate)
+        * move $pcac to global namespace (older Perl needs this)
+        * add a number of items to config_deps
+        * add PKG_DEVFSD to busybox's install_deps
+        * add listpkgseula, listpkgstw modes (package information listings)
+        * add copyright/GPL license info to the useage output
+        * allow incomplete matches for modes (remove the $ anchor in regex)
+        * if -c (configure) is set in single package mode, set SCB_WANT_CF.
+        This is used by packages like the kernel/busybox to recognise a
+        user wants to perform their configuration.
+        * write out a RELEASE_INFO file to the top level (to track builds)
+        * add more items to the distclean section
+        * don't print platform if not unpacking
+        * force build if force set regardless of single/multi-package build
+        * replace detection of short-circuit mode (^sc) with explicit setting
+        of nounpack in f_scbuild/f_scinstall
+        * fixups for continue on error mode
+        * change behavior: if source is unpacked warn about not clobbering,
+        but don't stop the build (die).  Instead, run the scbuild and scdeploy
+        functions within f_build
+        * fixup 'leavesrc' processing
+        * pass _localstatedir into rpmbuild if set
+        * print elapsed time for build phase
+        * prevent install phase when running a dry-run
+        * completely re-work how the spec file/packages names are looked 
+        up an procesed.  Now if you say -p <pkg> it looks inside the spec
+        files for a match, it does not infer spec file name.  This lets
+        you say: ./ltib -p kernel and it will lookup which kernel you
+        want to build (have selected) and build that.  The old behaviour
+        can be got by specifying -p <specname>.spec.  This allows you
+        to work on packages other than those selected in the config system
+        * change %Files in scdeploy to recognise that the token may have
+        a value on the same line as the token itself
+        * don't die if scdeploy fails, pass back the return code (it's up
+        to the caller to decide what to do)
+        * add f_listpkgseula, f_listpkgstw functions
+        * set $= = 10000; in f_listpkgs to put output on one page only
+        * move the code that generated the RELEASE_INFO file into its
+        own function (write_release_info)
+        * add guard in f_release so that you can't go into an infinite
+        loop if STDIN is not defined (batch mode).
+        * only build host rpms if config mode is not set (e.g run 
+        --hostcf -c to re-configure host packages only)
+        * add DISTCC_HOSTS, DISTCC_TCP_CORK, MAKEFLAGS environment 
+        variable exports.  This can be set in .ltibrc.  an already
+        set environment variable will override an entry in .ltibrc
+        * add check to make sure $cf->{rpm} is available, if not die.
+        This is to guard against it going missing (due to tinkering)
+        * clear something_got_built in pre_build_checks.  We only
+        care about the target, not host packages (wrt deployment)
+        * add BUILDCXX and TOOLCHAIN_PATH environment variable exports
+        * add some debug output in mk_buildlist (if -v)
+        * add in all the package name lookups in mk_buildlist
+        * add function pkg_iterate to tunr on/off a slew of packages
+        * add function validate_sn, this primes the package list to a valid state
+        * fixups to get_key_by_sn
+        * make rpm database query only the package name in remove_unselected_pkgs
+        * optimise the logic for dropping the packages (big speed up)
+        * add nasty expection cases to package dropping (e.g. not
+        freescale-coldfire-
+        * add some caller stack debug to get_spec if no spec name passed
+        * various typo fixes
+        * add tman function to the -m shell mode, this lets you look up
+        target man pages
+
+    * bin/Ltibutils.pm
+        * add CVS revision string in the comment area
+        * add optimisation to lookup only the name in parse_spec name mode
+        * fixup %prep and %files regex tokens, these now faithfully pull
+        in values on the same line as the token.
+        * cleanup in test_proxy
+        * test the ppp/gpp early in the test_remote_file function
+        * move test_ppp_gpp/test_proxy out of get_remote_file and add
+        in test_ppp_gpp (rationalisation)
+        * we no long try to get directly from a URL in get_remote_file
+        * refine test for zlib detection in app_checks
+        * add DEPLOYMENT_CRAMFS, DEPLOYMENT_ROMFS to mk_fs_image
+        * reorganise the way device nodes are made.  The directory
+        sub-trees under rootfs/dev are now uses a a template for the
+        rootfs.tmp staging area
+
+    * bin/autobuild_ltib
+        * drop MIME::Lite in favour of Net::SMTP
+        * some formatting changes
+
+    * bin/depmod.pl
+        * fix to order indirect keys (to work with module-init-tools)
+
+    * bin/device_genromfs.txt
+        * new file to support genrmomfs (uclinux)
+
+    * bin/device_table.txt
+        * add /dev/input, /dev/ttyCPM, /dev/ttymxc and others
+
+    * bin/ltib_install
+        * add EULA support
+
+    * bin/mk_pkg_results
+        * nice diff/formatter for autobuild results
+
+    * bin/netinstall
+        * add -P option to the checkout from cvs
+
+    * bin/stripall
+        * fix opt_s (speed up) option.
+
+    * config/defaults/busybox.config
+        * Add CONFIG_FEATURE_INIT_SCTTY, CONFIG_FEATURE_MOUNT_NFS,
+        CONFIG_FEATURE_UMOUNT_ALL, CONFIG_DEVFSD, CONFIG_DEVFSD_MODLOAD,
+        CONFIG_DEVFSD_FG_NP
+
+    * config/defaults/busybox.config.nommu
+        * Add CONFIG_FEATURE_SUID_CONFIG_QUIET=y, USING_CROSS_COMPILER=y,
+        CONFIG_FEATURE_INIT_SCTTY
+        * Remove: CONFIG_BUNZIP, CONFIG_GZIP, CONFIG_TAR, CONFIG_UNZIP,
+        CONFIG_OPENVT, CONFIG_ADDGROUP, CONFIG_DELGROUP, CONFIG_ADDUSER,
+        CONFIG_DELUSER, CONFIG_GETTY, CONFIG_PASSWD, CONFIG_SU,
+        CONFIG_FEATURE_SHADOWPASSWDS, CONFIG_CROND, CONFIG_CRONTAB,
+        CONFIG_IFUPDOWN
+
+    * config/platform/host/ltib.preconfig
+        * Add: CONFIG_PKG_BISON, CONFIG_PKG_CRAMFS, CONFIG_PKG_DISTCC
+        CONFIG_PKG_DTC, 
+
+    * config/platform/m520xevb/defconfig
+        * Add CONFIG_CAP_DEPLOYMENT_ROMFS, CONFIG_PKG_STRACE,
+        CONFIG_SYSCFG_DHCPC0
+        * Change toolchain to freescale-coldfire-m68k-uclinux-4.1-14.i686.rpm
+        * Change kernel to kernel-2.6.17.7-uc1
+        * Change to CONFIG_DEPLOYMENT_ROMFS
+        * Remove CONFIG_PKG_APPTRK_M68K, CONFIG_SYSCFG_WANT_LOGIN_TTY
+
+    * config/platform/m520xevb/defconfig-2.6.12
+        * Added
+
+    * config/platform/m520xevb/deployment_instructions.txt
+        * Update and make more informative
+
+    * config/platform/m520xevb/linux-2.6.12.config
+        * Added
+
+    * config/platform/m520xevb/linux-2.6.17.7.config
+        * Added
+
+    * config/platform/m520xevb/linux-2.6.x.config
+        * Deleted
+
+    * config/platform/m520xevb/main.lkc
+        * Added CAP_DEPLOYMENT_ROMFS, 
+        freescale-coldfire-m68k-uclinux-4.1-14.i686.rpm, 
+        kernel-2.6.17.7-uc1
+
+    * config/platform/m520xevb/nfs-2.6.x.config
+        * Updated for 2.6.17-uc1
+
+    * config/platform/m520xevb/pkg_map
+       * Remove PKG_BOA, PKG_STRACE overrides (common now)
+
+    * config/platform/m520xevb/romfs-2.6.x.config
+        * Updated for 2.6.17-uc1
+
+    * config/platform/m520xevb/merge/etc/fstab
+        * Deleted
+
+    * config/platform/m520xevb/merge/etc/rc.d/init.d/network
+        * Deleted
+
+    * config/platform/mcf547x_8x/main.lkc
+        * Add freescale-coldfire-m68k-linux-gnu-4.1-14.i686.rpm
+
+    * config/platform/mpc5200/busybox.config
+        * Added
+ 
+    * config/platform/mpc5200/defconfig
+        * Change to tc-mtwk-x86lnx-603e-3.4.3-1.i386.rpm
+        * Change to CONFIG_PKG_U_BOOT_LITE5200B_06APR2006
+        * Change to u-boot-mpc5200-1.1.2
+        * Change to kernel-2.6.16-mpc5200
+        * Change to linux-2.6.16-mpclite5200b.config
+        * Remove: CONFIG_PKG_GDB_CROSS_WANT_ED, CONFIG_PKG_GDB_SERVER_WANT_ED
+        CONFIG_PKG_VIM
+        * Added: CONFIG_PKG_MTD_UTILS, CONFIG_PKG_NCURSES_WANT_REDUCED_SET,
+        CONFIG_PKG_ZLIB
+        * Remove: CONFIG_SYSCFG_WANT_LOGIN_TTY, CONFIG_SYSCFG_START_SYSLOG,
+        CONFIG_SYSCFG_START_NETWORK, CONFIG_SYSCFG_START_BOA
+        * Change to CONFIG_SYSCFG_DEPLOYMENT_STYLE="JFFS2" 
+
+    * config/platform/mpc5200/defconfigliteb
+        * New file
+
+    * config/platform/mpc5200/defconfigmedia
+        * New file
+
+    * config/platform/mpc5200/linux-2.6.16-mpcmedia5200.config
+        * Add: CONFIG_MTD_COMPLEX_MAPPINGS, CONFIG_BLK_DEV_SD,
+        CONFIG_TOUCHSCREEN_MEDIA5200, CONFIG_FB_MB86290, CONFIG_SOUND...
+        CONFIG_USB_STORAGE..., CONFIG_FAT_FS, CONFIG_VFAT_FS, CONFIG_JFFS2_FS,
+        CONFIG_ZLIB_INFLATE, CONFIG_ZLIB_DEFLATE, 
+        * Remove: CONFIG_DEBUG_PREEMPT, CONFIG_DEBUG_RT_MUTEXES, 
+        CONFIG_DEBUG_PI_LIST
+        
+    * config/platform/mpc5200/main.lkc
+        * Change toolchains to: tc-mtwk-x86lnx-603e-3.4.3-1.i386.rpm ,
+        tc-fsl-x86lnx-ppc-uclibc-3.4.3-1.i386.rpm
+        * Change BOOTLOADER1 to PKG_U_BOOT_LITE5200B_06APR2006
+        * Add PKG_U_BOOT_MEDIA5200_25APR2006
+
+    * config/platform/mpc5200/pkg_map
+        * Remove: PKG_GCC, PKG_QTEMBEDDED, PKG_QTOPIA
+        * Add: PKG_PEAKCANLINUX
+
+    * config/platform/mpc5200/merge/etc/rc.d/rc.local
+        * New file (starts qpe)
+
+    * config/platform/mpc5200/merge/etc/rc.d/rc.qpe
+        * Deleted
+
+    * config/platform/mpc5200/merge/etc/rc.d/rcS 
+        * New file (overrides skell)
+
+    * config/platform/mpc5200/merge/sbin/hotplug
+        * New file
+
+    * config/platform/mpc7448hpcii/main.lkc
+        * Remove: ppc-uclibc-tc-20050308-2.i686.rpm
+        * Add: tc-fsl-x86lnx-ppc-uclibc-3.4.3-1.i386.rpm,
+        tc-fsl-x86lnx-7450-nptl-4.0.2-2.i386.rpm
+
+    * config/platform/mpc8349emds/defconfig
+        * Add CONFIG_INITTAB_LINE="::respawn:/sbin/getty -L console 0 screen"
+
+    * config/platform/mpc8349emds/linux-2.6.11-mpc8349emds-basic.config
+        * Only comment and whitespace changes
+
+    * config/platform/mpc8349emds/linux-2.6.11-mpc8349emds-pci-agent.config
+        * Only comment and whitespace changes
+        
+    * config/platform/mpc8349emds/linux-2.6.11-mpc8349emds-pci.config
+        * Only comment and whitespace changes
+
+    * config/platform/mpc8349emds/linux-2.6.11-mpc8349emds-sec-wtd-spi.config
+        * Remove: MTD, JFFS2
+
+    * config/platform/mpc8349emds/linux-2.6.11-mpc8349emds-usb-gadget.config
+        * Only comment and whitespace changes
+
+    * config/platform/mpc8349emds/linux-2.6.11-mpc8349emds-usb-host.config
+        * Only comment and whitespace changes
+
+    * config/platform/mpc8349emds/linux-2.6.11-mpc8349emds-usb-otg.config
+        * Only comment and whitespace changes
+
+    * config/platform/mpc8349emds/main.lkc
+        * Add: tc-fsl-x86lnx-ppc-nptl-4.0.2-3.i386.rpm
+
+    * config/platform/mpc8548cds/defconfig
+        * Add: CONFIG_PKG_HDPARM, CONFIG_PKG_NET_TOOLS, 
+
+    * config/platform/mpc8548cds/linux_2.6.11_mpc8548_cds_def.config
+        * Remove: CONFIG_MATH_EMULATION, 
+        * Add: CONFIG_PEX, CONFIG_NFS_V3, CONFIG_LOCKD_V4
+
+    * config/platform/mpc8548cds/main.lkc
+        * Remove: ppc-uclibc-tc-20050308-2.i686.rpm
+        * Add: tc-fsl-x86lnx-ppc-uclibc-nfp-3.4.3-1.i386.rpm, 
+        tc-fsl-x86lnx-e500-dp-nptl-4.0.2-2.i386.rpm
+
+    * config/platform/mpc8548cds/pkg_map
+        * Add: PKG_GCC (gcc-e500-dpfp)
+
+    * config/platform/mpc8555cds/defconfig
+        * Add MPC8541CDS to platform comment, CONFIG_PKG_HDPARM
+
+    * config/platform/mpc8555cds/main.lkc
+        * Remove: ppc-uclibc-tc-20050308-2.i686.rpm
+        * Add: tc-fsl-x86lnx-ppc-uclibc-nfp-3.4.3-1.i386.rpm,
+        tc-fsl-x86lnx-e500-sp-nptl-4.0.2-1.i386.rpm
+
+    * config/platform/mpc8555cds/pkg_map
+        * Add PKG_GDB (gdb-e500)
+
+    * config/platform/mpc8560ads/defconfig
+        * Add: CONFIG_PKG_BOA, CONFIG_PKG_VSFTPD, CONFIG_SYSCFG_START_BOA,
+        CONFIG_SYSCFG_BOA_ARGS
+
+    * config/platform/mpc8560ads/main.lkc
+        * Remove: ppc-uclibc-tc-20050308-2.i686.rpm 
+        * Add: tc-fsl-x86lnx-ppc-uclibc-nfp-3.4.3-1.i386.rpm,
+        tc-fsl-x86lnx-e500-sp-nptl-4.0.2-1.i386.rpm
+        PKG_U_BOOT_CW, conditional PKG_U_BOOT_BUILD_ARGS
+
+    * config/platform/mpc860fads/main.lkc
+        * Remove: ppc-uclibc-tc-20050308-2.i686.rpm
+        * Add:  tc-fsl-x86lnx-ppc-uclibc-nfp-3.4.3-1.i386.rpm
+
+    * config/platform/qs875s/busybox.config
+        * New file (for devfs support not in common config)
+
+    * config/platform/qs875s/defconfig
+        * Change default from CONFIG_GLIBC to CONFIG_UCLIBC
+        * Change default toolchain to: ppc-uclibc-tc-20050308-2.i686.rpm
+        * Change kernel to kernel-2.6.16-875
+        * Change to static device nodes from devfs
+        * Add: CONFIG_PKG_DROPBEAR, CONFIG_SYSCFG_SETTIME, 
+        CONFIG_SYSCFG_NTP_SERVER, CONFIG_SYSCFG_START_DROPBEAR_SSH
+        * Remove: -CONFIG_PKG_INETUTILS
+        * Change network to use fixed IP rather than dhcp 
+        * Change to RAMdisk deployment
+
+    * config/platform/qs875s/deployment.txt
+        * Update, more accurate, more information
+
+    * config/platform/qs875s/linux-2.4.x-am_adder_87x.config
+        * Add: CONFIG_FILTER
+
+    * config/platform/qs875s/linux-2.6.13-am_adder_87x.config
+        * New file (not used)
+
+    * config/platform/qs875s/linux-2.6.16-am_adder_87x.config
+        * New file
+
+    * config/platform/qs875s/main.lkc
+        * Update title
+        * Remove: ppc-uclibc-tc-20050308-2.i686.rpm
+        * Add: tc-fsl-x86lnx-ppc-uclibc-nfp-3.4.3-1.i386.rpm,
+        tc-fsl-x86lnx-823-4.0.2-2.i386.rpm
+        * Remove kernel-2.6.13-875
+        * Add: kernel-2.6.16-875
+
+    * config/platform/tqm823l/deployment_instructions.txt
+        * Update, more accurate, more information
+
+    * config/platform/tqm823l/main.lkc
+        * Remove: ppc-uclibc-tc-20050308-2.i686.rpm
+        * Add: tc-fsl-x86lnx-ppc-uclibc-nfp-3.4.3-1.i386.rpm,
+        tc-fsl-x86lnx-823-4.0.2-2.i386.rpm
+
+    * config/profile/max.config
+        * Remove: CONFIG_PKG_FILE, CONFIG_PKG_GRUB, CONFIG_PKG_TMAKE,
+        CONFIG_PKG_QTEMBEDDED
+        * Add: CONFIG_PKG_SEQ, CONFIG_PKG_DOSFSTOOLS, CONFIG_PKG_GENROMFS
+        CONFIG_PKG_ALSA_LIB, CONFIG_PKG_DIRECTFB, CONFIG_PKG_DIRECTFB_EXAMPLES,
+        CONFIG_PKG_PCMCIA_CS, CONFIG_PKG_PCRE, CONFIG_PKG_LRZSZ, 
+        CONFIG_PKG_UDEV, CONFIG_PKG_YAFFS_UTILS, CONFIG_PKG_ALSA_UTILS,
+        CONFIG_PKG_DHCP, CONFIG_PKG_BIND, CONFIG_PKG_DTC, 
+        CONFIG_PKG_BRIDGE_UTILS, CONFIG_PKG_CPIO, CONFIG_PKG_CRACKLIB,
+        CONFIG_PKG_CRAMFS, CONFIG_PKG_HESIOD, CONFIG_PKG_IPUTILS,
+        CONFIG_PKG_SCHEDUTILS, CONFIG_PKG_SETSERIAL, CONFIG_PKG_PTPD,
+        CONFIG_PKG_DEVMEM2, CONFIG_PKG_DISTCC
+
+    * config/profile/min.config
+        * Remove: CONFIG_PKG_MODUTILS
+
+    * config/profile/test.config
+        * Add: CONFIG_PKG_IPERF, CONFIG_PKG_NETPERF, CONFIG_PKG_IPROUTE
+        * Remove: CONFIG_PKG_RPM 
+
+    * config/userspace/defaults.lkc
+        * Remove: SYSCFG_SYSLOG_SOCKET_FILE (obsolte, not used now),
+        * Add: CAP_DEPLOYMENT_ROMFS, INITTAB_LINE
+
+    * config/userspace/deployment.lkc
+        * Add: DEPLOYMENT_ROMFS, DEPLOYMENT_ZIP
+        * Remove: SYSCFG_SYSLOG_SOCKET_FILE
+
+    * config/userspace/endian.lkc
+        * Update ENDIAN
+
+    * config/userspace/network.lkc
+        * Add: SYSCFG_DHCPC_CMD (how to start the dhcp client)
+
+    * config/userspace/packages.lkc
+        * PKG_BIND: add select PKG_OPENSSL
+        * Add: PKG_BRIDGE_UTILS, PKG_CPIO, PKG_CRACKLIB, PKG_CRAMFS, 
+        PKG_DEVMEM2, PKG_DISTCC, PKG_DTC, PKG_HARDWARETEST_IMX, PKG_HESIOD,
+        PKG_IPUTILS, PKG_MXC_MISC, PKG_PEAKCANLINUX, PKG_PTPD, 
+        PKG_QTOPIA_WANT_MOUSE, PKG_QTOPIA_WANT_CACHE_HOST_TOOLS, PKG_SCHEDUTILS
+        PKG_SCREEN, PKG_SETSERIAL, PKG_TIMEZONE
+        * Remove: PKG_GX200-BU-98000, PKG_MBX_SRC, PKG_NAS_CONFIG, 
+        PKG_QTEMBEDDED, PKG_QTOPIA_WANT_TOUCHSCREEN, PKG_TMAKE
+        * Add sub-selects: PKG_DHCP_WANT_SERVER, PKG_DHCP_WANT_CLIENT to
+        PKG_DHCP
+        * PKG_DSPI: add select PKG_KERNEL_WANT_HEADERS
+        * Change: PKG_GDB_BDM to PKG_GDB_M68K_BDM_WANT_ED
+        * PKG_LINUX_ATM: add select PKG_FLEX
+        * PKG_MAN: add select PKG_GROFF
+        * PKG_PCMCIA_CS: add select PKG_KERNEL_LEAVESRC
+        * PKG_QTOPIA: add selects PKG_LIBJPEG, PKG_TIMEZONE
+
+    * config/userspace/sysconfig.lkc
+        * Set SYSCFG_LOGING_TTY from the value of INITTAB_LINE
+        * change value conditioning of SYSCFG_START_DEVFSD
+        * Add: SYSCFG_START_SAMBA, SYSCFG_SMBD_ARGS, SYSCFG_NMBD_ARGS,
+        SYSCFG_START_DHCPD, SYSCFG_DHCP_ARG, SYSCFG_START_HARDWARETEST_DPM.
+        SYSCFG_START_QTOPIA
+
+    * dist/FC-2/*
+        * Deleted
+
+    * dist/lfs-5.1/DirectFB/DirectFB-examples.spec
+        * Fix licence, change to MIT
+
+    * dist/lfs-5.1/DirectFB/DirectFB.spec
+        * Add patch: DirectFB-0.9.24-ppcasm.patch
+        * pass in KHDR= into make
+
+    * dist/lfs-5.1/NAS-config/NAS-config.spec
+        * Deleted
+
+    * dist/lfs-5.1/XFree86/XFree86.spec
+        * Fix license, change to XFree86 1.1 (BSD like)
+
+    * dist/lfs-5.1/alsa-lib/alsa-lib-1.0.11rc2.spec
+        * Fix license, change to LGPL
+
+    * dist/lfs-5.1/alsa-lib/alsa-lib-1.0.6.spec
+        * Fix license, change to LGPL
+
+    * dist/lfs-5.1/alsa-lib/alsa-lib.spec
+        * Fix license, change to LGPL
+        * Add patches: alsa-lib-uclibc-wordexp.patch,  alsa-lib-1.0.10-cf.patch
+        * Remove *.la files from package
+
+    * dist/lfs-5.1/alsa-utils/alsa-utils-1.0.11rc2.spec
+        * Fix license, change to GPL
+
+    * dist/lfs-5.1/alsa-utils/alsa-utils-1.0.6.spec
+        * Fix license, change to GPL
+
+    * dist/lfs-5.1/alsa-utils/alsa-utils.spec
+        * Fix license, change to GPL
+        * Add patch: alsa-utils-1.0.10-cf.patch
+
+    * dist/lfs-5.1/apptrk/apptrk-m54x5.spec
+        * Fix license, change to Freescale EULA
+
+    * dist/lfs-5.1/apptrk/apptrk-m68k.spec
+        * Fix license, change to Freescale EULA
+
+    * dist/lfs-5.1/apptrk/apptrk-ppcbin.spec
+        * Fix license, change to Freescale EULA
+
+    * dist/lfs-5.1/base_libs/base_libs.spec
+        * Adjust to also work with CodeSorcery toolchains
+        * chmod 775 the libs to preven annoying warning (uClibc)
+        * Relocate the linker .so files to usr/lib rather than lib
+
+    * dist/lfs-5.1/bash/bash.spec
+        * Pass ac_cv_lib_intl_bindtextdomain=no to configure
+        * Pass -j1 to make
+
+    * dist/lfs-5.1/binutils/binutils.spec
+        * Change from 2.15 to 2.16.1 with appropriate patches
+        * Add some nasty exception processing for TOOLCHAIN_PREFIX
+        * Remove libtool .la files
+
+    * dist/lfs-5.1/blob/blob-imx21ads.spec
+        * Revise Patch0 (blob.mx21-3.patch)
+        * Parse and handle NAND
+
+    * dist/lfs-5.1/boa/boa-nommu.spec
+        * Deleted: MMUless platforms now use common boa spec file
+
+    * dist/lfs-5.1/boa/boa.spec
+        * Add %define base macro
+        * Change from 0.94.13 to 0.94.14rc21, remove old patches
+        * Add a new patch boa-0.94.14rc21-nommu.patch
+        * Fixups to install section and the boa.conf file
+
+    * dist/lfs-5.1/bonnie++/bonnie++.spec
+        * Add patch: bonnie++-1.93c-getc_putc-cpp.patch
+
+    * dist/lfs-5.1/bridge-utils/bridge-utils.spec
+        * New package
+
+    * dist/lfs-5.1/busybox/busybox-1.00.spec
+        * Remove: busybox-1.00-syslogd-p-2.patch (not needed)
+        * Add: busybox-1.00-control_tty.patch, 
+        busybox-1.00-udhcpc-nommu-bg.patch, busybox-1.1.3-getty-nobaud.patch,
+        busybox-1.00-modutils.patch
+
+    * dist/lfs-5.1/busybox/busybox.spec
+        * Remove: busybox-1.00-syslogd-p-2.patch (not needed)
+        * Add: busybox-1-sortlibm.patch, busybox-1.1.3-getty-nobaud.patch,
+        busybox-1.1.3-dev-root.patch
+        * Fix paths (for overlay) for pidof ip
+
+    * dist/lfs-5.1/bzip2/bzip2.spec
+        * Fix summary (Doh)
+        * Fix license, change to BSD
+
+    * dist/lfs-5.1/common/pkg_map
+        * Remove: PKG_TMAKE, PKG_QTEMBEDDED, PKG_MBX_SRC,
+        * Add: PKG_DTC, PKG_BRIDGE_UTILS, PKG_CPIO, PKG_CRACKLIB, PKG_CRAMFS
+        PKG_HESIOD, PKG_IPUTILS, PKG_SCHEDUTILS, PKG_SETSERIAL, PKG_PTPD,
+        PKG_DEVMEM2, PKG_DISTCC, PKG_HARDWARETEST_IMX, PKG_TIMEZONE,
+        PKG_MPC8555AMC_DSPUTILS, PKG_SCREEN
+        * Change PKG_QTOPIA from qtopia-mxc to qtopia
+        * Move: PKG_MXC_MISC
+        
+    * dist/lfs-5.1/coreutils/coreutils.spec
+        * Change from version 5.0 to 6.3 and remove patches
+
+    * dist/lfs-5.1/coreutils/seq.spec
+        * Change from version 5.0 to 6.3 and remove patches
+        * Fix the build section (due to update)
+
+    * dist/lfs-5.1/cpio/cpio.spec
+        * New package
+
+    * dist/lfs-5.1/cracklib/cracklib.spec
+        * New package
+
+    * dist/lfs-5.1/cramfs/cramfs.spec
+        * New Package
+
+    * dist/lfs-5.1/dev/dev.spec
+        * Add symlink of /dev/log to /var/tmp/log
+        * Add symlink of /dev/mtab to /proc/mounts
+        * Move manifest to /tmp so scinstall works
+
+    * dist/lfs-5.1/devfsd/devfsd.spec
+        * Add patch devfsd-uclibc-nls.patch
+        * Pass: WITHOUT_NSL=1 to make
+
+    * dist/lfs-5.1/devmem2/devmem2.spec
+        * New package
+
+    * dist/lfs-5.1/dhcp/dhcp.spec
+        * Add patches: dhcp-3.0.3b1-defaults.patch, dhcp-3.0.3b1-types.patch
+        * Fix install section, split out client and server sections based
+        on config selection
+        * set the attributes of sbin/dhclient-script to 755
+
+    * dist/lfs-5.1/distcc/distcc.spec
+        * New package
+
+    * dist/lfs-5.1/dspi-tools/dspi.spec
+        * Add patch: dspi-1.1-fixups1.patch
+
+    * dist/lfs-5.1/dtc/dtc.spec
+        * New package
+
+    * dist/lfs-5.1/e2fsprogs/e2fsprogs.spec
+        * Add patches: e2fsprogs-1.34-make-3.81.patch, 
+        e2fsprogs-1.34-powerpc64.patch
+        * Pass -j1 to make
+
+    * dist/lfs-5.1/expat/expat.spec
+        * Fix license, change to MIT/X Consortium License
+
+    * dist/lfs-5.1/fakeroot/fakeroot.spec
+        * Change from version 0.4.4 to 1.5.10 (prompted by gcc4)
+        * Remove more .la file
+        * Add a bug (type libfakeoot, just seen it, will fix later)
+
+    * dist/lfs-5.1/file/file.spec
+        * Fix license, change to BSD
+
+    * dist/lfs-5.1/findutils/findutils.spec
+        * Change from version 4.1.20 to 4.2.28
+        * Fix install path for localstatedir
+
+    * dist/lfs-5.1/flex/flex.spec
+        * Fix license, change to BSD
+        * Pass: -j1 to make
+
+    * dist/lfs-5.1/freetype/freetype.spec
+        * Remove patch: %{name}-%{version}-bytecode-interpreter.patch
+
+    * dist/lfs-5.1/gawk/gawk.spec
+        * Add macro for base
+        * Pass bindir to make install (as %{base}/bin)
+        * Add correct symlinks for awk/gawk
+
+    * dist/lfs-5.1/gcc/gcc-3.3.2.spec
+        * Move installation to %{_prefix}/local/lib
+        * Pass -j1 to make
+
+    * dist/lfs-5.1/gcc/gcc-e500-dpfp.spec
+        * New file
+
+    * dist/lfs-5.1/gcc/gcc.spec
+        * Add: gcc-3.4.3-make-3.81.patch
+        * Move copy of toolchain crt files to the install section
+        * Condition so uClibc builds only enable c.  glibc builds c,c++
+        * Move installation to %{_prefix}/local/lib
+        * Pass -j1 to make
+        * Remove the c++ pre-compiled header files
+        * Add a symlink for cc
+
+    * dist/lfs-5.1/gdb/gdb-6.4.spec
+        * Pass --host=$OPT_CFGHOST (optimised configuration host)
+        * Pass ac_cv_header_sys_reg_h=no
+        * Pass --enable-threads --enable-shared
+
+    * dist/lfs-5.1/gdb/gdb.spec
+        * Add m68k-bdm support (m68k-bdm-1.3.0.tar.gz, 5485.gdb, 
+        m68k-bdm-1.3.1.patch)
+        * Add gdb-cs-20060508-nommu.patch, gdb-cs-20060907-nommu.patch,
+        gdb-cs-20060913-nommu.patch, gdb-cs-exit-nommu.patch, 
+
+    * dist/lfs-5.1/gettext/gettext.spec
+        * Change from version 0.12.1 to 0.15
+        * Remove gettext-0.12.1-0.patch
+        * Add gettext-0.15-destdir.patch
+
+    * dist/lfs-5.1/glib2/glib2.spec
+        * Change from version 2.4.1 to 2.8.6
+        * Pre-load config.cach to prevent attempt to run test binaries
+
+    * dist/lfs-5.1/glibc/glibc.spec
+        * Remove libtool .la files
+
+    * dist/lfs-5.1/gnome-vfs/gnome-vfs.spec
+        * Modify license, change from LGPL to GPL/LGPL
+
+    * dist/lfs-5.1/grep/grep.spec
+        * Pass -j1 to make
+
+    * dist/lfs-5.1/groff/groff.spec
+        * Add groff-post-html.patch
+        * Pass -j1 to make
+
+    * dist/lfs-5.1/hardwaretest/hardwaretest-imx.spec
+        * New package
+
+    * dist/lfs-5.1/helloworld/helloworld.spec
+        * Change license to Public Domain
+
+    * dist/lfs-5.1/hesiod/hesiod.spec
+        * New package
+
+    * dist/lfs-5.1/hicolor-icon-theme/hicolor-icon-theme.spec
+        * Fix license, change to GPL
+
+    * dist/lfs-5.1/httpd/httpd.spec
+        * Fix for uClibc builds (pass lots of av_cv values to configure)
+
+    * dist/lfs-5.1/i2c-tools/i2c-tools.spec
+        * Add patch i2c-tools-device.patch
+
+    * dist/lfs-5.1/iperf/iperf.spec
+        * Fix summary text
+        * Update license to Distributable/GPL
+
+    * dist/lfs-5.1/iproute/iproute.spec
+        * Pass -j1 to make
+
+    * dist/lfs-5.1/ipsec-tools/ipsec-tools.spec
+        * Add $ENV{TC_PREFIX}/$ENV{X_DIR}/libc/usr/include/linux/version.h
+        to search for linux version file (from toolchain).
+        * Pass -j1 to make
+
+    * dist/lfs-5.1/iptables/iptables.spec
+        * Change from version 1.2.11 to 1.3.6
+
+    * dist/lfs-5.1/iputils/iputils.spec
+        * New package
+
+    * dist/lfs-5.1/irda-utils/irattach.spec
+        * Remove: irda-utils-0.9.17-mxc.patch
+
+    * dist/lfs-5.1/kbd/kbd.spec
+        * Condition HAVE_libintl_h, ENABLE_NLS only if not uClibc
+
+    * dist/lfs-5.1/kernel/kernel-2.6.10-mxc.spec.in
+        * Deleted
+
+    * dist/lfs-5.1/kernel/kernel-2.6.10-rig.spec.in
+        * Add linux-2.6.10-cf-gcc4.1.patch
+
+    * dist/lfs-5.1/kernel/kernel-2.6.11-mpc832xemds.spec.in
+        * Deleted
+
+    * dist/lfs-5.1/kernel/kernel-2.6.11-mpc8349.spec.in
+        * Remove: linux-2.6.11-mpc8349e-general-20060414.patch,
+                  linux-2.6.11-mpc8349e-pci-3.patch
+                  linux-2.6.11-mpc83xx-sec2.patch
+                  linux-2.6.11-mpc8349e-tsec-opt.patch
+          Add:    linux-2.6.11-mpc8349e-general-1.patch
+                  linux-2.6.11-mpc8349e-pci-4.patch
+                  linux-2.6.11-mpc83xxe-sec2-1.patch
+                  linux-2.6.11-mpc8349e-tsec-opt-3.patch
+                  linux-2.6.11-mpc8349e-ct.patch
+                  linux-2.6.11-mpc8349e-usb-pmc-1.patch
+
+    * dist/lfs-5.1/kernel/kernel-2.6.11-mpc8360epb-rev2.spec.in
+        * New file
+
+    * dist/lfs-5.1/kernel/kernel-2.6.11-mpc8360epb.spec.in
+        * Remove: linux-2.6.11-mpc83xx-sec2.patch
+                  linux-2.6.11-mpc8360-general-1.patch
+                  linux-2.6.11-mpc83xx-ct.patch
+                  linux-2.6.11-mpc8360-ucc-geth-1.patch
+                  linux-2.6.11-mpc8360-uec-mtu-napi.patch
+                  linux-2.6.11-mpc836x-spi-May24.patch
+                  linux-2.6.11-mpc8360e-usbgadget.patch
+                  linux-2.6.11-mpc8360-atm-1.patch
+        * Add:    linux-2.6.11-mpc83xxe-sec2-1.patch
+                  linux-2.6.11-mpc8360e-general-2.patch
+                  linux-2.6.11-mpc83xx-ct-1.patch
+                  linux-2.6.11-mpc8360e-uec-mtu-napi-2.patch
+                  linux-2.6.11-mpc836xe-spi.patch
+                  linux-2.6.11-mpc8360e-usbgadget-1.patch
+                  linux-2.6.11-mpc8360e-atm-3.patch
+                  linux-2.6.11-mpc8360e-usb-host.patch
+                  linux-2.6.11-mpc8360e-usb-kb-test.patch
+
+    * dist/lfs-5.1/kernel/kernel-2.6.11-pq3.spec.in
+        * Remove: linux-fsl-2.6.11-PQ38_RTC-2.patch
+        * Add:    linux-fsl-2.6.11-PQ38_RTC-3.patch
+                  linux-fsl-2.6.11-PQ3_Methernet.patch
+                  linux-fsl-2.6.11-PQ38_PHY.patch
+                  linux-fsl-2.6.11-PQ3_rev2_CPU.patch
+                  linux-fsl-2.6.11-PQ3_rev2_pci_pcie.patch
+                  linux-fsl-2.6.11-PQ3_IEEE754_general-5.patch
+                  linux-fsl-2.6.11-PQ3_IEEE754_dpfp-2.patch
+                  linux-fsl-2.6.11-PQ3_IEEE754_spfp-2.patch
+                  linux-fsl-2.6.11-PQ3_IEEE754_vspfp.patch
+                  linux-fsl-2.6.11-PQ3_IEEE754_round.patch
+                  linux-fsl-2.6.11-PQ3_TSI310_IRQ.patch
+                  linux-fsl-2.6.11-PQ3_eTSEC34.patch
+                  linux-fsl-2.6.11-PQ3_eTSEC_SKB.patch
+                  linux-fsl-2.6.11-PQ3_fix_oprofile.patch
+                  linux-fsl-2.6.11-PQ3_oprofile_backtrace_e500.patch
+
+    * dist/lfs-5.1/kernel/kernel-2.6.12-uc0.spec.in
+         * Remove: m5208-core.1.patch
+                   m5208-mtd.1.patch
+           Add:    m5208-core.2.patch
+                   m5208-mtd.2.patch
+
+    * dist/lfs-5.1/kernel/kernel-2.6.13.4-mpc8349itx-gp.spec.in
+        * New file
+
+    * dist/lfs-5.1/kernel/kernel-2.6.13.4-mpc8349itx.spec.in
+        * Remove: mpc8349itx-linux26-20060214.patch
+                  linux-2.6.11-mpc8349e-sec2v13.patch
+                  kernel-2.6.13-cf_ide.patch
+        * Add:    kernel-2.6.13-mpc8349itx-all-20060713.patch
+                  kernel-2.6.13-83xx-PCI-coherency.patch
+                  mpc8349itx-linux26-20060620-gianfar-opt.patch
+                  kernel-2.6.13-mpc8349itx-rtc-usb-20060914.patch
+
+    * dist/lfs-5.1/kernel/kernel-2.6.16-875.spec.in
+        * New file
+
+    * dist/lfs-5.1/kernel/kernel-2.6.16-mpc5200.spec.in
+        * Remove: linux-2.6.16-mpc5200-0002-28Apr2006-2.6.16-rt18.patch
+                  linux-2.6.16-mpc5200-0003-28Apr2006-Lite5200B.patch
+                  linux-2.6.16-mpc5200-0004-28Apr2006-bestcomm-dma.patch
+                  linux-2.6.16-mpc5200-0005-28Apr2006-bestcomm-fec.patch
+                  linux-2.6.16-mpc5200-0006-28Apr2006-fec.patch
+                  linux-2.6.16-mpc5200-0007-28Apr2006-ata.patch
+                  linux-2.6.16-mpc5200-0008-28Apr2006-52xx-init-reorg.patch
+                  linux-2.6.16-mpc5200-0009-28Apr2006-bestcomm-ata.patch
+                  linux-2.6.16-mpc5200-0010-28Apr2006-Media5200.patch
+                  linux-2.6.16-mpc5200-0011-28Apr2006-CoralP.patch
+                  linux-2.6.16-mpc5200-0012-28Apr2006-slicetimer-irq.patch
+                  linux-2.6.16-mpc5200-0013-28Apr2006-Media5200-touchscreen.patch
+                  linux-2.6.16-mpc5200-0014-04May2006-MTD.patch
+                  linux-2.6.16-mpc5200-0015-01Jun2006-I2C-clock-fix.patch
+        * Add:    linux-2.6.16-mpc5200-0002-2.6.16-rt18-28Jun2006.patch
+                  linux-2.6.16-mpc5200-0003-Lite5200B-28Jun2006.patch
+                  linux-2.6.16-mpc5200-0004-bestcomm-dma-28Jun2006.patch
+                  linux-2.6.16-mpc5200-0005-bestcomm-fec-28Jun2006.patch
+                  linux-2.6.16-mpc5200-0006-fec-28Jun2006.patch
+                  linux-2.6.16-mpc5200-0007-ata-28Jun2006.patch
+                  linux-2.6.16-mpc5200-0008-52xx-init-reorg-28Jun2006.patch
+                  linux-2.6.16-mpc5200-0009-bestcomm-ata-28Jun2006.patch
+                  linux-2.6.16-mpc5200-0010-Media5200-28Jun2006.patch
+                  linux-2.6.16-mpc5200-0011-CoralP-28Jun2006.patch
+                  linux-2.6.16-mpc5200-0012-slicetimer-irq-28Jun2006.patch
+                  linux-2.6.16-mpc5200-0013-Media5200-touchscreen-28Jun2006.patch
+                  linux-2.6.16-mpc5200-0014-MTD-27Jul2006.patch
+                  linux-2.6.16-mpc5200-0015-I2C-clock-fix-28Jun2006.patch
+                  linux-2.6.16-mpc5200-0016-ac97sound-28Jun2006.patch
+                  linux-2.6.16-mpc5200-0017-codetest-support-07Jul2006.patch
+
+    * dist/lfs-5.1/kernel/kernel-2.6.16-mpc8349itx.spec.in
+        * New file
+
+    * dist/lfs-5.1/kernel/kernel-2.6.16-mx31.spec.in
+        * New file
+
+    * dist/lfs-5.1/kernel/kernel-2.6.16-mx31.spec.in
+        * New file
+
+    * dist/lfs-5.1/kernel/kernel-2.6.16.1-uc0.spec.in
+        * Remove: patch-2.6.16.1
+                  m5329-core.6.patch
+                  m5329-nand.5.patch
+                  m5329-i2c.5.patch
+                  m5329-fb.5.patch
+                  m5329-can.5.patch
+                  m5329-usb.5.patch
+        * Add:    patch-2.6.16.1-1
+                  m532x-core.7.patch
+                  m532x-nand.6.patch
+                  m532x-i2c.7.patch
+                  m532x-fb.6.patch
+                  m532x-can.6.patch
+                  m532x-usb.6.patch
+        
+    * dist/lfs-5.1/kernel/kernel-2.6.17-mpc8641.spec.in
+        * New file
+
+    * dist/lfs-5.1/kernel/kernel-2.6.17.7-uc1.spec.in
+        * New file
+
+    * dist/lfs-5.1/kernel/kernel-2.6.17.spec.in
+        * New file
+
+    * dist/lfs-5.1/kernel/kernel-2.6.18-mpc8641.spec.in
+        * New file
+
+    * dist/lfs-5.1/kernel/kernel-arm-2.4.20-celf3-imx21ads.spec.in
+        * Deleted (for now)
+
+    * dist/lfs-5.1/kernel/kernel-common.tmpl
+        * Remove/link the kernel build dir to linux for easy locating
+        * Add support ofr LINTARCH=powerpc
+        * Copy the config file from the platform without condition
+        * If CONFIG_PPC_MERGE=y set in config file, LINTARCH=powerpc
+        * IF powerpc and $KSRC_DIR/%{dtc_path} run dtc
+        * For LINTARCH=powerpc images are in arch/$LINTARCH/boot/
+        * Make a symlink 'bootable_kernel' in the package (goes in rootfs/boot)
+        * If dtc, copy the dtc output file to rootfs/boot (in the package)
+        * Only remove the kernel source if PKG_KERNEL_LEAVESRC is unset
+
+    * dist/lfs-5.1/lfs-utils/lfs-utils.spec
+        * Fix license, change to BSD/UCB style license (distributable)
+        * Add: lfs-utils-0.3-mktemp-config_update-1.patch
+        * Add: 'make' to the %Build section (Doh)
+
+    * dist/lfs-5.1/libelf/libelf.spec
+        * Pass: -j1 to make
+
+    * dist/lfs-5.1/libgnomeuimm/libgnomeuimm.spec
+        * Update license to LGPL/GPL
+
+    * dist/lfs-5.1/libid3tag/libid3tag.spec
+        * Fix license to be GPL
+
+    * dist/lfs-5.1/libjpeg/libjpeg.spec
+        * Fix capitals
+
+    * dist/lfs-5.1/libmad/libmad.spec
+        * Fix licence to be GPL
+
+    * dist/lfs-5.1/libpng/libpng.spec
+        * Minor correction to license text
+
+    * dist/lfs-5.1/libtiff/libtiff.spec
+        * Fix capitals
+
+    * dist/lfs-5.1/libxslt/libxslt.spec
+        * Fix license to read MIT
+
+    * dist/lfs-5.1/linux-atm/linux-atm.spec
+        * Update license to read GPL/LGPL
+        * Remove: linux-atm-2.4.1-cross.patch
+        * Add:    linux-atm_2.4.1-17.diff 
+                  linux-atm-2.4.1-17-cross.patch
+                  linux-atm-2.4.1-uclibc-1.patch
+
+    * dist/lfs-5.1/linux-wlan/linux-wlan.spec
+        * Mew file
+
+    * dist/lfs-5.1/lkc/lkc.spec
+        * Pass: -j1 to make
+
+    * dist/lfs-5.1/lmbench/lmbench.spec
+        * Update license to read: GPL + restrictions
+
+    * dist/lfs-5.1/lrzsz/lrzsz.spec
+        * Pass: -j1 to make
+
+    * dist/lfs-5.1/ltp/ltp.spec
+        * Add: ltp-full-20050608-getdtablesize01_c.patch
+               ltp-full-20050608-uclibc.patch
+        * Remove: ./testcases/kernel/syscalls/fmtmsg/fmtmsg01
+                  ./testcases/kernel/syscalls/profil/profil01
+        * Test existence of test files before trying to install them
+
+    * dist/lfs-5.1/man/man.spec
+        * Pass: -j1 to make
+
+    * dist/lfs-5.1/mdadm/mdadm.spec
+        * Pass: CC=gcc to make
+
+    * dist/lfs-5.1/microwindows/microwindows.spec
+        * Pass: -j1 to make
+
+    * dist/lfs-5.1/mkspooflinks/mkspooflinks.spec
+        * Change from version 2.1 to 2.3
+
+    * dist/lfs-5.1/mtd-utils/mtd-utils.spec
+        * Add: mtd-utils-20060302-cf-byteswap_h-1.patch
+               mtd-utils-20060302-find_fs_entry.patch
+               mtd-utils-20060302-eraseall.patch
+
+    * dist/lfs-5.1/mxc-misc/mxc-misc-mx31.spec
+        * New file
+
+    * dist/lfs-5.1/mxc-misc/mxc-misc.spec
+        * Deleted
+
+    * dist/lfs-5.1/mysql/mysql.spec
+        * Update license to read GPL
+        * Remove passing -j3 to make
+
+    * dist/lfs-5.1/ncurses/ncurses.spec
+        * Fix capitalisation
+        * Pass: -j1 to make
+
+    * dist/lfs-5.1/net-tools/net-tools.spec
+        * Pass: -j1 to make
+
+    * dist/lfs-5.1/openssh/openssh.spec
+        * Pass: -j1 to make
+
+    * dist/lfs-5.1/openssl/openssl-0.9.7g.spec
+        * Fix license to read: BSD-style
+
+    * dist/lfs-5.1/openssl/openssl.spec
+        * Add macro for base
+        * Fix license to read: BSD-style
+        * Add: openssl-powerpc64.patch
+               openssl-md4_size_t.patch
+               openssl-md5_size_t.patch
+               openssl-sha_size_t.patch
+               openssl-0.9.8a-allow_lib64-2.patch
+        * Pass: -j1 to make
+        * Make a symlink to the shared library for libcrypto.so libssl.so
+
+    * dist/lfs-5.1/openswan/openswan.spec
+        * Pass: -j1 to make
+
+    * dist/lfs-5.1/oprofile/oprofile.spec
+        * Add: oprofile-0.9.1-gcc4.patch
+        * Pass: --with-binutils=$DEV_IMAGE/usr to configure
+
+    * dist/lfs-5.1/pciutils/pciutils.spec
+        * Pass: -j1 to make
+
+    * dist/lfs-5.1/pcmcia-cs/pcmcia-cs.spec
+        * Update the license field to MPL/GPL
+
+    * dist/lfs-5.1/pcmcia-cs/pcmcia-cs_mx21.spec
+        * New file
+
+    * dist/lfs-5.1/pcre/pcre.spec
+        * Update license to BSD License (revised)
+        * Pass: --with-tags=CXX to configure
+        * Pass: -j1 to make
+        * build spoofed but pass CC_FOR_BUILD="$BUILDCC" 
+        LINK_FOR_BUILD="$BUILDCC"
+
+    * dist/lfs-5.1/peak-linux-driver/peak-linux-driver-2.6.16.spec
+        * Fix source tag
+
+    * dist/lfs-5.1/perl/perl.spec
+        * Add full_ar="ar" for powerpc64
+
+    * dist/lfs-5.1/pexpect/pexpect.spec
+        * Update license text
+
+    * dist/lfs-5.1/php/php.spec
+        * Add: ppp-zend_strtod.patch
+        * For uClibc pass configure: --without-iconv
+        * Pass make: -Os to work around a bug in suspected in gcc4 
+        (freescale-coldfire-m68k-linux-gnu-4.1-14.i686.rpm)
+
+    * dist/lfs-5.1/pidentd/pidentd.spec
+        * Change from version 3.1a25 to 3.0.19
+        * Update license to: Freely Distributable
+        * Update URL
+        * Remove: pidentd-3.1a25-crossbuild.patch
+        * Add:    pidentd-3.0.19-crossbuild.patch
+
+    * dist/lfs-5.1/popt/popt.spec
+        * Update license to: X11 style
+
+    * dist/lfs-5.1/portmap/portmap.spec 
+        * Add: portmap-5beta-strerror.patch (uClibc)
+        * Pass make: UCLIBC=y if building for uClibc
+
+    * dist/lfs-5.1/ppp/ppp.spec
+        * Fix license to read: BSD
+        * Pass: -j1 to make
+
+    * dist/lfs-5.1/procinfo/procinfo.spec
+        * Add: procinfo-18-siglist.patch (uClibc)
+        * Pass: -j1 to make
+
+    * dist/lfs-5.1/procps/procps.spec
+        * Change from version 3.1.11 to 3.2.7, remove patches
+        * Pass: -j1 to make
+
+    * dist/lfs-5.1/psmisc/psmisc.spec
+       * Change from version 21.3 to 22.3
+       * Add: psmisc-22.3-intl.patch
+       * Add: -C (use/make config.cache) to configure
+       * Pass: -j1 to make
+
+    * dist/lfs-5.1/ptpd/ptpd.spec
+        * New file
+
+    * dist/lfs-5.1/python/python.spec
+        * Cleanup spurious name macro
+        * Fix license to read: OSI Approved Python License
+
+    * dist/lfs-5.1/qtopia/qtopia-mpc5200.spec
+        * New file
+
+    * dist/lfs-5.1/qtopia/qtopia-mpclite5200b.spec
+        * Deleted
+
+    * dist/lfs-5.1/qtopia/qtopia.spec
+        * New file
+
+    * dist/lfs-5.1/rng-tools/rng-tools.spec
+        * Add macro for argp_ver
+        * Add: argp-standalone-%{argp_ver}.tar.gz
+        * Modify to build for uClibc as well as glibc (if/else)
+
+    * dist/lfs-5.1/rpm/rpm-fs.spec
+        * Update section that checks for TLS (LD_ASSUME_KERNEL), this
+        fixes ltib to be installable on a number of new platforms
+
+    * dist/lfs-5.1/rpm/rpm.spec
+        * Add: rpm-4.0.4-no-static.patch
+               rpm-4.0.4-rpmio_h.patch
+               rpm-4.0.4-arm-gas.patch
+        * Add: ppc64 LINTARCH test (for mutex_type)
+        * Pass: ac_cv_header_libintl_h="no", 
+                gt_cv_func_gnugettext1_libintl="no" to configure
+        * Pass: -j1 to make (install)
+
+    * dist/lfs-5.1/samba/samba.spec
+        * Cleanup some commented out lines
+        * Add: samba-3.0.2-gcc4-fix.patch
+        * Pass: -j1 to make 
+
+    * dist/lfs-5.1/sash/sash.spec
+        * Update license to read: GPL/Distributable
+
+    * dist/lfs-5.1/schedutils/schedutils.spec
+        * New file
+
+    * dist/lfs-5.1/screen/screen.spec
+        * New file
+
+    * dist/lfs-5.1/setserial/setserial.spec
+        * New file
+
+    * dist/lfs-5.1/skell/skell-mx31.spec
+        * Change version from 1.11 to 1.13
+        * Remove: skell-1.11-mx31.patch
+                  skell-1.11-settime_ntpclient.patch
+          Add:    skell-1.13-udev.patch
+
+    * dist/lfs-5.1/skell/skell.spec
+        * Add: skell-1.13-devfs_dhcp.patch
+               skell-1.13-www.patch
+               skell-1.12-20060407-smb.patch
+               skell-1.13-20060601-dhcp.patch
+        * Set perms (0755) for etc/rc.d/init.d/smb, etc/rc.d/init.d/dhcp
+        * Set perms (2777) for var/ftp/pub
+        * Add devices: dev/console, dev/null (needed by udev)
+
+    * dist/lfs-5.1/strace/strace-4.5.14-arm_eabi.spec
+        * New file
+
+    * dist/lfs-5.1/strace/strace-nommu.spec
+        * Remove  -DHAVE_SYS_QUOTA_H from CFLAGS
+
+    * dist/lfs-5.1/strace/strace.spec
+        * Add: strace-4.4.98-1155222257.patch
+               strace-4.4.98-nommu-1.patch
+        * Add clauses to handle m520xevb|m532xevb (pass in -DHZ=100)
+        * Pass: ac_cv_header_asm_sigcontext_h=yes to configure
+
+    * dist/lfs-5.1/subversion/subversion.spec
+        * Fix license, change to: Apache/BSD-style
+
+    * dist/lfs-5.1/sysconfig/sysconfig-mx21.spec
+        * New file
+
+    * dist/lfs-5.1/sysconfig/sysconfig-mx31.spec
+        * various fixups
+
+    * dist/lfs-5.1/sysconfig/sysconfig.spec 
+        * Add SYSCFG_START_DHCPD, SYSCFG_START_SAMBA, SYSCFG_START_QTOPIA
+        * Add: smb dhcpd qtopia to the list of services
+        * Put quotes around HOSTNAME=
+        * Remove: SYSLOG_SOCKET_FILE
+        * Add: SMBD_ARGS, NMBD_ARGS, DHCP_ARG, SYSCFG_DHCPC_CMD
+        * Copy $TOP/RELEASE_INFO to rootfs/etc/ltib-release
+
+    * dist/lfs-5.1/sysklogd/sysklogd.spec
+        * Fix license to read: GPL/BSD
+
+    * dist/lfs-5.1/tar/tar.spec
+        * Change from version 1.13.25 to 1.15
+
+    * dist/lfs-5.1/tcp_wrappers/tcp_wrappers.spec
+        * Add tcp_wrappers-7.6-uclibc-strerror.patch (uClibc)
+
+    * dist/lfs-5.1/template/template.spec
+        * Add: URL tag
+        * Add: --host=$CFGHOST --build=%{_build} to configure line
+
+    * dist/lfs-5.1/timezone/timezone.spec
+        * New file
+
+    * dist/lfs-5.1/tmake/tmake.spec
+        * Update licese to read: Distributable
+
+    * dist/lfs-5.1/u-boot/u-boot-1.1.3-mpc832xemds.spec
+        * Deleted
+
+    * dist/lfs-5.1/u-boot/u-boot-1.1.3-mpc8349emds.spec
+        * Remove: u-boot-1.1.3-mpc83xx-general-2.patch
+                  u-boot-1.1.3-mpc83xx-cpu-2.patch
+                  u-boot-1.1.3-mpc8349-board-2.patch
+          Add:    u-boot-1.1.3-mpc83xx-general-4.patch
+                  u-boot-1.1.3-mpc83xx-cpu-5.patch
+                  u-boot-1.1.3-mpc8349-board-3.patch
+                  u-boot-1.1.3-mpc8349-rev2.patch
+
+    * dist/lfs-5.1/u-boot/u-boot-1.1.3-mpc8349itx.spec
+        * Remove: u-boot-1.1.3-mpc8349itx-rev1.0hw.patch
+                  u-boot-1.1.3-mpc8349itx-tweak1.patch
+                  u-boot-1.1.3-diag-cf-ide.patch
+          Add:    u-boot-1.1.3-mpc8349itx-all-20060628.patch
+                  u-boot-1.1.3-large-image-boot.patch
+                  u-boot-1.1.3-mpc8349itx-en-autoboot.patch
+
+    * dist/lfs-5.1/u-boot/u-boot-1.1.3-mpc8360epb-rev2.spec
+        * New file
+
+    * dist/lfs-5.1/u-boot/u-boot-1.1.3-mpc8360epb.spec
+        * Remove: u-boot-1.1.3-mpc83xx-general-2.patch
+                  u-boot-1.1.3-mpc83xx-cpu-2.patch
+                  u-boot-1.1.3-mpc83xx-qe.patch
+                  u-boot-1.1.3-mpc8360-board-2.patch
+          Add:    u-boot-1.1.3-mpc83xx-general-4.patch
+                  u-boot-1.1.3-mpc83xx-cpu-5.patch
+                  u-boot-1.1.3-mpc83xx-qe-2.patch
+                  u-boot-1.1.3-mpc8360-board-5.patch
+
+    * dist/lfs-5.1/u-boot/u-boot-fsl-mpc8641hpcn.spec
+        * New file
+
+    * dist/lfs-5.1/u-boot/u-boot-fsl-pq3.spec
+        * Remove: u-boot-fsl-1.1.3-MPC8548CDS_CW-2.patch
+                  u-boot-fsl-1.1.3-MPC8555CDS_CW.patch
+                  u-boot-fsl-1.1.3-MPC8560ADS_FCC.patch
+          Add:    u-boot-fsl-1.1.3-MPC8560ADS_FCC-2.patch
+                  u-boot-fsl-1.1.3-MPC85xxCDS_phy.patch
+                  u-boot-fsl-1.1.3-MPC85xxCDS_freq-4.patch
+                  u-boot-fsl-1.1.3-MPC85xxCDS_loadaddr.patch
+                  u-boot-fsl-1.1.3-MPC85xxCDS_id_eeprom2.patch
+                  u-boot-fsl-1.1.3-MPC85xxCDS_tftp.patch
+                  u-boot-fsl-1.1.3-MPC85xxCDS_etsec34-2.patch
+                  u-boot-fsl-1.1.3-MPC85xxCDS_disable_2t.patch
+
+    * dist/lfs-5.1/u-boot/u-boot-mpc5200-1.1.2.spec
+        * New file
+
+    * dist/lfs-5.1/u-boot-tools/u-boot-tools.spec
+        * Change from version 1.1.2 to 1.1.6 to support flat device trees
+
+    * dist/lfs-5.1/udev/udev-mx31.spec
+        * New file
+
+    * dist/lfs-5.1/util-linux/util-linux.spec
+        * Add: util-linux-2.12-uclibc-sys_siglist.patch (uClibc)
+
+    * dist/lfs-5.1/vim/vim.spec
+        * Update license field
+        * Pass: --disable-gpm to configure
+        * Pass: -j1 to make
+
+    * dist/lfs-5.1/watchdog-tools/watchdog.spec
+        * Update license to GPL
+        * Add: watchdog-gcc4.1.patch
+
+    * dist/lfs-5.1/wireless-tools/wireless-tools.spec
+        * Change from version 26 to 28
+
+    * dist/lfs-5.1/yaffs-utils/yaffs-utils.spec
+        * Update packager field
+        * Fix capitalisation
+        * Add: yaffs_utils-20060418-mtd-include.patch
+        * Pass: KERNELDIR= to make
+
+    * dist/lfs-5.1/zlib/zlib.spec
+        * Update license field
+
+    * doc/LtibBestPractices
+        * New file: hints for maintaining LTIB BSPs
+
+    * doc/LtibFaq
+        * Add: patch to the list of host dependencies
+        * Other relatively minor updates.
+
+    * doc/LtibReleaseProcess
+        * Add GFDL license text
+        * Typo fixes
+        * Significant update to content (improved hopefully).
+
+    * config/platform/imx31ads/*
+        * New platform
+
+    * config/platform/mpc8349itx/*
+        * New platform
+
+    * config/platform/mpc8360epb/*
+        * New platform
+
+    * config/platform/mpc8641hpcn/*
+        * New platform
+

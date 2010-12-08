@@ -1,0 +1,39 @@
+    body, div, p, blockquote, ol, ul, dl, li, dt, dd, td {
+            font-family:        verdana;
+    }
+    pre {
+            font-family:          Fixed;
+            margin-top:           8pt;
+            margin-bottom:        8pt;
+            background-color:     #EEEEEE;
+            white-space:          pre;
+            border-style:         solid;
+            border-width:         1pt;
+            border-color:         #999999;
+            color:                #111111;
+            padding-left:         0.4%;
+            padding-top:          2pt;
+            padding-bottom:       2pt;
+            width:                99%;
+    }
+    kbd, q { 
+            background-color:     #EEEEEE;
+            white-space:          pre;
+            border-style:         solid;
+            border-width:         1pt;
+            border-color:         #999999;
+            font:                 fixed;
+    }
+    h1,h2,h3,h4,h5 { 
+            font-family: sans-serif;
+            color: brown ;
+            font-size: medium;
+    }
+    h1       { font-size: 150%; padding-left: 0.0%; }
+    h2       { font-size: 130%; padding-left: 0.5%; }
+    h3       { font-size: 115%; padding-left: 1.0%; }
+    h4       { font-size: 105%; padding-left: 1.5%; }
+    h5       { font-size: 95%;  padding-left: 2.0%; }
+    cite     { text-align: center }
+    b        { color: black }
+

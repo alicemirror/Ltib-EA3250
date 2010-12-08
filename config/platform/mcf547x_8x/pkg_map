@@ -1,0 +1,4 @@
+# this is a comment
+PKG_OPENSSL = openssl-0.9.7g
+PKG_APPTRK = apptrk-m54x5
+PKG_WATCHDOG = watchdog-m54x5

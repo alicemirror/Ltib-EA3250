@@ -1,0 +1,37 @@
+
+With the board powered down, connect a serial cable between the host
+and the target board (PA2, the bottom 9 Way D connector).  On the host,
+using a terminal emulator (such as minicom), configure with the following
+parameters: 9600 8 N 1 with flow control off. Connect a network patch
+cable between the P3 Ethernet board connector and your hub.
+
+Turn on power to the target board.  If correctly configured, you will
+see the following prompt: =>
+
+Setup the following parameters for storage in NVRAM
+
+## only if no ethaddr is set: setenv ethaddr  62:69:74:65:6d:67
+setenv ipaddr   <target_ipaddr>
+setenv serverip <build_hosts_ipaddr>
+setenv bootargs root=/dev/nfs ip=<target_ipaddr>:<build_hosts_ipaddr>:::::
+
+NOTE: to mount the root file system rw:
+setenv bootargs root=/dev/nfs rw ip=<target_ipaddr>:<build_hosts_ipaddr>:::::
+
+
+saveenv
+reset
+
+Download the linux kernel
+
+=> tftp 100000 <kernel_pkg_name>
+
+Boot the kernel
+
+bootm 100000
+
+
+
+
+
+

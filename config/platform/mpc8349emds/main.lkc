@@ -1,0 +1,193 @@
+
+# constants (forced values) for this platform
+config CONFIG_TITLE
+    string
+    default "LTIB: Freescale MPC8349E MDS PowerPC board"
+
+config CPU
+    string
+    default "MPC8349EA"
+
+config PLATFORM_COMMENT
+    string
+    default "Freescale MPC8349EA MDS PowerPC board"
+
+config VENDOR
+    string
+    default "Freescale"
+
+config PLATFORM
+    string
+    default mpc8349emds
+
+config GNUTARCH
+    string
+    default powerpc
+
+config LINTARCH
+    string
+    default ppc
+
+config CFGHOST
+    string
+    default powerpc-linux
+
+# capabilities if different from defaults.lkc
+
+source ../../userspace/endian.lkc
+source ../../userspace/libc_type.lkc
+source ../../userspace/toolchain.lkc
+
+
+comment "Board selection"
+
+choice
+    prompt "Processor Board select"
+    default BOARD1
+    help
+        This menu will let you choose the board style.
+
+    config BOARD1
+        bool "MPC8349EA MDS Processor Board"
+        help
+            The board Support DDR2/DDR and have 32M Flash.
+    config BOARD2
+        bool "MPC8349E MDS Processor Board"
+        help
+            The board only support DDR and have 8M Flash.
+endchoice
+                                                                                
+comment "Bootloader"
+
+config SYSCFG_DTC_NAME
+    string
+    default "mpc834x_mds"
+
+config SYSCFG_CUBOOT_KERNEL
+    string
+    default "arch/powerpc/boot/cuImage.mpc834x_mds" if KERNEL_DIR_BUILD
+    default "arch/powerpc/boot/cuImage.83xx"
+
+source ../../userspace/cuimage.lkc
+
+config BOOTLOADER1
+    bool "Build a boot loader"
+    default y
+    help
+        Selecting this will build the u-boot boot loadwer
+                                                                                
+config PKG_U_BOOT
+    string
+    default "u-boot-1.1.3-mpc8349eamds" if BOOTLOADER1 && BOARD1
+    default "u-boot-1.1.3-mpc8349emds" if BOOTLOADER1 && BOARD2
+                                                                                
+choice
+    depends BOOTLOADER1
+    prompt "u-boot target board type"
+    default PKG_U_BOOT_GENERAL
+    help
+        This menu let you choose the exact u-boot target to build
+                                                                                
+    config PKG_U_BOOT_GENERAL
+        bool "General"
+    config PKG_U_BOOT_PCI_AGENT
+        bool "PCI agent"
+endchoice
+
+config PKG_U_BOOT_CONFIG_TYPE
+    string
+    default "MPC8349ADS_config" if PKG_U_BOOT_GENERAL
+    default "MPC8349ADS_PCIAGENT_config" if PKG_U_BOOT_PCI_AGENT
+config PKG_U_BOOT_BUILD_ARGS
+    string
+    default "OPTFLAGS=-Os"
+
+comment "Choose your Kernel"
+
+choice
+    prompt "kernel"
+    default KERNEL1
+    help
+        This menu will let you choose the kernel to use with your board.
+        If you don't want to build a kernel, unselect this option.
+
+    config KERNEL1
+        bool "linux 2.6.11"
+    config KERNEL_DIR_BUILD
+        bool "Local Linux directory build"
+        help
+            Build using a local copy of the kernel sources
+    config KERNEL_NONE
+        bool "Dont build the Linux kernel"
+endchoice
+
+config PKG_KERNEL
+    string
+    default "kernel-2.6.11-mpc8349ea" if KERNEL1 && BOARD1
+    default "kernel-2.6.11-mpc8349" if KERNEL1 && BOARD2
+    default "kernel26-dir-build"    if KERNEL_DIR_BUILD
+
+source ../../userspace/kernel_dir_build.lkc
+
+choice
+    prompt "config file"
+    default KERNEL_CONFIG1
+    help
+        This menu lets you select a kernel config file
+
+    config KERNEL_CONFIG1
+        bool "basic features"
+    config KERNEL_CONFIG2
+        bool "SEC2, watchdog and SPI"
+    config KERNEL_CONFIG3
+        bool "PCI host"
+    config KERNEL_CONFIG4
+        bool "PCI agent"
+    config KERNEL_CONFIG5
+        bool "USB host"
+    config KERNEL_CONFIG6
+        bool "USB gadget"
+    config KERNEL_CONFIG7
+        bool "USB otg"
+    config KERNEL_CONFIG8
+        bool "Kernel default config"
+    config KERNEL_CONFIG_CUSTOM
+        bool "custom"
+endchoice
+
+config PKG_KERNEL_PRECONFIG
+    string "kernel config file"
+    default "linux-2.6.11-mpc8349emds-basic.config" if KERNEL_CONFIG1
+    default "linux-2.6.11-mpc8349emds-sec-wtd-spi.config" if KERNEL_CONFIG2
+    default "linux-2.6.11-mpc8349emds-pci.config" if KERNEL_CONFIG3
+    default "linux-2.6.11-mpc8349emds-pci-agent.config" if KERNEL_CONFIG4
+    default "linux-2.6.11-mpc8349emds-usb-host.config" if KERNEL_CONFIG5
+    default "linux-2.6.11-mpc8349emds-usb-gadget.config" if KERNEL_CONFIG6
+    default "linux-2.6.11-mpc8349emds-usb-otg.config" if KERNEL_CONFIG7
+    default "mpc834x_mds_defconfig" if KERNEL_CONFIG8
+    default "enter config filename" if KERNEL_CONFIG_CUSTOM
+
+config PKG_KERNEL_WANT_HEADERS
+    depends ! KERNEL_NONE
+    bool "Include kernel headers"
+    help
+        Selecting this will copy kernel headers to rootfs/usr/src/linux/include
+   
+config PKG_KERNEL_WANT_CF
+    depends ! KERNEL_NONE
+    bool "Configure the kernel"
+    default n
+ 
+config PKG_KERNEL_LEAVESRC
+    depends ! KERNEL_NONE
+    bool "Leave the sources after building"
+    default n
+    help
+        This is a one shot option that can be used to build the kernel and
+        leave the build source tree in rpm/BUILD in place
+
+source ../../userspace/distro.lkc
+source ../../userspace/packages.lkc
+source ../../userspace/sysconfig.lkc
+source ../../userspace/deployment.lkc
+source ../../userspace/defaults.lkc

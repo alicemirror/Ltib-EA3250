@@ -1,0 +1,155 @@
+%TOPICTITLE%
+---
+
+<verbatim>
+Copyright © Freescale Semiconductor, Inc. 2004-2005. All rights reserved.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.2
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
+Texts.  A copy of the license is included in the file doc/COPYING
+</verbatim>
+
+---
+
+---+ How to add a new target platform to LTIB
+
+This is a quick HOWTO that will show how to add a new target platform into LTIB.
+
+For the purposes of this tutorial, an existing mpc8555cds is used as the
+template for a new mpc5200 target.
+
+This tutorial assumes that you are working using the latest cvs HEAD for LTIB.
+
+
+---++ What you should have available before you start
+
+   * A working cross toolchain for your target.  Many are already available in the toolchain foundry and show in existing LTIB targets.
+
+   * Kernel source and a kernel .config file for your target.
+
+   * If required, bootloader source for your target.
+
+
+---++ Create a placeholder for the new target BSP
+
+To do this copy an existing target for later editing.  This will serve as
+a template for the new target.
+
+You should use an existing target that is the closest match for your new
+target.
+
+<verbatim>
+cd ~/ltib/config/platform
+cp -a mpc8555cds mpc5200
+rm -rf mpc5200/CVS
+</verbatim>
+
+
+---++ Update the main.lkc file for your platform.
+
+The main things you need to change are:
+
+
+---+++ Platform information
+
+You need to check and update the following as required:
+
+| *CONFIG_TITLE*     | This is the name that shows up at the top of the LTIB config menu |
+| *PLATFORM_COMMENT* | This is similar to CONFIG_TITLE, this shows up in the platform selection menu when you first run LTIB. |
+| *VENDOR*           | This should be set to the board's vendor name |
+| *PLATFORM*         | This should exactly match the directory name of this platform (e.g. mpc5200) |
+| *GNUTARCH*         | This is the GNU architecture name for this target (e.g. powerpc) |
+| *LINTARCH*         | This is the Linux architecture name for this target (e.g. ppc) |
+| *CFGHOST*          | This is the name that configure should use for the --host entry when running configure for a package (e.g. powerpc-linux) |
+
+
+Set these to be appropriate for your platform.
+
+
+---+++ Capabilities section
+
+This can normally be left (empty).  The defaults come from 
+config/userspace/defaults.lkc.  The sorts of things that you may need
+to change are ERASE_BLOCK_SIZE for instance, if your Flash erase blocks
+are not 64KB.
+
+
+---+++ Toolchain selection
+
+Look at and update the toolchains as appropriate.  There should be at 
+least 2 choices:
+
+| *TOOLCHAIN1*       | (something from the toolchain foundry, see: http://twiki.freescale.net/bin/view.cgi/MWERKS/ToolchainFoundry) |
+| *TOOLCHAIN_CUSTOM* | this is used to select customer toolchains |
+
+You need to put in corresponding defaults for *TOOLCHAIN1* in the following areas:
+
+| *TOOLCHAIN*        | selects the toolchain's x86 rpm filename. e.g. mtwk-lnx-powerpc-603e-gcc-3.3.2-glibc-2.3.2-0.28-6.i686.rpm |
+| *TOOLCHAIN_PATH*   | the install path to the toolchain, minus the /bin. e.g. /opt/mtwk/usr/local/powerpc-603e-linux/gcc-3.3.2-glibc-2.3.2 |
+| *TOOLCHAIN_PREFIX* | the cross compiler prefix. e.g. powerpc-603e-linux- |
+| *TOOLCHAIN_CFLAGS* | any mandatory CFLAGS that must be used with your chosen cross compiler.  These should be conditioned per toolchain.  e.g. default "xxxx" if TOOLCHAINn |
+
+
+---+++ Bootloader selection
+
+This is optional, but if you have a bootloader you want built, adjust 
+this area appropriately.
+
+
+---+++ Kernel selection
+
+There should be at least 2 entries:
+
+| *KERNEL1*     | a description of your for the target. e.g. "Linux 2.6.11.7 for MPCLite5200B (from PCS BSP)" |
+| *KERNEL_NONE* | this entry is so you can disable kernel building |
+
+You need to put the corresponding defaults for *KERNEL1*:
+
+| *PKG_KERNEL*           | the name of the specfile to build this kernel, without the .spec extension.  e.g. default "kernel-2.6.11-mpclite5200b" if KERNEL1 |
+| *PKG_KERNEL_PRECONFIG* | the filename of the kernel config file to be used with your specfile.  This should reside in the directory 'config/platform/<PLATFORM>. e.g. default "linux-2.6.11-mpclite5200b.config" if KERNEL1 |
+
+
+---++ Add any new spec files
+
+If your main.lkc refers to any new spec files, you need to add them in 
+to the directory: dist/lfs-5.1/<package> (e.g. package may be kernel, u-boot etc).
+
+
+---++ Configure your ltib config file.
+
+Run:
+<verbatim>
+./ltib --configure
+</verbatim>
+
+This will configure your platform based on the settings of the one 
+you've copied.  Make adjustments as required.  When you save and exit, a 
+'.config' file will be saved in your platform's directory and ltib will 
+build this configuration.
+
+When you are done, copy the .config to defconfig in your platform's 
+directory e.g:
+
+<verbatim>
+cp config/platform/mpc5200/.config config/platform/mpc5200/defconfig
+</verbatim>
+
+
+---++ Saving your work.
+
+Once you have a default config you are happy with and your platform 
+builds and boot, you need to commit the new files to LTIB's CVS and copy 
+any sources to the GPP.  
+
+To save files to the GPP, use the link 'Upload 
+a file to the GPP' http://www.bitshrine.org/cgi-bin/gpp_upload.cgi.
+
+Note: you need to be a project member to do this.  Otherwise, please 
+submit your patches to the public mailing list.
+
+
+---
+
+-- Main.StuartHughes

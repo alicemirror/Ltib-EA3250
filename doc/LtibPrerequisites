@@ -1,0 +1,45 @@
+<verbatim>
+Copyright © Freescale Semiconductor, Inc. 2004-2005. All rights reserved.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.2
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
+Texts.  A copy of the license is included in the file doc/COPYING
+</verbatim>
+
+---+ Ltib host dependencies
+
+It is recommended that you have around 1GB of free disk space if you intend
+to full BSP builds.
+
+| *package* | *version*  | *comment* |
+| perl      | >= 5.6.1   | to run the ltib script |
+| sudo      | any        | to run the 'rpm install' phase on each package |
+| wget      | any        | to download packages/patches on demand |
+| rpm-build | any        | need by rpm to do actual building of packages |
+| rpm       | any        | to build initial rpm-fs host package |
+| glibc     | >= 2.2.x   | to build/run host packages |
+| libstdc++-devel | any? | to build rpm-fs host package |
+| binutils  | >= 2.11.93 | to build host packages |
+| gcc       | >= 2.96    | to build host packages |
+| gcc-c++   | >= 2.26    | to build rpm-fs host package |
+| zlib-devel | any       | to build rpm-fs and mtd-utils host packages |
+| ncurses   | >= 5.1     | to build lkc (config language) host package |
+| ncurses-devel | >= 5.1 | to build lkc (config language) host package |
+| m4        | any?       | may be needed by bison |
+| bison     | any        | to build lkc (config language) host package |
+| flex      | any        | to build lkc (config language) host package |
+| texinfo   | any        | to build genext2fs host package |
+| autoconf  | >= 2.54    | to build automake target package |
+| libtool   | >= 1.4.2   | to build libusb target package |
+| gettext   | any        | to build genext2fs target package |
+
+---++ Un-sorted reports
+
+   * Needed bison-1.875-53.2.i586.rpm which needed m4-1.4.2-3.i586.rpm
+   * Need byacc: support info on an 8548 install
+
+
+
+----

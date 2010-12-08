@@ -1,0 +1,131 @@
+
+EA3131 board deployment instructions
+************************************************************************
+
+Determine which board type you have - v1 or v2. v2 boards have an
+ethernet connector on them, while v1 doesn't. When setting up LTIB for
+the first time, make sure you correctly select your board type. After
+the build cycle is complete, you will have 3 images:
+ apex.bin (bootloader)
+ zImage (kernel image)
+ and rootfs.ext2.gz (root filesystem)
+
+Downloading the bootloader (apex.bin) to the EA3131 board
+************************************************************************
+To install apex.bin to the EA3131 board, the board needs to first be
+configured for serial boot. Locate the BOOT0, BOOT1, and BOOT2 jumpers
+on the board and change them to the serial boot mode.
+
+BOOT0/1/2 jumper configurations
+Mode              BOOT0       BOOT1       BOOT2
+----------------- ----------- ----------- -----------
+NAND boot         LOW         LOW         LOW
+SPI boot          LOW         LOW         HIGH
+MMC/SD boot       LOW         HIGH        HIGH
+UART/serial boot  HIGH        HIGH        LOW
+
+Connect a USB cable from a PC to the board's UART bridge connector. If
+needed, install the necessary USB drivers for the UART bridge on the
+PC. These drivers are included with the EA3131 board. Determine which
+serial port was allocated for the board on the PC. Start a terminal
+program on the PC and set it up for 115.2K-8-N-1 on the board's serial
+port. Press reset on the EA3131 board and send the apex.bin file to the
+board as a raw binary image. After the file has transferred, Apex will
+automatically start on the board and the Apex banner and prompt will
+appear. At the Apex prompt, type 'xrec 0x30008000'. Send the apex.bin
+file again from the terminal program to the board using the xmodem
+protocol. After the transfer has completed, note the number of bytes
+sent <size> in the transfer, as this will be needed in the next few
+steps.
+
+Setting up Apex for NAND boot after Apex has been downloaded
+************************************************************************
+At the Apex prompt, type 'erase lnand:128K+128K'. Then type
+'copy 0x30008000+<size> lnand:128K' to copy the downloaded image into
+NAND FLASH. Change the BOOT jumpers to NAND boot mode and reset the
+board to boot Apex from NAND FLASH.
+
+Setting up Apex for SPI NOR FLASH boot after Apex has been downloaded
+************************************************************************
+At the Apex prompt, type 'copy 0x30008000+<size> spinor:0' to copy the
+downloaded image into SPI NOR FLASH. Change the BOOT jumpers to SPI
+boot mode and reset the board to boot Apex from SPI NOR FLASH.
+
+Note: You may be required to power cycle the board prior to the first
+write of SPI NOR FLASH. If this is needed, you'll need to re-download
+the apex.bin image as indicated in the previous steps.
+
+Setting up Apex for SD/MMC boot
+************************************************************************
+Apex can be setup to boot from a special data partition on an SD card.
+See the LPC313X user's guide for setting up a SD card partition and
+installing apex.bin to that partition for SD boot.
+
+Setting up Apex to boot the kernel from NAND FLASH
+************************************************************************
+To boot the the kernel image from FLASH, first download the image to
+the board using the Apex command 'xrec 0x30008000'. Send the zImage file
+to the board using xmodem. After the image has transferred, note the
+size of the transferred image <size>. Erase the area of NAND used for
+the kernel storage using the Apec command 'erase lnand:2M+2M'. Then
+copy the image into NAND using the Apex command
+'copy 0x30008000+<size> lnand:2M'.
+
+The Apex environment startup variable needs to be modified to load the
+image at power by adding the following command:
+'copy lnand:2M+<size> 0x30008000'.
+
+See the startup examples below.
+
+Setting up Apex to boot the kernel from an EXT2 partition of an SD card
+************************************************************************
+If the zImage file is located on an SD card with an EXT2 partition,
+your can change the Apex environment startup variable as follows:
+'copy ext2://1/boot/zImage 0x30008000'.
+
+See the startup examples below.
+
+Setting up Apex to boot the kernel over the network using TFTP
+************************************************************************
+If the zImage file is located on a network TFTP server, you can change
+the Apex environment startup variable as follows:
+'copy tftp://192.169.1.193/zImage 0x30008000'.
+
+Change the IP address as needed for your TFTP server. See the startup
+examples below.
+
+Note: You may need to setup up other Apex environment variables such as
+the board address, gateway, and mask.
+
+Setting up the ramdisk image to load from an SD card
+************************************************************************
+If the ramdisk image is located on an SD card with an EXT2 partition,
+you can change the Apex environment startup variable as follows:
+'copy ext2://1/boot/rootfs.ext.gz 0x32000000'.
+
+Setting up the ramdisk image to load over the network using TFTP
+************************************************************************
+If the ramdisk image is located on a network TFTP server, you can
+change the Apex environment startup variable as follows:
+'copy tftp://192.169.1.193/rootfs.ext.gz 0x32000000'.
+
+NFS, EXT2, and MTD based root filesystems
+************************************************************************
+NFS, EXT2, and MTD root filesystems are also supported and are setup
+with the Apex cmdline environment variable.
+
+Various startup examples
+************************************************************************
+Example 1: kernel from NAND, ramdisk from NAND (ramdisk saved in NAND)
+startup = 'copy lnand:2M+<size> 0x30008000; copy lnand:4M+<size> 0x32000000; boot'
+cmdline = 'console=/dev/ttyS0,115200n8 root=/dev/ram0 rw ramdisk_size=12000K'
+
+Example 2: kernel from SD card, rootfs over NFS
+startup = 'copy ext2://1/boot/zImage 0x30008000; boot'
+cmdline = 'console=/dev/ttyS0,115200n8 root=/dev/nfs rw nfsroot=192.168.1.193:/home/user/lib/rootfs ip=dhcp'
+
+Example 3: kernel from TFTP, rootfs over SD card (EXT2)
+startup = 'copy tftp://192.168.1.50/zImage 0x30008000; boot'
+cmdline = 'console=/dev/ttyS0,115200n8 root=/dev/mmcblk0p1 rw rootfstype=ext2'
+
+

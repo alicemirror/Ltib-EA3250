@@ -1,0 +1,44 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define dversion 2.6.20
+%define pkg_name linux
+%define dtc_name m54455
+
+Summary         : Linux kernel (core of the Linux operating system)
+Name            : kernel
+Version         : 2.6.20
+Release         : 0
+License         : GPL
+Vendor          : Kernel.org + freescale patches
+Packager        : Kurt Mahan
+Group           : System Environment/Kernel
+Source          : %{pkg_name}-%{dversion}.tar.bz2
+Patch1          : linux-2.6.20-m5445x_core.patch
+Patch2          : linux-2.6.20-m5445x_fec.patch
+Patch3          : linux-2.6.20-m5445x_i2c-1.patch
+Patch4          : linux-2.6.20-m5445x_pci-1.patch
+Patch5          : linux-2.6.20-m5445x_ssi.patch
+Patch6          : linux-2.6.20-m5445x_usb.patch
+Patch7          : linux-2.6.20-m5445x_cau.patch
+Patch8          : linux-2.6.20-m5445x_ssi-disable-dma.patch
+Patch9          : linux-2.6.xx-sumversion.patch
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+From kernel.org plus Freescale patches
+
+%Prep
+%setup -n %{pkg_name}-%{dversion}
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1

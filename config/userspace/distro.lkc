@@ -1,0 +1,33 @@
+if CAP_LFS_5_1 && CAP_FC2
+
+comment "Choose your distribution type"
+choice
+    prompt "Distro"
+    default DISTRO_FC2
+
+    config DISTRO_UCLINUX
+    depends CAP_UCLINUX
+    bool "uClinux package distribution"
+    help
+      Use the package style from the uClinux distribution
+
+    config DISTRO_LFS_5_1
+    depends CAP_LFS_5_1
+    bool "LFS/BLFS 5.1 package distribution"
+    help
+        Use the LFS package sources as the distribution basis
+
+    config DISTRO_FC2
+    depends CAP_FC2
+    bool "Fedora Core 2"
+    help
+        Use Fedora core 2 packages sources
+endchoice
+
+config DISTRO
+    string
+    default "dist/uClinux-dist"  if DISTRO_UCLINUX
+    default "dist/lfs-5.1"       if DISTRO_LFS_5_1
+    default "dist/FC-2"          if DISTRO_FC2
+
+endif

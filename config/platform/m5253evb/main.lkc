@@ -1,0 +1,145 @@
+# constants (forced values)
+config CONFIG_TITLE
+    string
+    default "LTIB: Freescale M5253EVB Coldfire/M68k (noMMU)"
+
+config PLATFORM_COMMENT
+    string
+    default "Freescale M5253EVB Coldfire/M68k (noMMU)"
+
+config VENDOR
+    string
+    default "Freescale"
+
+config PLATFORM
+    string
+    default m5253evb
+
+config GNUTARCH
+    string
+    default m68knommu
+
+config LINTARCH
+    string
+    default m68knommu
+
+config CFGHOST
+    string
+    default m68k-linux
+
+config UCLIBC
+    bool
+    default y
+
+config ERASE_BLOCK_SIZE
+    string
+    default 64 
+
+config SYSCFG_RUNKERNELADDR
+    string
+    default "0x20000"
+
+config U_BOOT_IMAGE_TYPE
+    string
+    default "m68k"
+
+# capabilities if different from defaults.lkc
+config CAP_GLIBC
+    bool
+    default n
+config CAP_DEPLOYMENT_ROMFS
+    bool
+    default y
+config CAP_HAS_MMU
+    bool
+    default n
+config SYSCFG_TMPFS
+    string
+    default "ramfs"
+config SYSCFG_BOOTLOADER
+    string
+    default "dBUG"
+
+source ../../userspace/endian.lkc
+source ../../userspace/libc_type.lkc
+source ../../userspace/toolchain.lkc
+
+comment "Bootloader"
+config BOOTLOADER1
+    bool "Build the dBUG bootloader"
+    default n
+    help
+        Build the dBUG bootloader.  See platform User's Manual for installation 
+        instructions.
+
+config SYSCFG_BOOT_CPU
+    string
+    default m5253evb
+
+config PKG_DBUG
+    string
+    default "dbug" if BOOTLOADER1
+
+comment "Choose your Kernel"
+choice
+    prompt "kernel"
+    default KERNEL_NONE
+    help
+        This menu will let you choose the kernel to use with your board.
+        If you don't want to build a kernel, unselect this option.
+
+    config KERNEL1
+        bool "Linux 2.6.17.7-uc1"
+        help
+            This is the kernel and patches from uClinux.org
+    config KERNEL_DIR_BUILD
+        bool "Local Linux directory build"
+        help
+            Build using a local copy of the kernel sources
+    config KERNEL_NONE
+        bool "Don't build the Linux kernel"
+        help
+            Select this if you dont want to build the kernel or provide your own
+endchoice
+
+
+config PKG_KERNEL
+    string
+    default "kernel-2.6.17.7-uc1" if KERNEL1
+    default "kernel26-dir-build" if KERNEL_DIR_BUILD
+
+source ../../userspace/kernel_dir_build.lkc
+
+config PKG_KERNEL_WANT_OBJCOPY
+    bool
+    default y
+
+config PKG_KERNEL_WANT_HEADERS
+    depends ! KERNEL_NONE
+    bool "Include kernel headers"
+    help
+        Selecting this will copy kernel headers to rootfs/usr/src/linux/include
+
+config PKG_KERNEL_PRECONFIG
+    string "kernel preconfig"
+    default "linux-2.6.17.7.config" if KERNEL1
+    default "linux-2.6.17.7.config" if KERNEL_DIR_BUILD
+
+config PKG_KERNEL_WANT_CF
+    depends ! KERNEL_NONE
+    bool "Configure the kernel"
+    default n
+
+config PKG_KERNEL_LEAVESRC
+    depends ! KERNEL_NONE
+    bool "Leave the sources after building"
+    default n
+    help
+        This is a one shot option that can be used to build the kernel and
+        leave the build source tree in rpm/BUILD in place
+    
+source ../../userspace/distro.lkc
+source ../../userspace/packages.lkc
+source ../../userspace/sysconfig.lkc
+source ../../userspace/deployment.lkc
+source ../../userspace/defaults.lkc

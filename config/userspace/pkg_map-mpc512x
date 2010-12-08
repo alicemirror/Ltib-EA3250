@@ -1,0 +1,5 @@
+PKG_GAMMA_SET = gamma_set
+PKG_COLORKEY = colorkey
+PKG_AXE=axe
+PKG_AXE_BIN=axe_binaries
+PKG_VIUTEST=viutest

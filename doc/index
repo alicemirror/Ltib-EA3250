@@ -1,0 +1,118 @@
+---+ Linux Target Image Builder
+
+%TOC%
+
+---+ Introduction
+
+The LTIB (Linux Target Image Builder) project is a simple tool that can be used to develop and deploy BSPs (Board Support Packages) for various target platforms. Using this tool a user will be able to develop a GNU/Linux image for their target platform. For more information, see the [[/autodocs/LtibFaq.html][LtibFaq]]
+
+---+ News
+
+---++ Savannah CVS updated 
+
+Savannah CVS has been updated with a new merge from Freescale.
+A detailed changlog can be found:
+[[http://cvs.savannah.gnu.org/viewvc/*checkout*/ltib/doc/LtibMergesFromFSL-20090318?root=ltib][here]]
+
+---++ More news
+
+More and older news can be found:
+[[/autodocs/LtibExtNews.html][here]]
+
+
+---+ Quick install
+
+---++ You have regular Internet access and want the latest
+
+If you just want to try out LTIB as an end user and have a Linux host
+machine, download the following simple installer [[netinstall][netinstall]] and run as
+a non-root account:
+<verbatim>
+$ perl netinstall
+</verbatim>
+
+---++ If you only have proxy access or want a fixed snapshot
+
+You not be able to run the netinstall as this checks out the
+latest LTIB from CVS.  So instead, download the latest release from here
+[[http://download.savannah.nongnu.org/releases/ltib/ltib-8-1-2a-sv.tar.gz][ltib-8-1-2a-sv.tar.gz]] and then:
+
+<verbatim>
+$ tar zxvf ltib-8-1-2a-sv.tar.gz
+$ cd ltib-8-1-2-sv
+</verbatim>
+
+If you only have proxy access to the Internet
+
+   * edit .ltibrc
+      * add an entry for %http_proxy (the exact entry depends on your proxy)
+      * change %proxy setting from 0 to 1
+
+Finally, whether proxied or not:
+<verbatim>
+$ ./ltib
+</verbatim>
+
+If you need to know more, please read on.
+
+---+ Resources for LTIB
+
+---++ Frequently Asked Questions (FAQ) 
+
+The FAQ is probably the first place you should go to find out more about
+LTIB.  It has information on getting it, installing it and using it.  [[/autodocs/LtibFaq.html][click here]] 
+
+---++ LTIB user training document (pdf)
+
+For a gentle introduction to LTIB please click the following link:
+
+[[LTIB_generic_v1.4_-_version_6.4.1.pdf][Introduction to LTIB]]
+
+---++ LTIB presentation from CELF/OLS (pdf)
+
+[[/celf_ltib_bof_v1.2.pdf][Roll your own Linux, the easy way (BOF)]]
+
+---++ GPP (Global Package Pool) files  
+
+The GPP is the public storage location for all the sources/patches referenced
+by LTIB.   This link gives a directory listing off all files in the GPP [[/gpp][click here]]
+
+---++ GPP (Global Package Pool) file information
+
+For those files which have been uploaded through this site to the GPP
+this page will list the meta-information that was uploaded with the file.  [[/gpp_info][click here]]
+
+*Note:* much of the content was migrated from another source, very few
+files have info files associate at the moment.
+
+---++ Upload a file to the GPP
+
+If you are a developer and you want to participate in LTIB, as a project
+member you'll be able to upload files to the GPP.  The link to do this is [[/cgi-bin/gpp_upload.cgi][click here]] 
+
+---++ Unbundled platform tarfiles/patches
+
+For those of you who don't want to use LTIB, but just want the content,
+here is a list for each platform of the default packages (in build order)
+and for each the tarfiles and patches for each package.  Click the
+links to download the individual files.
+
+[[http:/autodocs/bsp_ext_ava.html][BSP toolchains, tarfiles and patches]]
+
+---+ Cryptographic Software
+Due to U.S. Exports Regulations, all cryptographic software on this site is subject to the following legal notice:
+<verbatim>
+    This site includes publicly available encryption source code which,
+    together with object code resulting from the compiling of publicly
+    available source code, may be exported from the United States under
+    License Exception "TSU" pursuant to 15 C.F.R. Section 740.13(e).
+</verbatim>
+This legal notice applies to cryptographic software only (such as openssl and some sections of the Linux kernel). Please see the Bureau of Industry and Security for more information about current U.S. regulations.
+
+This server is located in the USA, use in violation of any applicable laws is prohibited.
+
+
+
+---
+
+-- Main.StuartHughes

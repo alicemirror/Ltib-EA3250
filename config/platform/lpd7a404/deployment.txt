@@ -1,0 +1,83 @@
+
+Logic PD LH7A404 board deployment instructions
+************************************************************************
+To boot Linux on the Logic PD LH7A404 board, you will need the Apex
+bootloader (apex.bin), the kernel image (zImage), and a root file
+system image (rootfs.ext2.gz). The root file system can be mounted via
+a ramdisk image, NFS, or from a CF card.
+
+The default LTIB configuration will build the Apex and Linux images and
+a root file system suitable for NFS mounting.
+
+Setup procedure
+************************************************************************
+The Logic PD boards come with a pre-installed bootloader (lolo) that is
+used to boot and load Apex. For this deployment, the following setup
+is used:
+ * lolo is configured to boot Apex over the network using TFTP
+ * Apex is configured from the Apex build menu with the required Linux
+   download and boot options. This includes the location where to get
+   the Linux image file and the command line passed to the Linux kernel.
+ * Apex loads and kicks off Linux kernel
+ * Linux kernel mounts root file system over NFS
+
+On your LPD7A404 board, connect a serial cable between a PC and the
+board and start a terminal program at 115.2K-8N1 on the PC. Connect an
+ethernet cable between the board and an ethernet switch. The board
+should be able to access the Linux system that is being used to build
+the LPD7A404 embedded Linux system (LTIB).
+
+Downloading the bootloader (apex.bin) to the LPD7A404 board
+************************************************************************
+Lolo can be configured to automatically run several commands when it
+is started. The commands to load and start Apex over the network are
+shown below. Lolo can also be setup to load and execute Apex over NOR
+FLASH or from a CF card. See the Lolo documentation for more information
+on how to set up alternate boot methods.
+
+Basic lolo commands for loading and starting Apex over the network:
+ifconfig sm0 192.168.1.55
+load raw 0xc0200000 0x00020000 /tftp/192.168.1.51:apex.bin
+exec 0xc0200000
+
+Note: Be sure to setup network addresses that are suitable for your
+network environment.
+
+These commands can be automated with the following lolo instruction. Be
+sure to type is carefully and exactly as shown (with your setup's IP
+addresses) or lolo may not work correctly. The entire string should be
+typed on one line. If the command fails, lolo should eventually timeout.
+
+echo "LOLOifconfig sm0 192.168.1.55; load raw 0xc0200000 0x00020000 /tftp/192.168.1.51:apex.bin; exec 0xc0200000; exit;" /dev/serial_eeprom
+
+If everything is correct, you should be able to reset the board and
+see the Apex boot loader after a few seconds.
+
+Setting up Apex to boot the kernel over the network
+************************************************************************
+Apex can be setup to boot the Linux image over the network using TFTP
+by changing the Apex environment variables in the Apex menu. 
+
+The 2 important environment variables to change are the startup command
+and the boot command line to the kernel.
+
+The startup command specifies what Apex does when it is started and can
+b selected in the Apex environment menu. The command listed below will
+load and execute the Linux kernel from a TFTP server on IP address
+192.168.1.51 and set it's own IP address to 192.168.1.55.
+
+ipconfig 192.168.1.55
+cp tftp://192.168.1.51/zImage 0xc0010000
+go 0xc0010000
+
+The default startup can be overriden by placing all these commands on
+the override startup line in the Apex menu seperated by semicolons.
+
+The Linux kernel command line specifies options such as the serial port
+to use for the console or the location of the root file system. It can
+be overriden by changing the default in Apex. The following command
+line will use the LTUB generated root filesystem image over NFS for
+it's file system.
+
+console=ttyAM1,115200n81 rw root=/dev/nfs nfsroot=192.168.1.51:/home/ltib/rootfs ip=dhcp
+

@@ -1,0 +1,115 @@
+%TOPICTITLE%
+---
+
+<verbatim>
+Copyright © Freescale Semiconductor, Inc. 2004-2005. All rights reserved.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.2
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
+Texts.  A copy of the license is included in the file doc/COPYING
+</verbatim>
+
+
+%TOC%
+
+---+ LTIB Feature Comparision
+
+---++ Introduction
+
+This page gives a comparison table of LTIB versus other target image 
+builder tools, including PCS (Platform Creation Suite)
+
+---++ Feature Comparison Table 
+
+In the table below, a set of features are compared.
+The new system is identified as 'LTIB' (GNU/Linux Target Image Builder)
+
+| System name| Value    |
+| D          | Debian   |
+| E          | ELDK     |
+| B          | Buildroot|
+| P          | PCS      |
+| L          | LTIB     |
+
+| Key        | Value    |
+| y          | yes      |
+| n          | no       |
+| p          | planned  |
+| l          | limited  |
+| m          | manual   |
+| ?          | not known|
+| -          | not applicable |
+
+|*Feature*                    |*Systems*||||| *Comment*   |
+|                             |D|E|B|P|L|                 |
+| Package managed             |y|y|n|n|y| LTIB uses rpm package management|
+| Easy source build           |n|n|y|y|y| LTIB will build if no binary rpm is available|
+| Builds dependent on host    |y|y|y|n|y| PCS uniquely sandboxes the build|
+| Standard cross compilers    |y|n|y|y|y| Buildroot builds uclibc based compilers|
+| Supports sub-architectures  |n|y|n|n|y| Support for non-generic derivatives (7xx,8xx,82xx etc), cross-compiler driven|
+| Supports compiler spoofing  |n|l|n|y|y| Incrementally built interface libs/headers are isolated from other builds|
+| Sources pulled on demand    |n|n|y|n|y| LTIB supports LPP/GPP but will fall back to the Internet using URLs in spec files|
+| Supports multiple instances |y|l|y|y|y| Required for multiple concurrent configurations|
+| Supports uclibc             |y|n|y|n|y| LTIB uses a common package set |
+| Supports glibc              |y|y|n|y|y| LTIB uses a common package set |
+| Pre-built binary support    |y|y|n|y|y| LTIB will only attempt package build if the binary rpm is not present|
+| Supports Kernel config      |n|n|y|y|y| i.e. built into the system|
+| Supports Linux-2.6          |?|n|?|l|y| LTIB has the required packages at appropriate revisions to support a 2.6 kernel|
+| Pre-build configuration     |n|n|y|y|y| LTIB provides a menuconfig interface|
+| Post-build configuration    |n|l|n|l|y| LTIB will support rpm package insert/remove|
+| Integrated config design    |-|-|y|n|y| LTIB build/deploy scripts can all fully access the config database|
+| Supports merge objects      |n|n|n|y|y| LTIB supports common and per BSP merge directories|
+| Standard build grammar      |y|y|l|n|y| LTIB uses rpm grammar for builds|
+| Standard config grammar     |-|-|y|n|y| LTIB uses Linux-2.6 LKC grammar|
+| Coarse dependency checking  |y|y|l|y|y| LTIB uses lkc grammar and rpm's built-in library dependency checking|
+| Fine grain dependencies     |n|n|n|y|n| Only PCS supports very fine grain dependency checking|
+| Conflicts detection         |y|y|n|y|y| LTIB uses rpm built-in conflict detection, this may be overridden to resolve|
+| Conflict resolution         |m|m|m|y|m| PCS has a sophisticated conflict resolution system|
+| Automated deployment        |n|n|n|y|n| Only PCS has automated deployment methods|
+| Non-NFS deployment          |n|l|l|y|y| LTIB will supports ramdisk generation|
+| Common deployment scripts   |-|-|-|n|y| LTIB uses common deployment scripts|
+| Easy auto-build             |n|y|y|l|y| LTIB is designed to be very simple to support|
+| Easy package version support|n|n|y|l|y| LTIB spec files may include versions in their name|
+| Supports multiple distros   |n|n|n|l|y| LTIB distribution specific spec files are isolated.  Distros need some conversion|
+| Common root filesystem      |y|y|y|n|y| LTIB implements a common set of packages|
+| Package sets maintainable   |y|y|n|n|y| LTIB will be based of a standard distribution(s), common across architectures|
+| Package export              |n|y|n|l|y| LTIB can easily produce srpms which encapsulate source and build controls|
+| Package import              |n|l|l|l|y| LTIB can import srpm packages (there is a switch for this)|
+| Package modification        |m|m|y|y|y| LTIB guards edits in progress and supports prep, short-circuit build/install/deploy|
+| Patch generation            |m|m|n|y|y| LTIB supports generation of a patch for package changes|
+| Patch integration           |m|m|l|m|y| LTIB supports 'patchmerge' which will generate a patch and adjust the spec|
+| Project export              |-|-|l|y|y| LTIB support saving and entired image configuration for a platform|
+| Shallow learning curve      |n|y|n|n|y| Assuming you have no prior knowledge of a similar system|
+| Novice tolerant             |n|y|y|l|y| How likely is it for a new user to get a successful result|
+ 
+
+---++ References
+
+| Debian      | Debian distribution packages                 | http://www.debian.org/distrib/packages |
+| Denx ELDK   | Cross distro/builder from Denx               | http://www.denx.de/twiki/bin/view/DULG/ELDK |
+| buildroot   | uClibc root filesystem builder               | http://www.uclibc.org/cgi-bin/cvsweb/buildroot/ |
+| uClinux     | uClinux distribution builder (MMU &amp; MMUless  | http://www.uclinux.org/pub/uClinux/dist/ |
+
+
+---++ Definitions and Acronyms
+
+| *Acronym*| *Long form* |
+| *ELDK*   | Embedded Linux Development Kit (from Denx) |
+| *LTIB*   | GNU/Linux Target Image Builder |
+| *LFS*    | Linux From Scratch |
+| *BFS*    | Beyond Linux From Scratch |
+| *OSS*    | Open Source Software |
+| *PCS*    | Platform Creation Suite |
+| *LPP*    | Local Package Pool |
+| *GPP*    | Global Package Pool |
+| *RPM*    | Redhat Package Manager|
+| *LKC*    | Linux (2.6) Kernel Configuration System |
+| *ROM*    | Rough Order of Magnitude |
+
+
+----
+
+
+-- Main.StuartHughes - %SERVERTIME%

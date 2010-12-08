@@ -1,0 +1,59 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define dversion 2.6.23
+%define pkg_name linux
+
+Summary         : Linux kernel (core of the Linux operating system)
+Name            : kernel
+Version         : 2.6.23
+Release         : 0
+License         : GPL
+Vendor          : Kernel.org + freescale patches
+Packager        : Ebony Zhu
+Group           : System Environment/Kernel
+Source          : %{pkg_name}-%{dversion}.tar.bz2
+Patch1          : linux-fsl-2.6.23-ATI_X700_X800.patch
+Patch2          : linux-fsl-2.6.23-E600_ERR25-4.patch
+Patch3          : linux-fsl-2.6.23-ULI_RTC.patch
+Patch4          : linux-fsl-2.6.23-MPC8641_OF_DEV.patch
+Patch5          : linux-fsl-2.6.23-MPC85xx_DMA.patch
+Patch6          : linux-fsl-2.6.23-MPC85xx_RIO.patch
+Patch7          : linux-fsl-2.6.23-PROM.patch
+Patch8          : linux-fsl-2.6.23-POWERPC_FIX_MODPOST_WARNING.patch
+Patch9          : linux-fsl-2.6.23-MPC8641_ASMP.patch
+Patch10         : linux-fsl-2.6.23-MPC8641_ASMP_DTS.patch
+Patch11         : linux-fsl-2.6.23-MISC_FIX_FOR_GIANFAR_DRIVER.patch
+Patch12         : linux-fsl-2.6.23-GIANFAR_SKB_BUFFER_RECYCLING_SUPPORT.patch
+Patch13         : linux-fsl-2.6.23-GIANFAR_PARAMETER_ADJUST.patch
+Patch14         : linux-fsl-2.6.23-CT.patch
+Patch15         : linux-fsl-2.6.23-MPC86xx_CW.patch
+Patch16         : linux-fsl-2.6.23-MPC8641_DTS.patch
+Patch17         : kernel-2.6.23-8641hpcn-dts-v1.patch
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+From kernel.org plus Freescale patches
+
+%Prep
+%setup -n %{pkg_name}-%{dversion}
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1

@@ -1,0 +1,13 @@
+comment "LTIB settings"
+
+menu "System features"
+
+config FEAT_CACHE_RPMS
+   bool "cache target rpms"
+   default y
+   help
+      Save rpms when switching toolchains or other options that
+      would trigger a full rebuild.  This will use more disk
+      space but save time if you later switch back.
+
+endmenu

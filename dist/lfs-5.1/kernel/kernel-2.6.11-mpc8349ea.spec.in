@@ -1,0 +1,59 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define dversion 2.6.10
+%define pkg_name linux
+
+Summary         : Linux kernel (core of the Linux operating system)
+Name            : kernel
+Version         : 2.6.11
+Release         : 2
+License         : GPL
+Vendor          : kernel.org
+Packager        : Stuart Hughes
+Group           : System Environment/Kernel
+Source          : %{pkg_name}-%{dversion}.tar.bz2
+Patch0          : patch-2.6.11.bz2
+Patch1          : linux-2.6.11-mpc8349e-general-3.patch
+Patch2          : linux-2.6.11-mpc8349e-pci-5.patch
+Patch3          : linux-2.6.11-mpc8349e-pci-agent.patch
+Patch4          : linux-2.6.11-mpc8349e-watchdog.patch
+Patch5          : linux-2.6.11-mpc83xxe-sec2-1.patch
+Patch6          : linux-2.6.11-mpc8349e-usb-gadget.patch
+Patch7          : linux-2.6.11-mpc8349e-usb-host.patch
+Patch8          : linux-2.6.11-mpc8360e-usb-kb-test.patch
+Patch9          : linux-2.6.11-mpc8349e-usb-otg-2.patch
+Patch10         : linux-2.6.11-mpc8349e-spi-1.patch
+Patch11         : linux-2.6.11-mpc8349e-tsec-opt-4.patch
+Patch12         : linux-2.6.11-mpc8349e-ct-1.patch
+Patch13         : linux-2.6.11-mpc8349e-usb-pmc-2.patch
+Patch14         : linux-2.6.11-mpc8349e-cwdebug.patch
+Patch15         : kernel-2.6.11-gcc4.patch
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+From kernel.org
+All patches from Freescale
+
+%Prep
+%setup -n %{pkg_name}-%{dversion}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+

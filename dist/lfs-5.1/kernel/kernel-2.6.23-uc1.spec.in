@@ -1,0 +1,153 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define dversion linux-2.6.23
+%define kernel vmlinux
+%define binary linux.bin
+%define pkg_name linux-2.6.23
+
+Summary         : Linux kernel (core of the Linux operating system)
+Name            : kernel
+Version         : 2.6.23
+Release         : uc1
+License         : GPL
+Vendor          : uClinux.org + freescale patches
+Packager        : Matt Waddel
+Group           : System Environment/Kernel
+Source          : %{pkg_name}.tar.bz2
+Patch1          : linux-2.6.23-uc1.patch.gz
+Patch2          : linux-2.6.23-qspi.patch
+Patch3          : linux-2.6.23-532x.patch
+Patch4          : linux-2.6.23-fb-532x.patch
+Patch5          : linux-2.6.23-532x-nand.patch
+Patch6          : linux-2.6.23-touchscreen.patch
+Patch7          : linux-2.6.23-i2c-core.patch
+Patch8          : linux-2.6.23-codewarrior.patch
+Patch9          : linux-2.6.23-532x-audio.patch
+Patch10         : linux-2.6.23-usb-532x.patch
+Patch11         : linux-2.6.23-5373.patch
+Patch12         : linux-2.6.23-u-boot.patch
+Patch13         : linux-2.6.23-52277.patch
+Patch14         : linux-2.6.23-5373-fix.patch
+Patch15         : linux-2.6.23-usb-ehci.1.patch
+Patch16         : linux-2.6.23-cf-dma.patch
+Patch17         : linux-2.6.23-rtc-5227x.patch
+Patch18         : linux-2.6.23-532x-fix.patch
+Patch19         : linux-2.6.23-highprofile.patch
+Patch20         : linux-2.6.23-5253.patch
+Patch21         : linux-2.6.23-flash-5253.patch
+Patch22         : linux-2.6.23-rtc-5253.1.patch
+Patch23         : linux-2.6.23-fixes.1.patch
+Patch24         : linux-2.6.23-5445x-uclinux.patch
+Patch25         : linux-2.6.23-irq-5445x.patch
+Patch26         : linux-2.6.23-irq.patch
+Patch27         : linux-2.6.23-usb.patch
+Patch28         : linux-2.6.23-irq2.patch
+Patch29         : linux-2.6.23-i2c.patch
+Patch30         : linux-2.6.23-mtd.patch
+Patch31         : linux-2.6.23-lcd.1.patch
+Patch32         : linux-2.6.23-rs-fix.patch
+Patch33         : linux-2.6.23-usb-otg-cleanup2.patch
+Patch34         : linux-2.6.23-defconfig.patch
+Patch35         : linux-2.6.23-usb-otg-cleanup.patch
+Patch36         : linux-2.6.23-dma.patch
+Patch37         : linux-2.6.23-cache.patch
+Patch38         : linux-2.6.23-audio.patch
+Patch39         : linux-2.6.23-pointer.patch
+Patch40         : linux-2.6.23-touchscreen-52277.patch
+Patch41         : linux-2.6.23-eDMA-audio.patch
+Patch42         : linux-2.6.23-adc.patch
+Patch43         : linux-2.6.23-LCD-fix.patch
+Patch44         : linux-2.6.23-dm9000.1.patch
+Patch45         : linux-2.6.23-dspi-flash-1.patch
+Patch46         : linux-2.6.23-can.4.patch
+Patch47         : linux-2.6.23-reset.patch
+Patch48         : linux-2.6.23-sdmmc-4.patch
+Patch49         : linux-2.6.23-dma_sram.3.patch
+Patch50         : linux-2.6.23-audio-fix.1.patch
+Patch51         : linux-2.6.23-maxzone.1.patch
+Patch52         : linux-2.6.23-mtd-m5253demo.1.patch
+Patch53         : linux-2.6.23-dspi.patch
+Patch54         : linux-2.6.23-sram-alloc.patch
+Patch55         : linux-2.6.23-usb-fixes.patch
+Patch56         : linux-2.6.23-misc-fixes.patch
+Patch57         : linux-2.6.23-usb-5329.patch
+Patch58         : linux-2.6.23-pata.patch
+Patch59         : linux-2.6.23-zerocopy.patch
+Patch60         : linux-2.6.23-usb-regfix.patch
+Patch61         : linux-2.6.23-5253-audio.patch
+Patch62         : linux-2.6.23-m5253demo-reboot.patch
+Patch63         : linux-2.6.23-m5253-audio-fix.1.patch
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+From kernel.org + uClinux + freescale patches
+
+%Prep
+%setup -n %{dversion}
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1
+%patch18 -p1
+%patch19 -p1
+%patch20 -p1
+%patch21 -p1
+%patch22 -p1
+%patch23 -p1
+%patch24 -p1
+%patch25 -p1
+%patch26 -p1
+%patch27 -p1
+%patch28 -p1
+%patch29 -p1
+%patch30 -p1
+%patch31 -p1
+%patch32 -p1
+%patch33 -p1
+%patch34 -p1
+%patch35 -p1
+%patch36 -p1
+%patch37 -p1
+%patch38 -p1
+%patch39 -p1
+%patch40 -p1
+%patch41 -p1
+%patch42 -p1
+%patch43 -p1
+%patch44 -p1
+%patch45 -p1
+%patch46 -p1
+%patch47 -p1
+%patch48 -p1
+%patch49 -p1
+%patch50 -p1
+%patch51 -p1
+%patch52 -p1
+%patch53 -p1
+%patch54 -p1
+%patch55 -p1
+%patch56 -p1
+%patch57 -p1
+%patch58 -p1
+%patch59 -p1
+%patch60 -p1
+%patch61 -p1
+%patch62 -p1
+%patch63 -p1

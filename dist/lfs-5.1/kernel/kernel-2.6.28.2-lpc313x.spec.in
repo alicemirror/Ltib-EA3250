@@ -1,0 +1,34 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/nxp/rootfs/%{_target_cpu}
+%define dversion 2.6.28.2
+%define pkg_name linux
+
+Summary         : Linux kernel (core of the Linux operating system)
+Name            : kernel
+Version         : 2.6.28.2
+Release         : 1
+License         : GPL
+Vendor          : Kernel.org + NXP lpc313x patches
+Packager        : Kevin Wells
+Group           : System Environment/Kernel
+Source          : %{pkg_name}-%{dversion}.tar.bz2
+Patch1		: linux-2.6.28.2_lpc313x.patch
+Patch2		: linux-2.6.28.2_lpc313x_r1a_to_r2.patch
+Patch3		: linux-2.6.28.2_lpc313x_r2_to_r2a.patch
+Patch4		: linux-2.6.28.2_lpc313x_r2a_to_r2b.patch
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+Linux 2.6.28.2 kernel from kernel.org + NXP LPC313x patches
+
+%Prep
+%setup -n %{pkg_name}-%{dversion}
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+

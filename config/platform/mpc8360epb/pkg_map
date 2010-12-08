@@ -1,0 +1,2 @@
+PKG_NOTIFY_APP  = notify-app
+PKG_SPI_TEST    = spi-test

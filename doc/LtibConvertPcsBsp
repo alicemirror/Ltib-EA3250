@@ -1,0 +1,850 @@
+%TOPICTITLE%
+---
+
+<verbatim>
+Copyright © Freescale Semiconductor, Inc. 2004-2005. All rights reserved.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.2
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
+Texts.  A copy of the license is included in the file doc/COPYING
+</verbatim>
+
+%TOC%
+
+---+ Introduction
+
+This page gives a brief overview of how to convert an PCS BSP into 
+a format that can be used by LTIB.
+
+---+ Basic Strategy
+
+Unlike PCS, LTIB BSPs use a set of packages drawn from a common
+pool.  This means that in general, all that needs to be provided
+for an LTIB BSP is:
+
+   1 cross compiler
+   2 bootloader sources
+   3 kernel sources
+   4 kernel configuration
+   5 busybox.config file
+   6 top level config file (main.lkc)
+   7 BSP config file (defconfig)
+
+Of these only 4, 6 & 7 will definitely be unique to the BSP, the others
+may be copied or shared with other BSPs.
+
+
+---+ LTIB BSP Structure
+
+To best understand the conversion process, it will be helpful to 
+explain something about the structure of LTIB.   Also it would
+be helpful to users to be familiar with the LtibFaq for general
+operation of ltib.
+
+Below is shown a cut-back directory structure for LTIB.
+
+<verbatim>
+
+|-- ltib (main script)
+|
+|-- bin
+|   |-- Ltibutils.pm
+|   |-- device_table.txt
+|   |-- maketar
+|   |-- mksb_bootstrap
+|   `-- stripall
+|-- config
+|   |-- main.lkc
+|   |-- platform
+|   |   |-- host
+|   |   |   |-- ltib.preconfig
+|   |   |   `-- main.lkc
+...
+|   |   |-- mpc8555cds
+|   |   |   |-- busybox.config
+|   |   |   |-- defconfig
+|   |   |   |-- linux-fsl-2.4.27-mpc8555cds.config
+|   |   |   |-- linux-fsl-2.6.9-mpc8555cds.config
+|   |   |   `-- main.lkc
+|   |-- profile
+|   |   |-- max.config
+|   |   |-- max_noc++.config
+|   |   |-- min.config
+|   |   `-- mpc8555cds.config
+|   `-- userspace
+|       |-- deployment.lkc
+|       |-- distro.lkc
+|       |-- packages.lkc
+|       |-- post_build_script.lkc
+|       `-- uclinux.lkc
+|-- dist
+|   |-- FC-2
+|   |   |-- busybox
+|   |   |   `-- busybox.spec
+|   |   |-- common
+|   |   |   `-- pkg_map
+|   |   `-- modutils
+|   |       `-- modutils.spec
+|   `-- lfs-5.1
+...
+|       |-- boa
+...
+|       |-- busybox
+|       |   `-- busybox.spec
+|       |-- common
+|       |   `-- pkg_map
+|       |-- kernel
+|       |   |-- kernel-denx-2.4.24.spec
+|       |   |-- kernel-denx-2.4.4.spec
+|       |   |-- kernel-fsl-2.4.27.spec
+|       |   |-- kernel-fsl-2.6.9.spec
+|       |   |-- kernel-ppc-2.4.25-mpc5200.spec
+|       |   `-- kernel-ppc-2.6.11.spec
+|       |-- u-boot
+|       |   |-- u-boot-fsl-1.1.2.spec
+|       |   |-- u-boot-mpc5200.spec
+|       |   `-- u-boot.spec
+|-- doc
+|   |-- LtibConvertPcsBsp
+|   |-- LtibFaq
+|   |-- LtibFeatures
+|   |-- LtibInstall
+|   `-- LtibTodo
+|-- rootfs
+|-- rpm
+`-- rpmdb
+
+</verbatim>
+
+---++ Top level and 'bin' directories
+
+The top level directory contains the main script 'ltib', this loads up
+the Ltibuptils.pm module when it runs.
+
+The main 'ltib' script is what controls config/download/build/install of
+the packges
+
+
+---++ The 'config' directory structure
+
+The top level of the 'config' directory structure contains 'main.lkc',
+this is a file written in 'lkc' grammar.  This is the same grammar
+as provided by the 2.6 Linux kernel.
+
+The purpose of this top level 'main.lkc' file is purely to select which
+of the BSPs is to be processed.
+
+Below the top level, there are 3 directories: 'platform', 'profile' and
+'userspace'.
+
+   * *platform* : This directory contains the BSP abstractions (we will
+   discuss this aspect in more detail later.  The host 'BSP' is a special
+   case abstraction that controls the installation of host support
+   packages required by ltib (for instance the 'mconf' lkc grammar parser).
+
+   * *profile*: This directory currently contains files which can be used
+   to control the selection of userspace packages during automated builds.
+
+   * userspace: This directory contains lkc grammar configuration files
+   that are common across BSPs.  These include:
+      * *package.lkc* : This file is a list in alphabetic order of the
+      common packages that can be selected for a BSP.  The lkc grammar
+      allows certain dependencies and contstrains to be placed by
+      the use of certain key works.  This file is the primary means
+      of package control.
+      * *deployment.lkc* : This file controls the deployment configuration.
+      For instance a use can select whether or not a ramdisk is to be built.
+      * *post_build_script.lkc* : This is an optional config file that
+      can be used to setup individual per BSP post build scripts.  It
+      is mostly unused
+      * *distros.lkc* : LTIB has provision to maintain more than one 
+      set of distributions.  This file allows such a selection, depending
+      on the capability of the BSP.  Currently, the only the lfs-5.1
+      distro is supported.
+      * *uclinux.lkc* : This is a conversion of the main uclinux configure
+      by feature configuration file.  It is not currently used.
+
+
+---++ The 'dist' directory structure
+
+This directory structure contains the rpm 'spec' files that control the
+packages available to a BSP.  There are 2 top level directories,
+FC-2 (obsolete) and lfs-5.1 (Linux from scratch 5.1).  In practical
+terms only lfs-5.1 is available, however a this structure provides a
+means of having concurrent alternative packages sets in the future.
+
+Below 'lfs-5.1' you see one directory per package.  Each directory
+contains one or more rpm 'spec' file to control the building of that
+package. 
+
+In addition to the packages, there is a directory 'common', which 
+contains the file 'pkg_map'.  This file is used by 'ltib' to map
+the configuration package selection to the directories that serve
+the selection.  In addition, the order of the packages listed in
+'pkg_map' controls the build order attempted by ltib.
+
+---++ The 'doc' directory
+
+The doc directory contains some useful 'ltib' documentation.
+
+---++ The 'rootfs' directory
+
+By default, when packages have been built, they will be installed 
+into this directory.  It is expected that this directory will then
+be NFS exported and used by the target as its root filesystem.
+
+---++ The rpm directory
+
+This directory as the build area for the currect BSP.  Binrary
+packages may be found in the RPMS/<arch>/ sub-directory.
+
+---++ The 'rpmdb' directory
+
+By default, the currenty contents of the 'rootfs' directory is described
+by the rpm database held in 'rpmdb'.  This directory is used by 'ltib',
+but may also be usefully queried by suitable use of the rpm command.
+
+
+---+ Converting the mpc5200_lite5200-3.0-20041207 BSP
+
+As an example, I'll work through the steps I took to convert the 
+mpc5200_lite5200-3.0 into ltib format.  Primarily the purpose
+is not so much to import userspace package, but more to get 
+the right toolchain, kernel source+config and bootloader.
+
+---++ Create a placeholder for the new BSP
+
+To do this copy an existing BSP for later editing.
+<verbatim>
+cd ~/ltib/config/platform
+cp -a mpc8555cds mpc5200
+rm -rf mpc5200/CVS
+</verbatim>
+
+Note that we removed the CVS directory, as this will be correctly
+created when we 'cvs add' this BSP.
+
+---++ Identifying the toolchain
+
+First of all, I identified the toolchain used in this bsp.  If you 
+mount the iso image, and list the directory, you'll see:
+
+<verbatim> 
+mount mpc5200_lite5200-3.0-20041207.iso /cdrom -o loop 
+ls /cdrom/toolchains
+mtwk-powerpc-603e-gcc-3.3.2-glibc-2.3.2-0.10-1.0-1.i386.rpm
+</verbatim>
+
+Looking at the toolchain foundry download page 
+http://10.82.193.3/twiki/bin/view/Main/TargetArchitecture#TablePowerpc603e,
+the closest match chosen is: 
+mtwk-lnx-powerpc-603e-gcc-3.3.2-glibc-2.3.2-0.28-6.i686.rpm 
+
+---++ Identifying the boot loader sources
+
+Next, we install the PCS BSP on a suitable machine (that has pcs-3.1).
+Having done this, we then look in:
+<verbatim>
+/opt/Embedix/bsp/mpc5200_lite5200-3.0/config-data/buildcontrol/u_boot_1_1_2.lbc
+</verbatim>
+
+From this, we see that in this BSP, u-boot is made up of files:
+   * u-boot-CVS-20041007.tar.gz
+   * patch-u-boot-lite5200_total5200
+
+Also, we note with interest that this package contains a buildvar
+called '$TARGET' which is used control the configure/build and 
+install phased.
+
+Having taken a look at this, I decided to make the following transformations
+
+| *PCS name*                 | *LTIB name* |
+| u-boot-CVS-20041007.tar.gz | u-boot-1.1.1.tar.bz2 <br> u-boot-1.1.1-CVS-20041007.patch.gz |
+| patch-u-boot-lite5200_total5200 | u-boot-1.1.1-mpc5200.patch |
+
+The first change was to split the u-boot CVS tarball into a combination
+of official external release tarball, plus a patch to turn this into
+the CVS version.  This was a preference, and the file could have
+been left as it was.
+
+The second change was to regularize the naming of patches.
+Having done this, these files must be copied into the lpp (/opt/freescale/pkgs).
+This will put them in a known place for 'ltib' so that when we
+come to build, they can be located.
+
+As mentioned earlier, PCS uses a buildvar ($TARGET) to control the 
+build of u-boot.  Looking into this further (by looking at
+/opt/Embedix/bsp/mpc5200_lite5200-3.0/config-data/ecds/u_boot_1_1_2.ecd)
+I could see I needed to make the following config mappings available.
+
+| *LTIB config description* | *u-boot internal name*           |
+| Lite5200                  | Lite5200_LOWBOOT_config          |
+| Lite5200_8MiB             | Lite5200_LOWBOOT08_config        |
+| Total5200                 | Total5200_Rev2_lowboot_config    |
+| Total5200_Rev1            | Total5200_lowboot_config         |
+
+These will be used later in the *main.lkc* file to supply the correct 
+build time variable UBOOT_CONFIG_TYPE
+
+
+---++ Identifying the kernel sources
+
+Looking at:
+<verbatim>
+/opt/Embedix/bsp/mpc5200_lite5200-3.0/config-data/buildcontrol/kernel.lbc
+</verbatim>
+
+We can see that in this BSP, the Linux kernel is made up of files:
+  
+   * linuxppc_2_4_devel-20040920.tgz
+   * patch-linuxppc_2_4_devel-20040920-hrtimer
+   * patch-linuxppc_2_4_devel-20040920-hrtimer-lowlat
+   * patch-linuxppc_2_4_devel-20040920-hrtimer-lowlat-codetest_v4
+   * patch-linuxppc_2_4_devel-20040920-hrtimer-lowlat-codetest_v4-lite5200_total5200
+
+I also noted the build directory name was: 'linuxppc_2_4_devel-20040920'
+and that we were building a 'uImage'
+
+Having taken a look at this, I decided to make the following transformations:
+
+| *PCS name*                                                   | *LTIB name* |
+| linuxppc_2_4_devel-20040920.tgz                              | linuxppc_2_4_devel-20040920.tgz |
+| patch-linuxppc_2_4_devel-20040920-hrtimer                    | linuxppc_2_4_devel-20040920-hrtimer.patch |
+| patch-linuxppc_2_4_devel-20040920-hrtimer-lowlat             | linuxppc_2_4_devel-20040920-hrtimer-lowlat.patch |
+| patch-linuxppc_2_4_devel-20040920-hrtimer-lowlat-codetest_v4 | linuxppc_2_4_devel-20040920-hrtimer-lowlat-codetest_v4.patch |
+| patch-linuxppc_2_4_devel-20040920-hrtimer-lowlat-codetest_v4-lite5200_total5200 | linuxppc_2_4_devel-20040920-hrtimer-lowlat-codetest_v4-lite5200_total5200.patch |
+
+The purpose of these changes was to regularize the naming of patches.
+Having done this, these files must be copied into the lpp (/opt/freescale/pkgs).
+This will put them in a known place for 'ltib' so that when we
+come to build, they can be located.
+
+
+---++ Synthesizing the kernel config file
+
+Unfortunately, PCS does not explicitly encode the kernel configuration
+file (.config) in a separate or standard format.  This information
+is retained in 'ecd' format within the file:
+/opt/Embedix/bsp/mpc5200_lite5200-3.0/build/projectstate/config.ess
+
+The only way to recover the .config file for the kernel is to actually
+create a project instance for the BSP using the PCS GUI 'tw' (Target
+Wizard).  Here are the steps:
+
+   1. Install PCS
+   1. Install the mpc5200_lite5200-3.0 BSP
+   1. Start Target Wizard (command is tw)
+   1. Create a new project '5200' (select Metrowerks Lite5200(v2.0)
+   1. Select the 'kernel' node
+   1. Right click and select 'Force Rebuild Component'
+   1. When that has finished, exit Target Wizard
+   1. cp ~/project/5200/src/linux/.config ~/ltib/config/platform/mpc5200/linux-ppc-2.4.25-mpc5200.config
+
+
+---++ Creating the main configuration file
+
+In ltib, each BSP abstraction has a single main configuration file.
+This configuration file in coded in [[http://www.xs4all.nl/~zippel/lc/ lkc]]
+grammar, which is standard in the Linux 2.6 kernel, busybox and
+other open source projects.
+
+Having earlier copied a placeholder from the mpc8555cds config, 
+we edit it until it looks as follows.  Most of the changes
+required are self-evident, but pay attention in particular to
+the following parameters:
+
+| *config parameter*    | comment |
+| *PLATFORM_MPC5200*    | name appropriated (not used anymore) |
+| *PLATFORM_COMMENT*    | change to something appropriate |
+| *PLATFORM*            | change to something appropriate |
+| *TOOLCHAIN1 ...*      | list available toolchain types | 
+| *TOOLCHAIN*           | enter the corresponding rpm per toolchain selection |
+| *TOOLCHAIN_PATH*      | enter the correct path per toolchain selection |
+| *TOOLCHAIN_PREFIX*    | set appropriately |
+| *PKG_U_BOOT*          | name the u-boot spec file to use |
+| *UBOOT_CONFIG_TYPE*   | name the u-boot config to pass to 'make config' |
+| *KERNEL1 ....*        | list the available kernels that can be built |
+| *PKG_KERNEL*          | name the kernel spec file to use per kernel selection|
+
+When you finish, it should look as follows:
+
+Listing of ~/ltib/config/platform/mpc5200/main.lkc
+---
+<verbatim>
+# constants (forced values)
+config PLATFORM_MPC5200
+    bool
+    default y
+config PLATFORM_COMMENT
+    string
+    default "Freescale MPC5200 development board"
+
+config VENDOR
+    string
+    default "Freescale"
+
+config PLATFORM
+    string
+    default mpc5200
+
+config GNUTARCH
+    string
+    default powerpc
+
+config LINTARCH
+    string
+    default ppc
+
+config CFGHOST
+    string
+    default powerpc-linux
+
+# capabilities
+config CAP_UCLIBC
+    bool
+    default y
+config CAP_LFS_5_1
+    bool
+    default y
+
+comment "Choose your C library"
+choice
+    prompt "C library choice"
+    default GLIBC
+    help
+        This menu will let you choose the c library to use
+    config GLIBC
+        bool "glibc"
+        help
+            Full C POSIX C library (larger)
+    config UCLIBC
+        depends CAP_UCLIBC
+        bool "uclibc"
+        help
+            Smaller C library, not as full featured as glibc
+endchoice
+
+comment "Choose your toolchain"
+choice
+    prompt "Toolchain"
+    default TOOLCHAIN1
+    help
+        This menu will help you choose the cross toolchain to use to build
+        your packages with.  If you choose none, you can enter the
+        path to your toolchain by hand. 
+        Note: gcc-3.4 cannot be used to compile linux-2.4.x 
+
+    config TOOLCHAIN1
+        bool "gcc-3.3.2-glibc-2.3.2 (for 603e)" if GLIBC
+    config TOOLCHAIN2
+        bool "ppc gcc-3.3.2/uclibc-0.9.20 soft-float" if UCLIBC
+    config TOOLCHAIN_CUSTOM
+        bool "supply your toolchain path"
+endchoice
+
+config TOOLCHAIN
+    string
+    default mtwk-lnx-powerpc-603e-gcc-3.3.2-glibc-2.3.2-0.28-6.i686.rpm if TOOLCHAIN1
+    default mtwk-lnx-powerpc-gcc-3.3.2-uclibc-0.9.20-sf-0.28-4.i686.rpm if TOOLCHAIN2
+
+config TOOLCHAIN_PATH
+    string
+    default "/opt/mtwk/usr/local/powerpc-603e-linux/gcc-3.3.2-glibc-2.3.2" if TOOLCHAIN1
+    default "/opt/mtwk/usr/local/powerpc-linux/gcc-3.3.2-uclibc-0.9.20" if TOOLCHAIN2
+    string "Supply your toolchain path" if TOOLCHAIN_CUSTOM
+
+config TOOLCHAIN_PREFIX
+    string
+    default "powerpc-603e-linux-"   if TOOLCHAIN1
+    default "powerpc-uclibc-"       if TOOLCHAIN2 
+    string  "Enter your cross tools prefix" if TOOLCHAIN_CUSTOM
+
+config TOOLCHAIN_CFLAGS
+    string
+    default ""
+    string "Enter any CFLAGS for gcc/g++"
+    help
+        This option lets you set flags that will be passed to gcc/g++
+        These will be injected by the spoofing mechanism, so they
+        only work if you reference the compiler as gcc/g++ in your
+        rpm spec files (you cannot say for instance powerpc-linux-gcc)
+
+comment "Bootloader"
+
+config BOOTLOADER1
+    bool "Build a boot loader"
+    default y
+    help
+        Selecting this will build the u-boot boot loadwer
+
+config PKG_U_BOOT
+    string
+    default "u-boot-mpc5200" if BOOTLOADER1
+
+choice
+    depends BOOTLOADER1
+    prompt "u-boot target board type"
+    default UBOOT_LITE5200
+    help
+        This menu let you choose the exact u-boot target to build
+
+    config UBOOT_LITE5200
+        bool "Lite5200"
+    config UBOOT_LITE5200_8MIN
+        bool "Lite5200_8MiB"
+    config UBOOT_TOTAL5200
+        bool "Total5200"
+    config UBOOT_TOTAL5200_REV1
+        bool "Total5200_Rev1"
+endchoice
+
+config UBOOT_CONFIG_TYPE
+    string
+    default "Lite5200_LOWBOOT_config"       if UBOOT_LITE5200
+    default "Lite5200_LOWBOOT08_config"     if UBOOT_LITE5200_8MIN
+    default "Total5200_Rev2_lowboot_config" if UBOOT_TOTAL5200
+    default "Total5200_lowboot_config"      if UBOOT_TOTAL5200_REV1
+
+config UBOOT_BUILD_ARGS
+    string
+    default "OPTFLAGS=-O2"
+
+comment "Choose your Kernel"
+choice
+    prompt "kernel"
+    default KERNEL_NONE
+    help
+        This menu will let you choose the kernel to use with your board.
+        If you don't want to build a kernel, unselect this option.
+
+    config KERNEL1
+        bool "Linux 2.4.25 (from PCS BSP)"
+        help
+            This is the kernel and patches from the PCS BSP
+            mpc5200_lite5200-3.0
+    config KERNEL_NONE
+        bool "Dont build the Linux kernel"
+        help
+            Select this if you dont want to build the kernel or provide your own
+endchoice
+
+config PKG_KERNEL
+    string
+    default "kernel-ppc-2.4.25-mpc5200"  if KERNEL1
+
+config KERNEL_PRECONFIG
+    string
+    default "linux-ppc-2.4.25-mpc5200.config" if KERNEL1
+
+config KERNEL_WANTCF
+    depends ! KERNEL_NONE
+    bool "Configure the kernel"
+    default n
+    
+source ../../userspace/distro.lkc
+source ../../userspace/packages.lkc
+source ../../userspace/deployment.lkc
+</verbatim>
+---
+
+
+---+++ Config directory summary
+
+Having made the entries, listing out the directory *config/platform/mpc5200*
+should now show the tree below.
+
+<verbatim>
+|-- config
+|   |-- platform
+|   |   |-- mpc5200
+|   |   |   |-- busybox.config
+|   |   |   |-- defconfig
+|   |   |   |-- linux-ppc-2.4.25-mpc5200.config
+|   |   |   `-- main.lkc
+</verbatim>
+
+Although the *defconfig* file is that belonging to the copied mpc8555cds
+abstraction, this will be a good enough starting point.
+
+
+---++ Creating the rpm spec files
+
+Having identified the component pieces for the bootloader and kernel
+from the PCS BSP, we now need to make spec files for these.
+
+To do this, you can either: copy an existing specfile from a similar spec file,
+or copy, rename and modifiy the spec file  *dist/lfs/templates/template.spec*.
+
+---+++ The u-boot specfile
+
+Having noted that the *PKG_U_BOOT* config entry was set to *u-boot-mpc5200*
+we do the following:
+
+<verbatim>
+cd ~/ltib/dist/lfs-5.1/u-boot
+cp u-boot.spec u-boot-mpc5200.spec
+vi u-boot-mpc5200.spec
+</verbatim>
+
+We edit *u-boot-mpc5200.spec* and modify the Source/Patch entries
+as required using the filenames we chose earlier.  Having done
+this, the contents of *u-boot-mpc5200.spec* is as follows:
+
+---
+<verbatim>
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+
+Summary         : Universal Bootloader firmware
+Name            : u-boot
+Version         : 1.1.1
+Release         : mpc5200
+License         : GPL
+Vendor          : Freescale
+Packager        : Stuart Hughes
+Group           : Applications/System
+Source          : u-boot-1.1.1.tar.bz2
+Patch0          : u-boot-1.1.1-CVS-20041007.patch.gz
+Patch1          : u-boot-1.1.1-mpc5200.patch
+BuildRoot       : /tmp/%{name}-%{version}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+This specfile replicates the version used in the PCS BSP:
+   mpc5200_lite5200-3.0
+
+%Prep
+%setup 
+%patch0 -p1
+%patch1 -p1
+
+%Build
+UBOOT_CONFIG_TYPE=${UBOOT_CONFIG_TYPE:-TQM823L_config}
+make HOSTCC="$BUILDCC" CROSS_COMPILE=$TOOLCHAIN_PREFIX $UBOOT_CONFIG_TYPE
+make HOSTCC="$BUILDCC" HOSTSTRIP="$BUILDSTRIP" \
+     CROSS_COMPILE=$TOOLCHAIN_PREFIX $UBOOT_BUILD_ARGS all
+
+%Install
+rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT/%{pfx}/boot
+for i in u-boot.bin u-boot
+do
+    cp $i $RPM_BUILD_ROOT/%{pfx}/boot
+done
+
+%Clean
+rm -rf $RPM_BUILD_ROOT
+
+%Files
+%defattr(-,root,root)
+%{pfx}/*
+
+</verbatim>
+---
+
+---+++ The kernel specfile
+
+Having noted that the *PKG_KERNEL* config entry was set to 
+*kernel-ppc-2.4.25-mpc5200* we do the following:
+
+<verbatim>
+cd ~/ltib/dist/lfs-5.1/kernel
+kernel-2.6.11.spec kernel-ppc-2.4.25-mpc5200.spec
+vi kernel-ppc-2.4.25-mpc5200.spec
+</verbatim>
+
+We edit *kernel-ppc-2.4.25-mpc5200.spec* and modify the Source/Patch entries
+as required using the filenames we chose earlier.  Having done
+this, the contents of *kernel-ppc-2.4.25-mpc5200.spec* is as follows:
+
+---
+<verbatim>
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define dversion 2.4
+%define ktarg  uImage
+%define kernel arch/ppc/boot/images/vmlinux.gz
+%define pkg_name linuxppc_2_4_devel
+%define pkg_version 20040920
+%define bld_dir_name linuxppc_2_4_devel-20040920
+
+Summary         : Linux kernel (core of the Linux operating system)
+Name            : kernel
+Version         : 2.4.25
+Release         : mpc5200
+License         : GPL
+Vendor          : kernel.org
+Packager        : Stuart Hughes
+Group           : System Environment/Kernel
+Source          : %{pkg_name}-%{pkg_version}.tgz
+Patch0          : %{pkg_name}-%{pkg_version}-hrtimer.patch
+Patch1          : %{pkg_name}-%{pkg_version}-hrtimer-lowlat.patch
+Patch2          : %{pkg_name}-%{pkg_version}-hrtimer-lowlat-codetest_v4.patch
+Patch3          : %{pkg_name}-%{pkg_version}-hrtimer-lowlat-codetest_v4-lite5200_total5200.patch
+
+BuildRoot       : /tmp/%{name}-%{version}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+This has been extracted from the PCS mpc5200_lite5200-3.0 BSP
+
+%Prep
+%setup -n %{bld_dir_name}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+
+%Build
+if [ -z "$KERNEL_PRECONFIG" ]
+then
+    echo please set the KERNEL_PRECONFIG environment variable
+    exit 1
+fi
+cp $KERNEL_PRECONFIG .config
+if [ -n "$KERNEL_WANTCF" ]
+then
+    make ARCH=${LINTARCH} HOSTCC="${BUILDCC}" menuconfig
+    cp .config ${KERNEL_PRECONFIG}.dev
+else
+    yes "" | make ARCH=${LINTARCH} HOSTCC="${BUILDCC}" oldconfig
+fi
+make ARCH=${LINTARCH} HOSTCC="${BUILDCC}" dep
+make ARCH=${LINTARCH} HOSTCC="${BUILDCC}" %{ktarg} modules
+
+%Install
+mkdir -p $RPM_BUILD_ROOT/%{pfx}/boot
+cp %{kernel} $RPM_BUILD_ROOT/%{pfx}/boot/
+make ARCH=${LINTARCH} HOSTCC="${BUILDCC}" DEPMOD=/bin/true INSTALL_MOD_PATH=$RPM_BUILD_ROOT/%{pfx} modules_install
+
+%Clean
+rm -rf $RPM_BUILD_ROOT
+
+
+%Files
+%defattr(-,root,root)
+%{pfx}
+
+</verbatim>
+---
+
+---++ Test building the new BSP
+
+---+++ Preparation - clean up
+
+First of all, you need to make sure that your ltib working area
+is cleaned up (this is needed if you've previously build another BSP
+in this ltib directory).  To do this run:
+
+<verbatim>
+cd ~/ltib
+./ltib -m distclean
+</verbatim>
+
+---+++ Configure the new BSP
+
+Our current *defconfig* is for the mpc8555cds, so we'll need to change
+this.  To do this, we'll need to run the interactive *menuconfig* screen.
+To do this run:
+
+<verbatim>
+./ltib --configure
+</verbatim>
+
+The first thing to do is to enter the *Platform choice* menu and select
+our new BSP (*Freescale MPC5200 development board*).  Having
+selected this, exit and save from this top level menu.
+
+This will then put us into the BSP specific config screen.  You should work
+through these screens and make sure that all looks correct.  In
+particular, you should make the following selections:
+
+   * <verbatim> [*] Build a boot loader </verbatim>
+   * <verbatim> kernel (Linux 2.4.25 (from PCS BSP)) </verbatim>
+   * <verbatim> [*] Configure the kernel </verbatim>
+
+This will cause u-boot to be built, the kernel to be built, and also,
+the kernel *menuconfig* will pop up during kernel build.  
+
+*Note*: the working kernel config will be saved back to 
+linux-ppc-2.4.25-mpc5200.config.dev.  Any changes we have been made
+can be identified by diffing against the original
+linux-ppc-2.4.25-mpc5200.config file.  If we want to keep the changes,
+we simply move the linux-ppc-2.4.25-mpc5200.config.dev to the
+linux-ppc-2.4.25-mpc5200.config file.
+
+*Note*: the cross toolchain will be installed as required
+
+
+---+++ What do I do it the build fails ? How do I iterate ?
+
+Let assume that you've made all these changes, but when you
+have configured, the kernel package fails to build, what should you 
+do ?
+
+Ltib allows you work on a single package at a time, and like regular
+rpm, supports the notion of *short-circuit* build and install.  In
+addition to this, ltib adds the feature to short circuit deploy.
+This allows a user to iteratively fix build problems, test deploy,
+make any further fixes, before finally commiting your work.
+For further details see: LtibFaq , but the main commands you'd want
+to run are:
+
+| *Command*                                         | *Purpose* |
+| ./ltib -p spec_name -f                            | extract a package's source to work on |
+| ./ltib -p kernel-ppc-2.4.25-mpc5200 -m scbuild -f | test rpm build phase of a package |
+| ./ltib -p kernel-ppc-2.4.25-mpc5200 -m scinstall  | test rpm install phase of a package |
+| ./ltib -p spec_name -m scdeploy                   | install the package to the NFS root filesystem area (useful for userspace package)|
+| ./ltib -D                                         | force re-build of the ramdisk |
+| ./ltib -p  kernel-ppc-2.4.25-mpc5200 -m patchmerge| create a patch of your changes and update the spec file |
+
+
+---+++ Deploying the BSP
+
+The primary deployment mechanism in ltib is expected to be NFS.  By
+default ltib will build a root filesystem suitable for exporting as
+a root filesystem in ~/ltib/rootfs .  It is the user's responsibility
+to export this directory and setup the bootloader parameters to 
+use this.  Note that the built kernel can be located in ~/ltib/rootfs/boot
+
+
+---++ Saving your work
+
+Once you have booted your board and are happy to check in your work,
+you need to do the following:
+
+    * copy the updated .config to defconfig
+    <verbatim> cp config/platform/mpc5200/.config config/platform/mpc5200/defconfig </verbatim>
+    * checking ltib changes to CVS
+    * copy new source files to the GPP
+
+
+---+++ Checking in changes to CVS
+
+Assuming you have a read/write cvs account for ltib, in this example
+we would do the following:
+
+<verbatim>
+
+cd ~/ltib
+cvs add config/platform/mpc5200
+cvs add config/platform/mpc5200/*
+cvs add dist/lfs-5.1/u-boot/u-boot-mpc5200.spec
+cvs add dist/lfs-5.1/kernel/kernel-ppc-2.4.25-mpc5200.spec
+cvs commit
+
+</verbatim>
+
+---+++ Updating the GPP 
+
+You now need to update the sources in the GPP or send links to the 
+content to the LTIB public mailing list
+
+
+
+---
+-- Main.StuartHughes - %SERVERTIME%

@@ -1,0 +1,119 @@
+= Connections/configuration =
+
+Serial port:       Upper 9 way serial connector next to ethernet connector
+                   on ADS base board.
+Serial setting:    115200 N81
+Lan connector:     There is only one.
+Power connector:   There is only one on the CPU  board.
+
+= Bootloader =
+
+When you power on, you should see something like:
+
+{{{
+RedBoot> Ethernet eth0: MAC address 00:08:02:99:88:77
+IP: 192.168.0.116/255.255.255.0, Gateway: 192.168.0.1
+Default server: 192.168.0.200
+
+RedBoot(tm) bootstrap and debug environment [ROMRAM]
+Non-certified release, versiont FSL 200539 - bt 13:42:19, Sep 21 2005
+
+Platform: ADS (Freescale i.MX31) PASS 1.0 [x32 DDR]
+Copyright (C) 2000, 2001, 2002, 2003, 2004 Red Hat, Inc.
+
+RAM: 0x00000000-0x07f00000, [0x00013e48-0x07ed1000] available
+FLASH: 0xa0000000 - 0xa2000000, 256 blocks of 0x00020000 bytes each.
+RedBoot> 
+}}}
+
+= Booting Linux =
+
+Example:
+
+tftp/nfs server  : <host_ip>
+target ip address: <target_ip> 
+
+= booting using a ramdisk =
+
+ * Make a directory /tftpboot/mx31 and then make sure to:
+ {{{
+cp rootfs/boot/zImage /tftpboot/mx31
+cp rootfs.ext2.gz /tftpboot/mx31
+ }}}
+
+ * Then at the redboot prompt:
+ {{{
+ip_address -l <target_ip> -h <host_ip>
+load -v -r -b 0x1000000 mx31/rootfs.jffs2
+load -v -r -b 0x100000  mx31/zImage
+exec -r 0x1000000 -c "root=/dev/ram console=ttymxc0,115200" 0x1000000
+ }}}
+
+= booting using nfs =
+
+ * Make a symlink to your rootfs directory
+ {{{
+cd /tftpboot
+ln -s <ltib_dir>/imx31/rootfs <target_ip>
+ }}}
+
+ * Make a directory /tftpboot/mx31 and then make sure to:
+ {{{
+mkdir /tftpboot/mx31
+ }}}
+
+ * Copy the mx31 kernel to /tftpboot/mx31.
+ {{{
+cp <ltib_dir>/imx31/rootfs/boot/zImage /tftpboot/mx31
+ }}}
+
+ * Export the rootfs directory, edit /etc/exports and add the line:
+ {{{
+<ltib_dir>/imx31/rootfs *(rw,no_root_squash)
+ }}}
+ YES: this is insecure, so if you're worried change appropriately.
+
+ * Re-start/export your nfs server (here's one way)
+ {{{
+sh /etc/rc.d/init.d/nfs restart
+ }}}
+
+ * At the redboot prompt:
+ {{{
+ip_address -l <target_ip> -h <host_ip>
+load -v -r -b 0x100000  mx31/zImage
+exec -b 0x100000 -l 0x200000 -c "noinitrd console=ttymxc0,115200 root=/dev/nfs nfsroot=<host_ip>:/tftpboot/<target_ip> init=/linuxrc ip=<target_ip:<host_ip>"
+ }}}
+
+
+= Change Default RedBoot Parameters in Flash. =
+
+ * To list the default RedBoot parameters:
+{{{
+fconfig -l
+}}}
+
+ * To change some/all the parameters:
+{{{
+fconfig
+}}}
+
+ * This returns each of the line items one at a time, and they can be edited.
+   When now editing the variable just hit return to move to the next item.  At
+   the end there will be a prompt to Update the RedBoot non-volatile
+   configuration.  Answer "y" to update the flash memory.
+
+
+= Additional Actions Needed to enable login.
+
+In order to get the serial login working the following actions are needed:
+{{{
+cd rootfs/dev
+mkdir ttymxc
+mknod ttymxc/0 c 207 16
+mknod ttymxc/1 c 207 17
+ln -s ttymxc/0 ttymxc0
+ln -s ttymxc/1 ttymxc1 
+cd ../..
+}}}
+

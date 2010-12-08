@@ -1,0 +1,77 @@
+#!/bin/sh
+if [ "$1" = "stop" ]
+then
+    echo Unmounting filesystems
+    rm -f /.autofsck
+
+    echo "checking for shutdown"
+    if [ "$2" != "reboot" ]; then
+      if [ -f /sys/bus/i2c/drivers/s08qg8/0-000a/shutdown ]; then
+          echo "Shutdown 0-000a"
+          cat /sys/bus/i2c/drivers/s08qg8/0-000a/shutdown
+          echo 0xC6 > /sys/bus/i2c/drivers/s08qg8/0-000a/shutdown
+      elif [ -f /sys/bus/i2c/drivers/s08qg8/1-000a/shutdown ]; then
+          echo "Shutdown 1-000a"
+          cat /sys/bus/i2c/drivers/s08qg8/1-000a/shutdown
+          echo 0xC6 > /sys/bus/i2c/drivers/s08qg8/1-000a/shutdown
+      fi
+    fi
+    echo "filesystem shutdown phase complete"
+
+    sync
+    umount -a -r /
+    mount -n -o remount,ro /
+    swapoff -a
+fi
+
+if [ "$1" = "start" ]
+then
+    echo Mounting filesystems
+    mount -n -t proc  proc  /proc
+    mount -n -t $TMPFS rwfs  /mnt/rwfs -o size=512k
+    cat /proc/mounts
+    if [ "$READONLY_FS" != "y" ]
+    then
+        mount -n -o remount,ro /
+        FS_TYPE=`sed -e 's|root=/dev/||;s| .*||' /proc/cmdline`
+        if [ "$FS_TYPE" != "ram" ]
+        then
+            if [ -e /.autofsck ] || [ -e /forcefsck ]
+            then
+                echo "It appears that you root file system was not cleanly shutdown."
+                echo "Please wait while checking /dev/$FS_TYPE"
+                fsck -pfv /dev/$FS_TYPE
+                echo "File system check completed."
+                mount -n -o remount,rw /
+                rm -f /forcefsck
+            else
+                mount -n -o remount,rw /
+            fi
+            touch /.autofsck
+        else
+            mount -n -o remount,rw /
+        fi
+    else
+        RAMDIRS="$RAMDIRS /tmp /etc /var"
+    fi
+    if [ -n "$RAMDIRS" ]
+    then
+        for i in $RAMDIRS
+        do
+            if [ ! -e /mnt/rwfs/$i ]
+            then
+                cp -a $i /mnt/rwfs/
+                mount -o bind /mnt/rwfs/$i $i
+            fi
+        done
+    fi
+    if [ "$TMPFS" = "tmpfs" ]
+    then
+        mount -t $TMPFS shm /dev/shm
+    fi
+    if [ ! -e /etc/mtab ]
+    then
+        ln -s /proc/mounts /etc/mtab
+    fi
+    mount -a
+fi

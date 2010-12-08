@@ -1,0 +1,290 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define dversion 2.6.24
+%define pkg_name linux
+%define dtc_name mpc5121ads
+
+Summary         : Linux kernel for MPC5121ADS 
+Name            : kernel
+Version         : 2.6.24.7.rt21
+Release         : 1
+License         : GPL
+Vendor          : kernel.org
+Packager        : John Rigby
+Group           : System Environment/Kernel
+Source          : %{pkg_name}-%{dversion}.tar.bz2
+Patch0		: patch-2.6.24.6.bz2
+Patch1		: linux-2.6.24-mpc5121-01-POWERPC-ipic-add-new-interrupts-in.patch
+Patch2		: linux-2.6.24-mpc5121-02-POWERPC-ipic-ack-only-for-edge-int.patch
+Patch3		: linux-2.6.24-mpc5121-03-POWERPC-Add-support-for-mpc512x-in.patch
+Patch4		: linux-2.6.24-mpc5121-04-POWERPC-Add-IPIC-Kconfig-option.patch
+Patch5		: linux-2.6.24.6-mpc5121-Basic-kernel.patch
+Patch6		: linux-2.6.24.6-mpc5121-Device-tree.patch
+Patch7		: linux-2.6.24-mpc5121-07-POWERPC-Separate-MPC52xx-PSC-FIFO-.patch
+Patch8		: linux-2.6.24-mpc5121-08-POWERPC-mpc5200-Cleanup-checkpatch.patch
+Patch9		: linux-2.6.24-mpc5121-09-Factor-out-5200-dependencies-from-.patch
+Patch10		: linux-2.6.24-mpc5121-10-Add-MPC512x-support-to-MPC52xx-psc.patch
+Patch11		: linux-2.6.24-mpc5121-11-POWERPC-add-e300c4-entry-to-cputab.patch
+Patch12		: linux-2.6.24.6-mpc5121-FEC-support.patch
+Patch13		: linux-2.6.24.6-mpc5121-clock-driver.patch
+Patch14		: linux-2.6.24.6-mpc5121-FEC-Power-management.patch
+Patch15		: linux-2.6.24.6-mpc5121-DIU-frame-buffer-driver.patch
+Patch16		: linux-2.6.24.6-mpc5121-DMA-driver.patch
+Patch17		: linux-2.6.24.6-mpc5121-ADS-AC97-iopad-setup.patch
+Patch18		: linux-2.6.24.6-mpc5121-POWERPC-FSL-I2C-devtree-cleanups.patch
+Patch19		: linux-2.6.24.6-mpc5121-I2C.patch
+Patch20		: linux-2.6.24.6-mpc5121-NAND-flash-controller.patch
+Patch21		: linux-2.6.25-CAN-01-Allocate-protocol-numbers-for-PF_CAN.patch
+Patch22		: linux-2.6.25-CAN-02-Add-PF_CAN-core-module.patch
+Patch23		: linux-2.6.25-CAN-03-Add-raw-protocol.patch
+Patch24		: linux-2.6.25-CAN-04-Add-broadcast-manager-bcm-protocol.patch
+Patch25		: linux-2.6.25-CAN-05-Add-virtual-CAN-netdevice-driver.patch
+Patch26		: linux-2.6.25-CAN-06-Fix-plain-integer-definitions-in-users.patch
+Patch27		: linux-2.6.25-CAN-07-Add-missing-Kbuild-entries.patch
+Patch28		: linux-2.6.25-CAN-08-Add-maintainer-entries.patch
+Patch29		: linux-2.6.25-CAN-09-Add-documentation.patch
+Patch30		: linux-2.6.25-CAN-10-Clean-up-module-auto-loading.patch
+Patch31		: linux-2.6.25-CAN-11-Move-proto_-un-register-out-of-spin-lo.patch
+Patch32		: linux-2.6.25-CAN-12-Minor-clean-ups.patch
+Patch33		: linux-2.6.24.6-mpc5121-Real-time-clock.patch
+Patch34		: linux-2.6.24.6-mpc5121-DIU-three-plane-support.patch
+Patch35		: linux-2.6.24.6-mpc5121-DIU-separate-plat-functions.patch
+Patch36		: linux-2.6.24.6-mpc5121-AXE-and-MBX.patch
+Patch37		: linux-2.6.24.6-mpc5121-Clock-rework.patch
+Patch38		: linux-2.6.24.6-mpc5121-MSCAN-driver-from-socketCAN-project.patch
+Patch39		: linux-2.6.24.6-mpc5121-MSCAN-for-MPC5121.patch
+Patch40		: linux-2.6.24.6-mpc5121-5200-5121-Merged-can.patch
+Patch41		: linux-2.6.24.6-mpc5121-MSCAN-naming-update.patch
+Patch42		: linux-2.6.24.6-mpc5121-fix-sram-device-node.patch
+Patch43		: linux-2.6.24.6-mpc5121-USB-USB-for-2.6.24.patch
+Patch44		: linux-2.6.24.6-mpc5121-iopad-config-cleanup.patch
+Patch45		: linux-2.6.24.6-mpc5121-uart-prescaler-init.patch
+Patch46		: linux-2.6.24.6-mpc5121-PSC-fifo-size-init.patch
+Patch47		: linux-2.6.24.6-mpc5121-FEC-TX-Alignment.patch
+Patch48		: linux-2.6.24.6-mpc5121-Fix-PSCFIFO-error-bits.patch
+Patch49		: linux-2.6.24.6-mpc5121-AC97-ASoC-driver.patch
+Patch50		: linux-2.6.24.6-mpc5121-AC97-reset-fix.patch
+Patch51		: linux-2.6.24.6-mpc5121-ADS-add-cpld-pic.patch
+Patch52		: linux-2.6.24.6-mpc5121-Add-PCI-support.patch
+Patch53		: linux-2.6.24.6-mpc5121-hide-pci-bridge.patch
+Patch54		: linux-2.6.24.6-mpc5121-Barebones-PSC-GPIO-driver.patch
+Patch55		: linux-2.6.24.6-mpc5121-Add-PSCFIFO-bit-definitions.patch
+Patch56		: linux-2.6.24.6-mpc5121-Support-console-on-different-PSC.patch
+Patch57		: linux-2.6.24.6-mpc5121-SPI-Driver.patch
+Patch58		: linux-2.6.24.6-mpc5121-ADS7843-touchscreen-support.patch
+Patch59		: linux-2.6.24.6-mpc5121-Power-management-support.patch
+Patch60		: linux-2.6.24.6-mpc5121-Power-management-test.patch
+Patch61		: linux-2.6.24.6-mpc5121-Export-fsl_dma_xxx-routines.patch
+Patch62		: linux-2.6.24.6-mpc5121-MPC5121e-PATA-driver.patch
+Patch63		: linux-2.6.24.6-mpc5121-USB-switch-to-new-clock-name.patch
+Patch64		: linux-2.6.24.6-mpc5121-DIU-gamma-support.patch
+Patch65		: linux-2.6.24.6-mpc5121-USB-Add-OTG-susp-res-msg.patch
+Patch66		: linux-2.6.24.6-mpc5121-Make-cpld-irq-conditional.patch
+Patch67		: linux-2.6.24.6-mpc5121-fix-fsl_nand-typo.patch
+Patch68		: linux-2.6.24.6-mpc5121-Enable-wakeup-from-CAN-event.patch
+Patch69		: linux-2.6.24.6-mpc5121-Fix-AC97-driver-PM.patch
+Patch70		: linux-2.6.24.6-mpc5121-Disable-unused-serial-transeivers.patch
+Patch71		: linux-2.6.24.6-mpc5121-Add-ad1939-codec.patch
+Patch72		: linux-2.6.24.6-mpc5121-ad1939-codec-big-endian.patch
+Patch73		: linux-2.6.24.6-mpc5121-Early-CPLD-mapping.patch
+Patch74		: linux-2.6.24.6-mpc5121-Cleanup-ADS5121-ASoC-driver.patch
+Patch75		: linux-2.6.24.6-mpc5121-Add-MPC5121e-ASoC-I2S-support.patch
+Patch76		: linux-2.6.24.6-mpc5121-Make-I2S-or-AC97-a-choice.patch
+Patch77		: linux-2.6.24.6-mpc5121-save-restore-AC97-volume.patch
+Patch78		: linux-2.6.24.6-mpc5121-Fix-I2S-link-failure.patch
+Patch79		: linux-2.6.24.6-mpc5121-79-Rev-1.5-NFC-bad-block-fix.patch
+Patch80		: linux-2.6.24.6-mpc5121-80-ADS5121-Rev4-platform-support.patch
+Patch81		: linux-2.6.24.6-mpc5121-81-MPC5121-DIU-rev2-silicon.patch
+Patch82		: linux-2.6.24.6-mpc5121-82-USB-dma_sync-workaround.patch
+Patch83		: linux-2.6.24.6-mpc5121-83-USB-serial-gadget-CDC-ACM-fixes.patch
+Patch84		: linux-2.6.24.6-mpc5121-84-USB-driver-unification-changes.patch
+Patch85		: linux-2.6.24.6-mpc5121-85-USB-suspend-resume-support.patch
+Patch86		: linux-2.6.24.6-mpc5121-86-USB-Fix-gadget-oops-if-no-xcvr.patch
+Patch87		: linux-2.6.24.6-mpc5121-87-USB-Rev-2.0-endian-fixes.patch
+Patch88		: linux-2.6.24.6-mpc5121-88-USB-remove-port1-property.patch
+Patch89		: linux-2.6.24.6-mpc5121-89-USB-restore-gdgt-suspnd-res-msg.patch
+Patch90		: linux-2.6.24.6-mpc5121-90-USB-otg-cleanup.patch
+Patch91		: linux-2.6.24-ubifs.patch
+Patch92		: linux-2.6.24.6-mpc5121-92-ADS5121-cpld-irq-routing-fix.patch
+Patch93		: linux-2.6.24.6-mpc5121-93-ADS5121-onboard-rtc-support.patch
+Patch94		: linux-2.6.24-mx-ENGR00068619-Keep-JFFS2-from-using-OOB-on.patch
+Patch95		: linux-2.6.24.6-mpc5121-95-Silicon-Rev-2-NAND-support.patch
+Patch96		: linux-2.6.24.6-mpc5121-96-PATA-use-mmio.patch
+Patch97		: linux-2.6.24.6-mpc5121-97-Fix-JFFS-NAND-mount-error.patch
+Patch98		: linux-2.6.24.6-mpc5121-98-PSC-Serial-hw-handshake.patch
+Patch99		: linux-2.6.24.6-mpc5121-99-PM-alternate-external-int-vector.patch
+Patch100	: linux-2.6.24.6-mpc5121-100-PM-make-standby-deepsleep.patch
+Patch101	: linux-2.6.24.6-mpc5121-101-PM-prep-patch-for-hibernate.patch
+Patch102	: linux-2.6.24.6-mpc5121-102-PM-hibernate-for-ADS5121.patch
+Patch103	: linux-2.6.24.6-mpc5121-103-PM-wakeup-on-RTC-from-DeepSleep.patch
+Patch104	: linux-2.6.24.6-mpc5121-104-rev2-device-tree-updates.patch
+Patch105	: linux-2.6.24.6-mpc5121-105-DIU-add-byteflip-ioctl.patch
+Patch106	: linux-2.6.24.6-mpc5121-106-POWERPC-sensible-default-clock.patch
+Patch107	: linux-2.6.24.6-mpc5121-107-USB-Add-USB_DEVICE_TEST_MODE-st.patch
+Patch108	: linux-2.6.24.6-mpc5121-108-Add-rev2-silicon-mscan-clock-st.patch
+Patch109	: linux-2.6.24.6-mpc5121-109-CAN-Add-support-for-Rev2-silico.patch
+Patch110	: linux-2.6.24.6-mpc5121-110-USB-gadget-flush-cache-for-the-.patch
+Patch111	: linux-2.6.24.6-mpc5121-111-USB-ether-gadget-Don-t-report-t.patch
+Patch112	: linux-2.6.24.6-mpc5121-uvcvideo-driver.patch
+Patch113	: linux-2.6.24.6-mpc5121-uvcvideo-remove-ref-to-hardware.patch
+Patch114	: linux-2.6.24.6-mpc5121-114-DMA-Export-fsl_dma_disable.patch
+Patch115	: linux-2.6.24.6-mpc5121-115v2-USB-Set-INCR8-mode-for-system.patch
+Patch116	: linux-2.6.24.6-mpc5121-116-PATA-limit-udma-to-udma4-and-lo.patch
+Patch117	: linux-2.6.24.6-mpc5121-117-PM-hibernate-for-ADS5121-part-2.patch
+Patch118	: linux-2.6.24.6-mpc5121-118v2-VIU-driver.patch
+Patch119	: linux-2.6.24.6-mpc5121-119-RTC-allow-wakeups-via-sysfs.patch
+Patch120	: linux-2.6.24.6-mpc5121-120-PM-CAN-deep-sleep-fix.patch
+Patch121	: linux-2.6.24.6-mpc5121-121v2-SDHC-driver.patch
+Patch122	: linux-2.6.24.6-mpc5121-122-FEC-fix-fec-DMA_CONTROL-field-o.patch
+Patch123	: linux-2.6.24.6-mpc5121-123-fs_enet-PM-suspend-resume-fix.patch
+Patch124	: linux-2.6.24.6-mpc5121-124-SPI-Fix-MR2-and-EOF-bug.patch
+Patch125	: linux-2.6.24.7-mpc5121-125-fix-SMP-ordering-hole-in-fcntl_.patch
+Patch126	: linux-2.6.24.7-mpc5121-126-Linux-2.6.24.7.patch
+Patch127	: linux-2.6.24.7-mpc5121-127-Linux-2.6.24.7-rt21.patch
+Patch128	: linux-2.6.24.6-mpc5121-128-PATA-better-error-recovery.patch
+Patch129	: linux-2.6.24.6-mpc5121-129-DIU-MFB_WAIT_FOR_VSYNC-ioctl.patch
+Patch130	: linux-2.6.24.6-mpc5121-130-DIU-implement-double-buffering.patch
+
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+From kernel.org
+All patches from Freescale
+
+%Prep
+%setup -n %{pkg_name}-%{dversion}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1
+%patch18 -p1
+%patch19 -p1
+%patch20 -p1
+%patch21 -p1
+%patch22 -p1
+%patch23 -p1
+%patch24 -p1
+%patch25 -p1
+%patch26 -p1
+%patch27 -p1
+%patch28 -p1
+%patch29 -p1
+%patch30 -p1
+%patch31 -p1
+%patch32 -p1
+%patch33 -p1
+%patch34 -p1
+%patch35 -p1
+%patch36 -p1
+%patch37 -p1
+%patch38 -p1
+%patch39 -p1
+%patch40 -p1
+%patch41 -p1
+%patch42 -p1
+%patch43 -p1
+%patch44 -p1
+%patch45 -p1
+%patch46 -p1
+%patch47 -p1
+%patch48 -p1
+%patch49 -p1
+%patch50 -p1
+%patch51 -p1
+%patch52 -p1
+%patch53 -p1
+%patch54 -p1
+%patch55 -p1
+%patch56 -p1
+%patch57 -p1
+%patch58 -p1
+%patch59 -p1
+%patch60 -p1
+%patch61 -p1
+%patch62 -p1
+%patch63 -p1
+%patch64 -p1
+%patch65 -p1
+%patch66 -p1
+%patch67 -p1
+%patch68 -p1
+%patch69 -p1
+%patch70 -p1
+%patch71 -p1
+%patch72 -p1
+%patch73 -p1
+%patch74 -p1
+%patch75 -p1
+%patch76 -p1
+%patch77 -p1
+%patch78 -p1
+%patch79 -p1
+%patch80 -p1
+%patch81 -p1
+%patch82 -p1
+%patch83 -p1
+%patch84 -p1
+%patch85 -p1
+%patch86 -p1
+%patch87 -p1
+%patch88 -p1
+%patch89 -p1
+%patch90 -p1
+%patch91 -p1
+%patch92 -p1
+%patch93 -p1
+%patch94 -p1
+%patch95 -p1
+%patch96 -p1
+%patch97 -p1
+%patch98 -p1
+%patch99 -p1
+%patch100 -p1
+%patch101 -p1
+%patch102 -p1
+%patch103 -p1
+%patch104 -p1
+%patch105 -p1
+%patch106 -p1
+%patch107 -p1
+%patch108 -p1
+%patch109 -p1
+%patch110 -p1
+%patch111 -p1
+%patch112 -p1
+%patch113 -p1
+%patch114 -p1
+%patch115 -p1
+%patch116 -p1
+%patch117 -p1
+%patch118 -p1
+%patch119 -p1
+%patch120 -p1
+%patch121 -p1
+%patch122 -p1
+%patch123 -p1
+%patch124 -p1
+%patch125 -p1
+%patch126 -p1
+%patch127 -p1
+%patch128 -p1
+%patch129 -p1
+%patch130 -p1

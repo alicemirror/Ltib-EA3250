@@ -1,0 +1,24 @@
+           README for LTIB (GNU/Linux Target Image Builder)
+
+This directory contains various tools and utilities to build GNU/Linux
+target images from various source/binary packages.
+
+The code is licensed under the terms of the GPL (see COPYING).
+The documentation is licenced under the terms of the FDL (see doc/COPYING).
+The rest of the documentation can be found in the 'doc' directory.
+
+See doc/LtibInstall for installation instructions.
+
+See doc/LtibFaq for answers to common questions.
+
+Please report bugs to : stuarth@freescale.com
+
+Copyright © Freescale Semiconductor, Inc. 2004-2007. All rights reserved.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.2
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
+Texts.  A copy of the license is included in the file doc/COPYING
+
+

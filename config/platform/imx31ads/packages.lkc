@@ -1,0 +1,22 @@
+comment 'Platform specific package selection'
+
+config PKG_GST_FSLV4LSINK
+    select PKG_GST_PLUGINS_BASE
+    select PKG_GSTREAMER_CORE
+    bool "gstreamer-plugins-fslv4lsink"
+    help
+          This package provides the Freescale Video4Linux2 Sink Plugin.
+
+config PKG_MXC_MISC
+    select PKG_KERNEL_LEAVESRC
+    bool "mxc-misc"
+    default n
+    help
+      This package provides unit tests and libraries that are specific to
+      the mxc platform.
+
+config PKG_TVOUT_TEST_MX31
+    bool "tvout-test-mx31"
+    help
+      tvout-test-mx31 is a package to test the i.MX31 ADS TV-Out encoder card.
+

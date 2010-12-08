@@ -1,0 +1,8 @@
+comment 'Platform specific package selection'
+
+config PKG_MCF54455_DEMO
+    bool "HTML files for the M54455EVB demo"
+    default n
+    help
+        Say yes if you want to build the demo for Coldfire MCF54455EVB
+

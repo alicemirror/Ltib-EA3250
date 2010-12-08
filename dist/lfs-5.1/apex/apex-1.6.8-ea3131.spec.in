@@ -1,0 +1,34 @@
+# Template = apex-common.tmpl
+%define pfx /opt/nxp/rootfs/%{_target_cpu}
+
+Summary         : Apex bootloader
+Name            : apex
+Version         : 1.6.8
+Release         : 1
+License         : GPL
+Vendor          : NXP
+Packager        : Kevin Wells
+Group           : Applications/System
+Source          : %{name}-%{version}.tar.bz2
+Patch0		: apex-1.6.8_lpc313x.patch
+patch1		: apex-1.6.8_lpc313x_nand.patch
+patch2		: apex-1.6.8_lpc313x_r1a_to_r2.patch
+patch3		: apex-1.6.8_lpc313x_r2_to_r2a.patch
+patch4		: apex-1.6.8_lpc313x_r2a_to_r2c.patch
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+This specfile attempts to recreate the Apex 1.6.8 binary
+needed for the Embedded Artists 3131 board.
+
+%Prep
+%setup -n %{name}-%{version}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+

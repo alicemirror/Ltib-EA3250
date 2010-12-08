@@ -1,0 +1,21 @@
+# template = u-boot-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define buildsubdir %{name}-%{version}
+
+Summary         : Universal Bootloader firmware
+Name            : u-boot
+Version         : local
+Release         : 1
+License         : GPL
+Vendor          : Freescale Semiconductor
+Packager        : Stuart Hughes
+Group           : System Environment/Kernel
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+%Prep
+

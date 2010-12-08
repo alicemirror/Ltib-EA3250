@@ -1,0 +1,120 @@
+# constants (forced values)
+config CONFIG_TITLE
+    string
+    default "LTIB: Freescale MPC7448HPCII PPC development board"
+
+config PLATFORM_COMMENT
+    string
+    default "Freescale MPC7448HPCII PPC development board"
+
+config VENDOR
+    string
+    default "Freescale"
+
+config PLATFORM
+    string
+    default mpc7448hpcii
+
+config GNUTARCH
+    string
+    default powerpc
+
+config LINTARCH
+    string
+    default ppc
+
+config CFGHOST
+    string
+    default powerpc-linux
+
+# capabilities if different from defaults.lkc
+
+source ../../userspace/endian.lkc
+source ../../userspace/libc_type.lkc
+source ../../userspace/toolchain.lkc
+
+
+comment "Bootloader"
+
+config BOOTLOADER1
+    bool "Build a boot loader"
+    default y
+    help
+        Selecting this will build the u-boot boot loader
+
+menu "U-Boot options"
+    depends on BOOTLOADER1
+config PKG_U_BOOT_CW
+    bool "CodeWarrior support"
+    default n
+    help
+        Select this to enable CodeWarrior debugging support in U-Boot
+endmenu
+
+config PKG_U_BOOT
+    string
+    default "u-boot-fsl-mpc7448" if BOOTLOADER1
+config PKG_U_BOOT_CONFIG_TYPE
+    string
+    default "mpc7448hpc2_config" if BOOTLOADER1
+config PKG_U_BOOT_BUILD_ARGS
+    string
+    default "OPTFLAGS=-O2" if !PKG_U_BOOT_CW
+    default "OPTFLAGS=-O2 CONFIG_CW=1" if PKG_U_BOOT_CW
+
+comment "Choose your Kernel"
+choice
+    prompt "kernel"
+    default KERNEL_NONE
+    help
+        This menu will let you choose the kernel to use with your board.
+        If you don't want to build a kernel, unselect this option.
+
+    config KERNEL1
+    	bool "Linux 2.6.11 + MPC7448HPCII patch"
+    config KERNEL_DIR_BUILD
+        bool "Local Linux directory build"
+        help
+            Build using a local copy of the kernel sources
+    config KERNEL_NONE
+        bool "Don't build the Linux kernel"
+        help
+            Select this if you dont want to build the kernel or provide your own
+endchoice
+
+config PKG_KERNEL
+    string
+    default "kernel-2.6.11-mpc7448" if KERNEL1
+    default "kernel26-dir-build"    if KERNEL_DIR_BUILD
+
+source ../../userspace/kernel_dir_build.lkc
+
+config PKG_KERNEL_WANT_HEADERS
+    depends ! KERNEL_NONE
+    bool "Include kernel headers"
+    help
+        Selecting this will copy kernel headers to rootfs/usr/src/linux/include
+
+config PKG_KERNEL_PRECONFIG
+    string
+    default "linux_2.6.11_mpc7448hpcii_def.config" if KERNEL1
+    default "linux_2.6.11_mpc7448hpcii_def.config" if KERNEL_DIR_BUILD
+    
+config PKG_KERNEL_WANT_CF
+    depends ! KERNEL_NONE
+    bool "Configure the kernel"
+    default n
+
+config PKG_KERNEL_LEAVESRC
+    depends ! KERNEL_NONE
+    bool "Leave the sources after building"
+    default n
+    help
+        This is a one shot option that can be used to build the kernel and
+        leave the build source tree in rpm/BUILD in place
+
+source ../../userspace/distro.lkc
+source ../../userspace/packages.lkc
+source ../../userspace/sysconfig.lkc
+source ../../userspace/deployment.lkc
+source ../../userspace/defaults.lkc

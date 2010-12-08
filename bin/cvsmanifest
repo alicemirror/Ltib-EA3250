@@ -1,0 +1,42 @@
+#!/usr/bin/perl -w
+######################################################################
+#
+# Copyright © Freescale Semiconductor, Inc. 2004-2008. All rights reserved.
+#
+# Stuart Hughes, stuarth@freescale.com
+#
+# This file is part of LTIB.
+#
+# LTIB is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# LTIB is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with LTIB; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+#
+# Freescale GNU/Linux Target Image Builder.
+# ------------------------------------------
+# This script can be used to generate a manifest files to be used
+# when running './ltib -m trelease' and selecting localdir when prompted
+# for the cvs tag name.
+#
+######################################################################
+
+$_ =`cat CVS/Root`;
+chomp($rep =`cat CVS/Repository`);
+($cvsroot) = m,(/.*),;
+
+open(P, "cvs status 2>/dev/null |") or die;
+while(<P>) {
+    next unless m#^\s+Repository revision:.*$cvsroot/$rep/(.*),v#o;
+    next if $1 =~ m#/Attic/#;
+    print "$1\n";
+} 
+

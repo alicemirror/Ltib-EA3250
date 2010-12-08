@@ -1,0 +1,246 @@
+%TOPICTITLE%
+---
+
+<verbatim>
+Copyright © Freescale Semiconductor, Inc. 2004-2005. All rights reserved.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.2
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
+Texts.  A copy of the license is included in the file doc/COPYING
+</verbatim>
+
+
+%TOC%
+
+---+ Introduction
+
+Here is a quick note on various techniques and best practices for maintaining
+LTIB BSP.
+
+
+---+ How to upgrade a BSP (i.e. not-maintenance).
+
+---++ Scenario
+
+A BSP exists for a target and some time has gone by.  Now you want to
+re-release that BSP, possibly adding new kernels, toolchains bootloaders etc.
+What should you do?
+
+---++ Which CVS should I use
+
+After the last release of this BSP, the release team should have merged
+back from their branch into the trunk of CVS.  If this has not happened,
+you must do this first.  
+
+Now that some time has gone by and you are adding something new not
+so much  fixing a bug (even though that may be an indirect consequence)
+you should be working to start with on the HEAD of the trunk of CVS.
+
+Once you have added the new stuff and have it basically working, you should
+re-branch and follow the release process documented in LtibReleaseProcess
+
+
+---++ Principles
+
+   1. If we've released something before the selections
+   of kernel/bootloader/toolchain should still be available to users
+   2. Don't knowingly break older stuff.  
+   3. Newer is not always better (to everyone).  Some people really need
+   to have the old stuff available to them (even if it's not the default).
+
+
+---++ What should I do to add a new toolchain and kernel?
+
+---+++ General principles
+
+Lets say you have new toolchain and a new kernel that you want to
+upgrade people to.  Here's what to do:
+
+   * __ADD__ the new toolchain as the next one in the selection list.  
+   * __LEAVE__ the old toolchain tokens in place
+
+---+++ Example: adding a new toolchain
+
+In the patch below, here's an example showing how I added a new toolchain
+to the tqm823l platform:
+
+<verbatim>
+$  cvs diff -r 1.31 -r 1.32 config/platform/tqm823l/main.lkc
+Index: config/platform/tqm823l/main.lkc
+===================================================================
+RCS file: /cm/vault/ltib/ltib/config/platform/tqm823l/main.lkc,v
+retrieving revision 1.31
+retrieving revision 1.32
+diff -u -r1.31 -r1.32
+--- config/platform/tqm823l/main.lkc    24 May 2006 15:41:29 -0000      1.31
++++ config/platform/tqm823l/main.lkc    27 Jul 2006 12:47:30 -0000      1.32
+@@ -54,6 +54,8 @@
+         bool "ppc-823 gcc-3.3.2/glibc-2.3.2 soft-float" if GLIBC || LIBC_NONE
+     config TOOLCHAIN2
+         bool "gcc-3.3.5/uclibc-0.9.2" if UCLIBC || LIBC_NONE
++    config TOOLCHAIN3
++        bool "gcc-4.0.2/glibc-2.3.6 soft float" if GLIBC || LIBC_NONE
+     config TOOLCHAIN_CUSTOM
+         bool "custom"
+ endchoice
+@@ -62,11 +64,13 @@
+     string
+     default mtwk-lnx-powerpc-823-gcc-3.3.2-glibc-2.3.2-0.28-7.i686.rpm if TOOLCHAIN1
+     default ppc-uclibc-tc-20050308-2.i686.rpm if TOOLCHAIN2
++    default tc-fsl-x86lnx-823-4.0.2-2.i386.rpm if TOOLCHAIN3
+
+ config TOOLCHAIN_PATH
+     string
+     default "/opt/mtwk/usr/local/powerpc-823-linux/gcc-3.3.2-glibc-2.3.2" if TOOLCHAIN1
+     default "/opt/mtwk/usr/local/uclibc/ppc_nofpu" if TOOLCHAIN2
++    default "/opt/freescale/usr/local/gcc-4.0.2-glibc-2.3.6-2/powerpc-823-linux" if TOOLCHAIN3
+     string "Supply your toolchain path" if TOOLCHAIN_CUSTOM
+
+ config CUSTOM_TOOLCHAIN_PREFIX
+@@ -77,7 +81,7 @@
+
+ config TOOLCHAIN_PREFIX
+     string
+-    default "powerpc-823-linux-" if TOOLCHAIN1
++    default "powerpc-823-linux-" if TOOLCHAIN1 || TOOLCHAIN3
+     default "powerpc-linux-uclibc-" if TOOLCHAIN2
+     default CUSTOM_TOOLCHAIN_PREFIX if TOOLCHAIN_CUSTOM
+
+</verbatim>
+
+
+---+++ Example: adding a new kernel
+
+Here is an example that shows the addition of a new kernel to a target.
+
+First, here's the patch of the main.lkc file.  I've snipped it back
+to remove the hunks we're not interested in:
+
+<verbatim>
+$ cvs diff -r 1.2 -r1.3 config/platform/qs875s/main.lkc
+Index: config/platform/qs875s/main.lkc
+===================================================================
+RCS file: /sources/ltib/ltib/config/platform/qs875s/main.lkc,v
+retrieving revision 1.2
+retrieving revision 1.3
+diff -u -r1.2 -r1.3
+--- config/platform/qs875s/main.lkc     27 Feb 2007 14:43:16 -0000      1.2
++++ config/platform/qs875s/main.lkc     6 Mar 2007 17:20:39 -0000       1.3
+@@ -121,6 +121,8 @@
+         bool "2.4.27 (Analogue Micro Ltd)"
+     config KERNEL3
+         bool "2.6.16 (Analogue Micro Ltd)"
++    config KERNEL4
++        bool "kernel-8xx"
+     config KERNEL_DIR_BUILD
+         bool "Local Linux directory build"
+         help
+@@ -135,6 +137,7 @@
+     string
+     default "kernel-2.4.27-875"               if KERNEL1
+     default "kernel-2.6.16-875"               if KERNEL3
++    default "kernel-8xx"                      if KERNEL4
+     default "kernel26-dir-build"              if KERNEL_DIR_BUILD
+
+ source ../../userspace/kernel_dir_build.lkc
+@@ -153,6 +156,7 @@
+     string "kernel config"
+     default "linux-2.4.x-am_adder_87x.config" if KERNEL1
+     default "linux-2.6.16-am_adder_87x.config" if KERNEL3 || KERNEL_DIR_BUILD
++    default "linux-8xx-am_adder_87x.config" if KERNEL4
+
+ config PKG_KERNEL_WANT_CF
+     depends ! KERNEL_NONE
+</verbatim>
+
+Here's an explanation:
+
+   * Hunk '@@ -121,6 +121,8 @@' shows the new menu prompt under the kernel
+   choice list selection "kernel-8xx"
+
+   * Hunk '@@ -135,6 +137,7 @@' Shows that the new kernel (#4) will select
+   the spec file who's base name is "kernel-8xx" as the rpm spec file
+   that will be used in order to build the kernel.  It is this spec file
+   that references the source tarball and patches that belong to this kernel
+
+   * Hunk '@@ -153,6 +156,7 @@' Shows that the new kernel (#4) will select
+   the new linux .config file "linux-8xx-am_adder_87x.config"
+
+In addition to changing this main.lkc for this example I needed do the
+following:
+
+   * Create (maybe based on a copy) the file:
+   config/platform/qs875s/linux-8xx-am_adder_87x.config
+
+   * Create (maybe based on a copy) the file:
+   dist/lfs-5.1/kernel/kernel-8xx.spec.in 
+
+
+---++ Remember to upload the content to the GPP or send a patch
+
+Before you check-in changes to LTIB CVS that reference new content
+(e.g. toolchains, source tarballs and patches), you must uploaded
+the to the GPP using this link: http://www.bitshrine.org/cgi-bin/gpp_upload.cgi
+
+In order to use this link you must be a trusted developer with a password.
+Until that has been arranged, please send patches to the LTIB public
+mailing list
+
+---++ Pre-selecting the new stuff
+
+Having added your changes to main.lkc (leaving the old stuff in place), 
+and added any new config files, run:
+<verbatim>
+./ltib --configure
+</verbatim>
+
+Make the changes you need to your overall configuration so that the BSP
+works with your updates as you require.  Your configuration points
+will now have been captured in:
+
+   * config/platform/&lt;target&gt;/defconfig.dev
+   * config/platform/&lt;target&gt;/&lt;linux_config_name&gt;.dev
+
+If you want to make your new overall configuraton the new default, move
+the config/platform/&lt;target&gt;/defconfig.dev to 
+config/platform/&lt;target&gt;/defconfig and check-in the update.
+
+If you have updated your new Linux configuration file, you should move
+this from the '.dev' name to a version without the '.dev'.  Normally
+this will be a new file, so you need to 'cvs add' it before checking
+it in to cvs.
+
+
+---++ Why is this important
+
+Imagine you're a poor user using CVS.  Your config is setup and you're
+working on (and happy with) a certain toolchain and kernel.  If someone
+changes the meaning of TOOLCHAIN1 or KERNEL1, when you do a cvs update,
+you'll be subjected to a situation whereby your current configuration is
+invalid.  Worse still the old selections you _WANTED_ have disappeared.
+How rude....
+
+This situation would likely lead to frustration by users and lots of
+extra support traffic.
+
+---++ Conclusion
+
+---+++ Dos
+
+   * Add new stuff
+   * Update the defconfig
+
+---+++ Donts
+
+   * Remove old stuff 
+
+---+++ Exceptions
+
+There are always exceptions, but please discuss first on the LTIB list
+if you are thinking that your case is an exception.
+
+----
+
+-- Main.StuartHughes - %SERVERTIME%

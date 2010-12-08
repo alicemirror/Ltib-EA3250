@@ -1,0 +1,213 @@
+menu "Network setup"
+
+depends SYSCFG_START_NETWORK
+
+comment ""
+
+config SYSCFG_IFACE0
+    bool "Enable interface 0"
+    default y
+
+if SYSCFG_IFACE0
+
+config SYSCFG_NET_INTERFACE0
+    default "eth0"
+    string "interface"
+
+config SYSCFG_DHCPC0
+    bool "get network parameters using dhcp"
+    help
+       Careful if you use this if you are booting using nfsroot
+       the dhcp client will not be used and we will use the values
+       from the boot loader.  When your lease expires (4 days) your
+       system will lose it's connection with the NFS server
+
+
+if ! SYSCFG_DHCPC0
+
+config SYSCFG_IPADDR0
+    default "192.168.0.254"
+    string "IP address"
+
+config SYSCFG_NET_MASK0
+    default "255.255.255.0"
+    string "netmask"
+
+config SYSCFG_NET_BROADCAST0
+    default "192.168.0.255"
+    string "broadcast address"
+
+config SYSCFG_NET_GATEWAY0
+    default "192.168.0.1"
+    string "gateway address"
+
+config SYSCFG_NAMESERVER0
+    default "192.168.0.1"
+    string "nameserver IP address"
+endif
+endif
+
+
+comment ""
+
+config SYSCFG_IFACE1
+    bool "Enable interface 1"
+
+if SYSCFG_IFACE1
+
+config SYSCFG_NET_INTERFACE1
+    default "eth1"
+    string "interface"
+
+config SYSCFG_DHCPC1
+    bool "get network parameters using dhcp"
+    help
+       Do not use this if you are booting using nfsroot
+
+if ! SYSCFG_DHCPC1
+
+config SYSCFG_IPADDR1
+    default "192.168.1.254"
+    string "IP address"
+
+config SYSCFG_NET_MASK1
+    default "255.255.255.0"
+    string "netmask"
+
+config SYSCFG_NET_BROADCAST1
+    default "192.168.1.255"
+    string "broadcast address"
+
+config SYSCFG_NET_GATEWAY1
+    default "192.168.1.1"
+    string "gateway address"
+
+config SYSCFG_NAMESERVER1
+    default "192.168.1.1"
+    string "nameserver IP address"
+endif
+endif
+
+
+comment ""
+
+config SYSCFG_IFACE2
+    bool "Enable interface 2"
+
+if SYSCFG_IFACE2
+
+config SYSCFG_NET_INTERFACE2
+    default "eth2"
+    string "interface"
+
+config SYSCFG_DHCPC2
+    bool "get network parameters using dhcp"
+    help
+       Do not use this if you are booting using nfsroot
+
+if ! SYSCFG_DHCPC2
+
+config SYSCFG_IPADDR2
+    default "192.168.2.254"
+    string "IP address"
+
+config SYSCFG_NET_MASK2
+    default "255.255.255.0"
+    string "netmask"
+
+config SYSCFG_NET_BROADCAST2
+    default "192.168.2.255"
+    string "broadcast address"
+
+config SYSCFG_NET_GATEWAY2
+    default "192.168.2.1"
+    string "gateway address"
+endif
+endif
+
+comment ""
+
+config SYSCFG_IFACE3
+    bool "Enable interface 3"
+
+if SYSCFG_IFACE3
+
+config SYSCFG_NET_INTERFACE3
+    default "eth3"
+    string "interface"
+
+config SYSCFG_DHCPC3
+    bool "get network parameters using dhcp"
+    help
+       Do not use this if you are booting using nfsroot
+
+if ! SYSCFG_DHCPC3
+
+config SYSCFG_IPADDR3
+    default "192.168.3.254"
+    string "IP address"
+
+config SYSCFG_NET_MASK3
+    default "255.255.255.0"
+    string "netmask"
+
+config SYSCFG_NET_BROADCAST3
+    default "192.168.3.255"
+    string "broadcast address"
+
+config SYSCFG_NET_GATEWAY3
+    default "192.168.3.1"
+    string "gateway address"
+endif
+endif
+
+
+comment ""
+
+config SYSCFG_IFACE4
+    bool "Enable interface 4"
+
+if SYSCFG_IFACE4
+
+config SYSCFG_NET_INTERFACE4
+    default "eth4"
+    string "interface"
+
+config SYSCFG_DHCPC4
+    bool "get network parameters using dhcp"
+    help
+       Do not use this if you are booting using nfsroot
+
+if ! SYSCFG_DHCPC4
+
+config SYSCFG_IPADDR4
+    default "192.168.4.254"
+    string "IP address"
+
+config SYSCFG_NET_MASK4
+    default "255.255.255.0"
+    string "netmask"
+
+config SYSCFG_NET_BROADCAST4
+    default "192.168.4.255"
+    string "broadcast address"
+
+config SYSCFG_NET_GATEWAY4
+    default "192.168.4.1"
+    string "gateway address"
+endif
+endif
+
+if SYSCFG_DHCPC0 || SYSCFG_DHCPC1 || SYSCFG_DHCPC2 || SYSCFG_DHCPC3 || SYSCFG_DHCPC4
+
+config SYSCFG_DHCPC_CMD
+   string "DHCP client startup"
+   default "dhclient -q "  if   PKG_DHCP_WANT_CLIENT
+   default "udhcpc -b -i " if ! PKG_DHCP_WANT_CLIENT
+   help
+       This entry specifies how to start the DHCP client
+
+endif
+
+endmenu
+

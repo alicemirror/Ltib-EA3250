@@ -1,0 +1,43 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define dversion 2.6.13
+%define pkg_name linux
+
+Summary         : Linux kernel (core of the Linux operating system)
+Name            : kernel
+Version         : 2.6.13
+Release         : 1
+License         : GPL
+Vendor          : kernel.org
+Packager        : Stuart Hughes
+Group           : System Environment/Kernel
+Source          : %{pkg_name}-%{dversion}.tar.gz
+Patch0          : patch-2.6.13.4.gz
+Patch1          : kernel-2.6.13-mpc8349itx-all-20060713.patch
+Patch2          : kernel-2.6.13-83xx-PCI-coherency.patch
+Patch3          : mpc8349itx-linux26-20060320-gianfar-fixes.patch
+Patch4          : mpc8349itx-linux26-20060620-gianfar-opt.patch
+Patch5          : kernel-2.6.13-mpc8349itx-gp-mod-20060831.patch
+Patch6          : kernel-2.6.13-mpc8349itx-rtc-usb-20060914.patch
+Patch7          : kernel-2.6.13-gcc4.patch
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+From kernel.org
+All patches from Freescale
+
+%Prep
+%setup -n %{pkg_name}-%{dversion}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+

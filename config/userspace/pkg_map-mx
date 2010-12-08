@@ -1,0 +1,6 @@
+PKG_GDB = gdb-6.6
+PKG_MXC_LIB = mxc-lib-mx
+PKG_MXC_TEST = mxc-test-mx
+PKG_SKELL = skell-mx
+PKG_SYSCONFIG = sysconfig-mx
+PKG_UDEV = udev-mx

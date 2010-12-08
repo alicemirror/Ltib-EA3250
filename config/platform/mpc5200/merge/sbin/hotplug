@@ -1,0 +1,4 @@
+#!/bin/sh
+[ "$DEVPATH" = "/block/sda/sda1" ] || exit 1
+[ "$ACTION" = "add" ] && mount -t vfat /dev/sda1 /mnt
+exit 0

@@ -1,0 +1,107 @@
+#
+# Please examine and set the values according to your needs.
+# The comment out values have good defaults.  If you want
+# to override them, uncomment and set your value.
+#
+# You can copy this to your home directory to apply these values
+# to other instances of this utility (becomes global for your user)
+#
+
+# base for location of the built root filesystem, this also doubles up as
+# the storage area for all interface libraries/headers.  This directory
+# will have rootfs appended to it
+#%bldbase
+
+# The directory where rpms will be built
+#%rpmdir
+
+# The base directory where the binary rpms go
+#%_rpmdir
+
+# The directory containing the rpm database
+#%rpmdb
+
+# The directory containing scripts that spoof the compiler
+#%spoof_path
+
+# The directory containing scripts/binaries called from the main script
+#%bin_path
+
+# Local directories, these are searched before the Local Package Pool
+# for files.  This can be a whitespace separated list (including new-lines)
+%ldirs
+/var/tmp/pkgs
+/opt/freescale/pkgs
+
+# The Local Package Pool, the global storage area for downloads.
+# This directory must exist and you must have write permission.
+# In general, leave this as it is.
+#%lpp
+
+# This is a list of the package pools to use (whitespace separated inc newline)
+%pps
+ppp
+gpp
+
+# The URL of the PPP (Private Package Pool) private code repository
+%ppp_url
+
+# The URL of the GPP (Global Package Pool) master code repository
+%gpp_url
+http://bitshrine.org/gpp/
+
+# The URL of the GPP staging area.   This is only used for -m release
+%gpp_stage_url
+http://bitshrine.org/gpp/
+
+# The URL of the Clickthru staging area.  This is only used for -m release
+%cpp_stage_url
+
+# The HTTP proxy for internet access
+# example: http://USER:PASSWORD@somehost.dom.net:PORT
+%http_proxy
+
+# For each of the sources: ppp, gpp, gpp_stage, cpp_stage
+# there is a corresponding entry that says whether or not
+# to use a proxy.
+# Valid values are: 1 : 0
+%ppp_proxy
+0
+
+%gpp_proxy
+0
+
+%gpp_stage_proxy
+0
+
+%cpp_stage_proxy
+0
+
+# use this to bypass proxy testing (set to 1)
+%bypass_network_tests
+0
+
+# use for multi-processor, or with distcc
+%MAKEFLAGS
+-j 8
+
+# distcc
+#%DISTCC_HOSTS
+#localhost @virginia:/opt/freescale/ltib/usr/bin/distccd
+
+#%DISTCC_TCP_CORK
+#0
+
+# ccache related environments
+%CCACHE_DIR
+$home/.ccache
+
+# control whether datestamps are UTC (default) or localtime
+#%use_localtime
+#0
+
+# This is used to trigger re-running the host install package
+# pass.  Bump this number up if you update a host support
+# package and you want to force others to install this update
+%host_wait_warning
+.host_wait_warning33

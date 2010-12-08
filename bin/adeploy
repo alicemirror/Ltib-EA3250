@@ -1,0 +1,5 @@
+#!/usr/bin/expect
+
+source [file dir [info script]]/adeploylib.exp
+test_setup
+passed

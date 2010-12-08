@@ -1,0 +1,389 @@
+---+ changelog for import-20090318
+
+   * .gitignore
+      * Ignore .patch, .iso and other files/links.
+
+   * .ltibrc
+      * Whitespace fixups
+      * Add configurable output directory for binary rpms (_rpmdir)
+      * Change the default buildcc to use ccache
+      * Enable ccache by default
+
+   * ltib
+      * Add _rpmdir configuration for output binary rpms
+      * Update the app version number
+      * Add correct listpkgcsv to listpkgscsv
+      * Redirect stdout to stderr for conf in batch mode
+      * Set CROSS_COMPILE to the empty string in the environment
+      * Change references to cvs to scm as we now can support git
+      * Move the callout to listpkgs function earlier
+      * Add a check when setting LINTARCH and RPMTARCh 
+      * Make distclean cleaner
+      * Add better rebuild condition checks for directory builds
+      * Take notice of 'download_only' for rebuild checks (don't delete rpms)
+      * Make directory builds or unpacked packages check for any updates
+        and if found, rebuild the package.
+      * Skip rpm build unless the pkg key has a corresponding spec name value 
+      * Exclude .git from patchmerge
+      * Update write_release_info to work with git or cvs
+      * Allow (only) CCACHE_DIR and _rpmdir to do simple indirect expansions
+      * Add SOFT_FP_ARCH and GLIBC_WANT_KERNEL_HEADERS to rpm build environment
+      * When switching cached rpm sets, remove if LINTARCH is not set/invalid
+      * Add check in mk_buildlist for $pcf being defined before call
+      * Update regex in mk_buildlist to accept empty RHS in pkg_map files
+      * Allow platform pkg_maps to define new entries, not just overrides
+      * Allow platform pkg_maps to set string values (e.g. for dir builds etc)
+      * Add new packages from platform pkg_map at 3rd to last position
+      * Make get_spec less noisy
+      * Create projtmp in check_dirs if not present
+      * Return plat_dir early when in listpkgs mode
+      * Derived platform from $plat_dir
+
+   * bin/Ltibaddsrpms.pm
+      * Pass second param to parse_spec unnecessarily)
+      * Unconditionally append RPM_BUILD_ROOT terms with with %{pfx}
+      * Simplify the placement and accuracy of sources/patches
+ 
+   * bin/Ltiblistpkgs.pm
+      * Make work on unbuilt BSPs
+
+   * bin/Ltibrelease.pm
+      * Improve comments, make consistent with git or CVS
+      * get_spec failure is no longer fatal, but warn
+      * Make releases work if LTIB is managed in a git SCM as well as CVS
+      * Improve cleanup
+      * Improve release tagging
+      * Make the precence of actual pkgs directory on ISO optional
+ 
+   * bin/Ltibutils.pm
+      * Import cf from main package
+      * Cache scmtags
+      * Source/patch tags now return the whole line (for numbering)
+      * Improve regex for prep/build/install corner cases
+      * Greatly simply variable interpolation and limit (big speed increasse)
+      * Change CVS functions to scm funtions (also works with git)
+
+   * bin/adeploy
+      * New file.  Setup basic auto-deployment
+
+   * bin/adeploylib.exp
+      * New file.  Auto-deployment support functions
+
+   * bin/blob_cmds_nfs.default
+      * New file.  Basic boot command sequence for blob
+
+   * bin/device_genromfs.txt
+      * Add event device nodes
+      * Fixup mmcblk devices
+      * Fixup spidev devices
+      * Fixup ttySDIO0
+
+   * bin/listpkginfo
+      * Complete re-write to list more and more accurate pkg information
+
+   * bin/ltib_install
+      * Test for existance of pkgs directory before copy
+
+   * bin/redboot_cmds_nfs.default
+      * New file.  Default boot command sequence for redboot
+
+   * bin/u-boot_cmds_nfs.default
+      * New file.  Default boot command sequence for u-boot
+
+   * config/defaults/busybox.config
+      * Enabled udhcd options
+
+   * config/platform/host/ltib.preconfig
+      * Add ccache
+      * Change CONFIG_PKG_DTC to CONFIG_DTC (incorrectly?)
+
+   * config/platform/host/main.lkc
+      * add choice kernel (?) 
+      
+   * config/platform/imx31ads/linux-2.6.16-mx31ads.config
+      * Deleted
+
+   * config/platform/mpc5121ads/defconfig
+      * New file
+
+   * config/platform/mpc5121ads/defconfig_ramdisk
+      * New file
+
+   * config/platform/mpc5121ads/linux-2.6.22-mpc5121ads.config
+      * New file
+
+   * config/platform/mpc5121ads/linux-2.6.24-mpc5121ads.config
+      * New file
+
+   * config/platform/mpc5121ads/linux-2.6.24.7-rt21-mpc5121ads.config
+      * New file 
+
+   * config/platform/mpc5121ads/main.lkc
+      * New file 
+
+   * config/platform/mpc5121ads/packages.lkc
+      * New file
+
+   * config/platform/mpc5121ads/pkg_map
+      * New file
+
+   * config/platform/qs875s/defconfig
+      * Updated (later uClibc toolchain)
+
+   * config/platform/tqm823l/defconfig
+      * Updated
+
+   * config/userspace/defaults.lkc
+      * Update platform defaults
+      * Set release to 9.1.1
+
+   * config/userspace/dtc.lkc
+      * New file, allows directory build option
+
+   * config/userspace/hypervisor-dir-build.lkc
+      * Removed
+
+   * config/userspace/libc_type.lkc
+      * Set no C library if platform is host
+      * Add section to use kernel headers from glibc rather than the toolchain
+
+   * config/userspace/packages.lkc
+      * Select libelf for apptrk
+      * Correct typos and spelling
+      * Add asterisk gui
+      * alsa-lib/alsa-utils now builds for nommu too now
+      * Don't enforce dependency selects if the platform is host
+      * Add udev non-raid option (rules)
+      * Move dtc/libfdt selection into its own dtc.lkc file
+      * ipsec package no longer depends on the kernel package
+      * libtermcap now also builds for nommu platforms
+      * Add mplayer
+      * ncurses now also builds for nommu platforms
+      * Add pkgconfig 
+      * rtc-test needs kernel source left unpacked
+      * samba now also builds for nommmu platforms
+      * Add package SDL
+
+   * config/userspace/pkg_map
+      * Set no default spec for the kernel
+      * Move busybox, distcc and ccache after base_libs
+      * Add mplayer
+      * Add asterisk-gui
+      * Remove platform specific only entries
+      * Add SDL
+
+   * config/userspace/pkg_map-mpc512x
+      * Remove skell/sysconfig overrides
+      * Add axe_binaries
+
+   * config/userspace/pkg_map-nommu
+      * Update apptrk entry
+
+   * config/userspace/toolchain.lkc
+      * Add gcc-4.3.2 support
+
+   * dist/lfs-5.1/alsa-lib/alsa-lib.spec
+      * update from 1.0.11rc2 to 1.0.18
+
+   * dist/lfs-5.1/alsa-utils/alsa-utils.spec
+      * Add alsa-utils-1.0.11rc2-ldl.patch
+      * Add section for nommu
+
+   * dist/lfs-5.1/apptrk/apptrk-cf-v2v3.spec
+      * Updated
+
+   * dist/lfs-5.1/apptrk/apptrk-m68k.spec
+      * Set execute permissions for apptrk
+
+   * dist/lfs-5.1/asterisk/asterisk-cf.spec
+      * New file
+
+   * dist/lfs-5.1/asterisk-gui/asterisk-gui.spec
+      * New file
+
+   * dist/lfs-5.1/axe/axe.spec
+      * Updated
+
+   * dist/lfs-5.1/axe/axe_binaries.spec
+      * New file
+
+   * dist/lfs-5.1/base_libs/base_libs.spec
+      * Add CPPSUP_LIB_DIR
+
+   * dist/lfs-5.1/bash/bash.spec
+      * Add options for m68k build
+
+   * dist/lfs-5.1/binutils/binutils.spec
+      * Update from CS: 4.3-50 to 4.3-74 (2.18.3)
+
+   * dist/lfs-5.1/busybox/busybox-1.00.spec
+      * Removed, no longer referenced
+
+   * dist/lfs-5.1/busybox/busybox-1.6.1.spec
+      * Removed, no longer referenced
+
+   * dist/lfs-5.1/busybox/busybox.spec
+      * Update busybox-1.11.2-getty-nobaud-1.patch
+
+   * dist/lfs-5.1/dtc/dtc-common.tmpl
+      * New file to provide common build for directory, or tarballs
+
+   * dist/lfs-5.1/dtc/dtc-dir-build.spec.in
+      * Directory build header for dtc
+
+   * dist/lfs-5.1/dtc/dtc.spec
+      * Removed
+
+   * dist/lfs-5.1/dtc/dtc.spec.in
+      * Tarball build header for dtc 
+
+   * dist/lfs-5.1/e2fsprogs/e2fsprogs.spec
+      * Update from 1.34 to 1.41.4
+
+   * dist/lfs-5.1/gcc/gcc-4.3-74.spec.in
+      * New file for latest CS toolchain
+
+   * dist/lfs-5.1/gdb/gdb-4.3-74.spec
+      * New file for latest CS gdb (used in their toolchain)
+
+   * dist/lfs-5.1/gdb/gdb-6.3.50.spec
+      * Removed as no longer referenced
+
+   * dist/lfs-5.1/glibc/glibc.spec
+      * Update from 2.5.1 to 2.5.2
+
+   * dist/lfs-5.1/gmp/gmp.spec
+      * Add options for m68k build
+ 
+   * dist/lfs-5.1/iozone/iozone.spec
+      * Add options for m68k build
+
+   * dist/lfs-5.1/iptables/iptables.spec
+      * Add iptables-1.4.2-libxt_TOS.patch and whitespace noodling
+
+   * dist/lfs-5.1/kernel/kernel-2.6.10-rig.spec.in
+      * Removed, no longer referenced.
+
+   * dist/lfs-5.1/kernel/kernel-2.6.11-uc.spec.in
+      * Removed, no longer referenced.
+
+   * dist/lfs-5.1/kernel/kernel-2.6.21-mpc8641.spec.in
+      * Removed, no longer referenced.
+
+   * dist/lfs-5.1/kernel/kernel-2.6.22.x-mpc5121.spec.in
+      * New file
+
+   * dist/lfs-5.1/kernel/kernel-2.6.24.6-mpc5121.spec.in
+      * New file
+
+   * dist/lfs-5.1/kernel/kernel-2.6.24.7-rt21-mpc5121.spec.in
+      * New file
+
+   * dist/lfs-5.1/kernel/kernel-common.tmpl
+      * Extend directory building outside project src tree
+      * Cleanup stray commenting out
+      * Change default target for m68k* from vmlinux to uImage
+      * Handle internal Kconfig build types (allyes etc)
+      * Re-work copyback changed kernel config handling
+      * Remove CROSS_COMPILE= as this is set in ltib (I don't really like this)
+      * Change dtc padding option from DTC_SPACE to DTC_PAD (-S xxx to -p yyy)
+      * Remove some hard wired platform logic
+
+   * dist/lfs-5.1/kernel/kernel26-dir-build.spec.in
+      * Changed default buildsubdir to %{name}-%{version}
+ 
+   * dist/lfs-5.1/liboil/liboil.spec
+      * Reinstate liboil-0.3.11-noaltivec.patch
+
+   * dist/lfs-5.1/libtermcap/libtermcap.spec
+      * Add options for m68knommu support
+
+   * dist/lfs-5.1/libxml2/libxml2.spec
+      * Update from 2.6.28 to 2.7.2
+
+   * dist/lfs-5.1/lm_sensors/lm_sensors.spec
+      * New file
+
+   * dist/lfs-5.1/ltp/ltp.spec
+      * Add ltp-full-20070930-linux-inotify.patch
+      * Add ltp-full-20070930-linux-dirent-02.patch
+ 
+   * dist/lfs-5.1/mp3play/mp3play-cf.spec
+      * New file
+
+   * dist/lfs-5.1/mplayer/mplayer.spec
+      * New file
+
+   * dist/lfs-5.1/mxc-misc/mxc-misc.spec
+      * Remove explicit CROSS_COMPILE= and whitespace noodling
+
+   * dist/lfs-5.1/ncurses/ncurses.spec
+      * Add support for nommu
+
+   * dist/lfs-5.1/pmra/pmra.spec
+      * Remove explicit CROSS_COMPILE=
+
+   * dist/lfs-5.1/qtopia/qtopia-4.spec
+      * Updated
+
+   * dist/lfs-5.1/samba/samba.spec
+      * Add samba-3.0.32-for-uclinux1.patch for nommu support
+
+   * dist/lfs-5.1/sdl/sdl.spec
+      * New file
+
+   * dist/lfs-5.1/simicsfs/simicsfs.spec
+      * Fix path to rootfs interface area
+
+   * dist/lfs-5.1/strace/strace-nommu.spec
+      * Host is (incorrectly) hard-wired now      
+
+   * dist/lfs-5.1/strace/strace.spec
+      * Add strace-4.5.14-linux-dirent.patch
+
+   * dist/lfs-5.1/swang/swang-poc.spec
+      * Remove explicit override of CROSS_COMPILE
+
+   * dist/lfs-5.1/swang/wangw.spec
+      * Remove explicit override of CROSS_COMPILE
+
+   * dist/lfs-5.1/sysconfig/modeps.spec
+      * Fix path to rootfs interface area
+
+   * dist/lfs-5.1/sysconfig/sysconfig.spec
+      * Add optional fman device node creation to rc.local 
+
+   * dist/lfs-5.1/tar/tar.spec
+      * Move output to /bin rather than /usr/bin for binaries
+
+   * dist/lfs-5.1/u-boot/u-boot-1.2.0-mpc5121ads.spec
+      * New file
+
+   * dist/lfs-5.1/u-boot/u-boot-1.2.0-uClinux.spec
+      * New file
+
+   * dist/lfs-5.1/u-boot/u-boot-1.3.2-mpc5121.spec
+      * New file
+
+   * dist/lfs-5.1/u-boot/u-boot-2008.10-mpc5121.spec
+      * New file
+
+   * dist/lfs-5.1/u-boot/u-boot-common.tmpl
+      * Update to allow directory builds outside project area
+
+   * dist/lfs-5.1/u-boot/u-boot-fsl-mpc8641hpcn.spec
+      * Removed unreferenced file
+
+   * dist/lfs-5.1/uclibc/uclibc.spec
+      * Remove explicit override of CROSS_COMPILE
+
+   * dist/lfs-5.1/udev/udev.spec
+      * Update patch 1,2
+      * Add non-raid option handling
+
+   * dist/lfs-5.1/zaptel/zaptel.spec
+      * Add zaptel-1.4.11-makefw.patch and zaptel-1.4.11-printmodes.patch
+      * Allow relocation of rootfs outside project tree
+
+   * Index: doc/LtibConvertPcsBsp
+      * Updated to remove explicit CROSS_COMPILE setting 

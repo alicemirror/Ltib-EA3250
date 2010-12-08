@@ -1,0 +1,108 @@
+
+EA3250 board deployment instructions
+***********************************************************************
+These are basic instructions on deploying Linux to your EA3250 board
+using TFTP and NFS. These instructions assume you have some experience
+with setting up your TFTP and NFS servers.
+
+More detailed instructions can be obtained from Embedded Artist's web
+site when you register your board.
+
+Your EA3250 board should have come pre-installed with the S1L boot
+loader. S1L handles board initialization and second level application
+boot (in this case u-boot).
+
+For steps and information regarding S1L and setup of the board's USB to
+UART adapter, see the User's manual for the LPC3250 OEM board included
+with the board or available from Embedded Artist's website.
+
+Initial board setup and starting S1L
+************************************************************************
+Using the included USB cable, plug the board into a PC by conencting the
+USB cable between the PC's USB port and the UART#0 port on the board.
+If needed, install the USB<-->UART drivers needed to operate the USB
+UART port on the PC.
+
+Once the USB initialization is complete, determine the COM port that
+was assigned to the board and open a terminal program (such as Teraterm)
+for the COM port at 115.2K-8-N-1.
+
+Reset the board and the "Embedded Artists LPC3250 board" banner should
+appear with a "EA3250" prompt. If it doesn't appear, verify that your
+terminal and USB<-->UART connection is setup properly.
+
+If you are planning on loading images over the network, connect an
+ethernet cable between the board and a switch.
+
+u-boot installation and setup
+************************************************************************
+Once you have your u-boot.bin image, you can use the following sequence
+to copy u-boot to the board and setup S1L to automatically run it on
+powerup or reset.
+
+Embedded Artists LPC3250 board
+Build date: Sep 2 2009 16:51:31
+
+EA3250>load term raw 0x83fa0000
+Starting terminal download, send break to stop
+
+Using the "send binary" capability of the terminal program, send the
+u-boot.bin to the board as a binary image. After the file has completely
+transferred, send a break sequence via the terminal program to get back
+to the EA3250> prompt. (In Teraterm, this can be done with ALT-b).
+
+Type nsave at the prompt to save the image in NAND FLASH.
+EA3250>nsave
+
+Set S1L to boot the image on powerup.
+EA3250>aboot flash raw 0x83fa0000
+
+Finally, set the S1L boot delay to 2 seconds.
+EA3250> prompt EA3250> 2
+
+Press reset to reboot the board. After a few seconds, u-boot should
+start.
+
+Setting up u-boot to boot the kernel using TFTP using DHCP
+************************************************************************
+At the u-boot prompt, change the server IP address to your host
+machine's IP address and save the new u-boot environment settings. The
+following sequence should do it:
+
+setenv serverip 192.168.1.51 (Use your host machine address here)
+setenv bootcmd 'dhcp; bootm'
+saveenv
+
+Make sure your host machines's TFTP server is setup and that the kernel
+image (uImage) is in the TFTP file area. Reset the board and the kernel
+should boot.
+
+The board can be setup to boot using static IP by also changing the
+bootcmd environment variable to 'tftpboot; bootm' and also setting the
+ipaddr and netmask environment variables to the desired values.
+
+Setting up the kernel's root filesystem
+************************************************************************
+In the previous step, the kernel started but then probably gave a
+'kernel panic' error and then appeared to stop. This is most likely
+because it couldn't find a root filesystem. The root filesystem can be
+located on a network NFS share, an SD card partition, as a compressed
+image uncompressed by Linux into memory at run-time, or in the NAND
+FLASH. This example only shows how to setup the kernel to mount the
+root filesystem using NFS. (See the Embedded Artists Linux BSP manual
+for more booting options).
+
+Reset the board and boot to u-boot. Once the u-boot message appears,
+press any key to get to the u-boot prompt. Type 'printenv' to dump the
+current environment variables and examine the bootargs variable. This
+variable is used by the kernel to define the console device (serial
+port), location of the root filesystem, init file location, network
+setup, etc.
+
+Change the bootargs variable as follows to use NFS for the root
+filesystem on your machine. Make sure your NFS server is setup to serve
+the files on your host machine from the correct location.
+
+setenv bootargs 'console=ttyS0,115200n81 root=/dev/nfs rw nfsroot=192.168.1.51:/home/<user>/ltib/rootfs ip=dhcp'
+saveenv
+

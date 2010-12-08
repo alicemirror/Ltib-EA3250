@@ -1,0 +1,215 @@
+# constants (forced values)
+config CONFIG_TITLE
+    string
+    default "LTIB: Freescale MPC5200 based development boards"
+
+config PLATFORM_COMMENT
+    string
+    default "Freescale MPC5200 based development boards"
+
+config VENDOR
+    string
+    default "Freescale"
+
+config PLATFORM
+    string
+    default mpc5200
+
+config GNUTARCH
+    string
+    default powerpc
+
+config LINTARCH
+    string
+    default ppc
+
+config CFGHOST
+    string
+    default powerpc-linux
+
+# capabilities if different from defaults.lkc
+
+source ../../userspace/endian.lkc
+source ../../userspace/libc_type.lkc
+source ../../userspace/toolchain.lkc
+
+
+comment "Bootloader"
+
+config BOOTLOADER1
+    bool "Build a boot loader"
+    default y
+    help
+        Selecting this will build the u-boot boot loadwer
+
+choice
+    depends BOOTLOADER1
+    prompt "u-boot target board type"
+    default PKG_U_BOOT_1_1_5_LITE5200B
+    help
+        This menu lets you choose the exact u-boot target to build
+
+    config PKG_U_BOOT_1_1_5_LITE5200B
+        bool "U-Boot 1.1.5 for Lite5200B"
+    config PKG_U_BOOT_1_1_5_MEDIA5200
+        bool "U-Boot 1.1.5 for Media5200"
+    config PKG_U_BOOT_1_1_5_LITE5200B_AGL
+        bool "U-Boot 1.1.5 with AGL/BTCS for Lite5200B"
+    config PKG_U_BOOT_1_1_5_MEDIA5200_AGL
+        bool "U-Boot 1.1.5 with AGL/BTCS for Media5200"
+    config PKG_U_BOOT_LITE5200B_06APR2006
+        bool "Lite5200B_IMTD_6Apr2006"
+    config PKG_U_BOOT_MEDIA5200_25APR2006
+        bool "Media5200_IMTD_25Apr2006"
+    config PKG_U_BOOT_LITE5200B
+        bool "Lite5200B"
+    config PKG_U_BOOT_LITE5200
+        bool "Lite5200"
+    config PKG_U_BOOT_LITE5200_8MIN
+        bool "Lite5200_8MiB"
+    config PKG_U_BOOT_TOTAL5200
+        bool "Total5200"
+    config PKG_U_BOOT_TOTAL5200_REV1
+        bool "Total5200_Rev1"
+endchoice
+
+config PKG_U_BOOT_CONFIG_TYPE
+    string
+    default "lite5200b_config"              if PKG_U_BOOT_1_1_5_LITE5200B
+    default "Media5200_config"              if PKG_U_BOOT_1_1_5_MEDIA5200
+    default "lite5200b_BTCS_config"         if PKG_U_BOOT_1_1_5_LITE5200B_AGL
+    default "Media5200_BTCS_config"         if PKG_U_BOOT_1_1_5_MEDIA5200_AGL
+    default "lite5200b_config"              if PKG_U_BOOT_LITE5200B_06APR2006
+    default "Media5200_config"              if PKG_U_BOOT_MEDIA5200_25APR2006
+    default "lite5200b_config"              if PKG_U_BOOT_LITE5200B
+    default "Lite5200_LOWBOOT_config"       if PKG_U_BOOT_LITE5200
+    default "Lite5200_LOWBOOT08_config"     if PKG_U_BOOT_LITE5200_8MIN
+    default "Total5200_Rev2_lowboot_config" if PKG_U_BOOT_TOTAL5200
+    default "Total5200_lowboot_config"      if PKG_U_BOOT_TOTAL5200_REV1
+
+config PKG_U_BOOT
+    string
+    default "u-boot-1.1.5-mpc5200"  if PKG_U_BOOT_1_1_5_LITE5200B
+    default "u-boot-1.1.5-mpc5200"  if PKG_U_BOOT_1_1_5_MEDIA5200
+    default "u-boot-1.1.5-mpc5200"  if PKG_U_BOOT_1_1_5_LITE5200B_AGL
+    default "u-boot-1.1.5-mpc5200"  if PKG_U_BOOT_1_1_5_MEDIA5200_AGL
+    default "u-boot-mpc5200-1.1.2"  if PKG_U_BOOT_LITE5200B_06APR2006
+    default "u-boot-mpc5200-1.1.2"  if PKG_U_BOOT_MEDIA5200_25APR2006
+    default "u-boot-mpclite5200b"   if PKG_U_BOOT_LITE5200B
+    default "u-boot-mpc5200"        if PKG_U_BOOT_LITE5200
+    default "u-boot-mpc5200"        if PKG_U_BOOT_LITE5200_8MIN
+    default "u-boot-mpc5200"        if PKG_U_BOOT_TOTAL5200
+    default "u-boot-mpc5200"        if PKG_U_BOOT_TOTAL5200_REV1
+
+config PKG_U_BOOT_BUILD_ARGS
+    string "u-boot flags"
+    default "OPTFLAGS=-O2"
+
+comment "Choose your Kernel"
+choice
+    prompt "Kernel"
+    default KERNEL_NONE
+    help
+        This menu will let you choose the kernel to use with your board.
+        If you don't want to build a kernel, unselect this option.
+
+    config KERNEL5
+        bool "Linux 2.6.16.x mpc5200_lite5200b"
+        help
+            This is kernel version 2.6.16.x plus patches for the Lite5200B platform.
+    config KERNEL6
+        bool "Linux 2.6.16.x mpc5200_Media5200"
+        help
+            This is kernel version 2.6.16.x plus patches for the Media5200 platform.
+    config KERNEL7
+        bool "Linux 2.6.16.x mpc5200_lite5200b with AGL features enabled"
+        help
+            This is kernel version 2.6.16.x plus patches for the Lite5200B platform.
+	    It includes features supporting Automotive Grade Linux (AGL) including
+	    Boot Time Critical Services (BTCS) and basic power management.
+    config KERNEL8
+        bool "Linux 2.6.16.x mpc5200_Media5200 with AGL features enabled"
+        help
+            This is kernel version 2.6.16.x plus patches for the Media5200 platform.
+	    It includes features supporting Automotive Grade Linux (AGL) including
+	    Boot Time Critical Services (BTCS) and basic power management.
+    config KERNEL1
+        bool "Linux 2.6.11.7 for MPCLite5200B (from PCS BSP)"
+        help
+            This is the kernel and patches from the PCS BSP 
+            mpc5200_lite_K26-BSP-3.0-20050906.  This is the
+            new Lite5200B board with two pci slots.
+    config KERNEL2
+        bool "Linux 2.6.11.7 for MPCLite5200 (from PCS BSP)"
+        help
+            This is the kernel and patches from the PCS BSP 
+            mpc5200_media5200_K26-3.0-20050512
+    config KERNEL3
+        bool "Linux 2.6.11.7 mpc5200_media5200 (from PCS BSP)"
+        help
+            This is the kernel and patches from the PCS BSP 
+            mpc5200_media5200_K26-3.0-20050512
+    config KERNEL4
+        bool "Linux 2.4.25 mpc5200_lite5200 (from PCS BSP)"
+        help
+            This is the kernel and patches from the PCS BSP
+            mpc5200_lite5200-3.0
+    config KERNEL_DIR_BUILD
+        bool "Local Linux directory build"
+        help
+            Build using a local copy of the kernel sources
+    config KERNEL_NONE
+        bool "Dont build the Linux kernel"
+        help
+            Select this if you dont want to build the kernel or provide your own
+endchoice
+
+
+config PKG_KERNEL
+    string
+    default "kernel-2.6.11-mpclite5200b" if KERNEL1
+    default "kernel-2.6.11-mpc5200" if KERNEL2
+    default "kernel-2.6.11-mpc5200" if KERNEL3
+    default "kernel-ppc-2.4.25-mpc5200" if KERNEL4
+    default "kernel-2.6.16-mpc5200" if KERNEL5 || KERNEL6 || KERNEL7 || KERNEL8
+    default "kernel26-dir-build" if KERNEL_DIR_BUILD
+
+source ../../userspace/kernel_dir_build.lkc
+
+config PKG_KERNEL_PRECONFIG
+    string "kernel preconfig"
+    default "linux-2.6.11-mpclite5200b.config" if KERNEL1
+    default "linux-2.6.11-mpclite5200.config" if KERNEL2
+    default "linux-2.6.11-mpc5200-media.config" if KERNEL3
+    default "linux-ppc-2.4.25-mpc5200.config" if KERNEL4
+    default "linux-2.6.16-mpclite5200b.config" if KERNEL5
+    default "linux-2.6.16-mpcmedia5200.config" if KERNEL6
+    default "linux-2.6.16-mpclite5200b-agl.config" if KERNEL7
+    default "linux-2.6.16-mpcmedia5200-agl.config" if KERNEL8
+    default "linux-2.6.16-mpclite5200b.config" if KERNEL_DIR_BUILD
+
+config PKG_KERNEL_WANT_HEADERS
+    depends ! KERNEL_NONE
+    bool "Include kernel headers"
+    help
+        Selecting this will copy kernel headers to rootfs/usr/src/linux/include
+
+config PKG_KERNEL_WANT_CF
+    depends ! KERNEL_NONE
+    bool "Configure the kernel"
+    default n
+
+config PKG_KERNEL_LEAVESRC
+    depends ! KERNEL_NONE
+    bool "Leave the sources after building"
+    default n
+    help
+        This is a one shot option that can be used to build the kernel and
+        leave the build source tree in rpm/BUILD in place
+    
+source ../../userspace/distro.lkc
+source ../../userspace/packages.lkc
+source ../../userspace/sysconfig.lkc
+source ../../userspace/deployment.lkc
+source ../../userspace/defaults.lkc
+

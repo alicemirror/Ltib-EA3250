@@ -1,0 +1,92 @@
+---+ General Setup
+
+With the board powered down, connect a serial cable between the host
+and the target board (X18, middle 9 Way D connector).  On the host,
+using a terminal emulator (such as minicom), configure with the following
+parameters: 115200 8 N 1 with flow control off. Connect a network patch
+cable between the X1 network connector and your hub.
+
+Turn on power to the target board.  If correctly configured, you will
+see the following prompt: =>
+
+---+ NFS deployment
+
+Setup the following parameters for storage in NVRAM
+
+setenv ipaddr   <target_ipaddr>
+setenv serverip <build_hosts_ipaddr>
+setenv bootargs root=/dev/nfs nfsaddr=<target_ipaddr>:<build_hosts_ipaddr>
+saveenv
+reset
+
+Download the linux kernel
+
+=> tftp 100000 <kernel_pkg_name>
+
+Boot the kernel
+
+bootm 100000
+
+
+A short-hand for this is:
+
+setenv nfsboot setenv bootargs root=/dev/nfs nfsroot=$(serverip):$(rootfsdir) nfsaddrs=$(ipaddr):$(serverip) \; tftp 100000 tqm/vmlinux.gz.uboot \; bootm 100000
+saveenv
+run nfsboot
+
+Note: an alternative is
+
+setenv ipaddr   192.168.0.254
+setenv serverip 192.168.0.9
+setenv rootfsdir /home/seh/ltib_bsps/ltib-dev/rootfs
+setenv nfsboot setenv bootargs root=/dev/nfs nfsroot=$(serverip):$(rootfsdir) ip=$(ipaddr):::::: \; tftp 100000 tqm/vmlinux.gz.uboot \; bootm 100000
+saveenv
+run nfsboot
+
+
+---+ Ramdisk deployment example
+
+setenv bootargs root=/dev/ram ramdisk_size=10000
+tftp 200000 tqm/rootfs.ext2.gz.uboot
+tftp 100000 tqm/tqm823lsf
+bootm  100000 200000
+
+
+---+ Flash deployment (jffs2)
+
+   * Build a jffs2 image using ltib.  This will be found by default under:
+   rootfs
+
+   * copy the image to the nfs rootfs/tmp area
+<verbatim>
+mv rootfs.jffs2 rootfs/tmp
+</verbatim>
+
+   * Boot up the target as described in the NFS deployment section
+
+   * Choose a suitable flash partition (e.g /dev/mtd6), make sure
+   your image will fit.
+
+   * Copy to the flash partition (this command erases too)
+<verbatim>
+flashcp /tmp/rootfs.jffs2 /dev/mtd6
+</verbatim>
+
+   * Test that the image has been properly copied to flash
+<verbatim>
+mount -t jffs2 /dev/mtdblock6 /mnt/src
+ls /mnt/src
+chroot /mnt/src
+</verbatim>
+
+   * Power off the board, and boot using mtdblock6 has the root device
+
+<verbatim>
+tftp 100000 tqm/vmlinux.gz.uboot
+setenv bootargs 'root=1f03 rootfstype=jffs2'
+bootm 100000
+</verbatim>
+
+
+
+

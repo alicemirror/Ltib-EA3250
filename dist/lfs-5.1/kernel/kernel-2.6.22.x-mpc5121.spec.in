@@ -1,0 +1,107 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define dversion 2.6.22
+%define pkg_name linux
+%define dtc_name mpc5121ads
+
+Summary         : Linux kernel for MPC5121ADS 
+Name            : kernel
+Version         : 2.6.22
+Release         : 1
+License         : GPL
+Vendor          : kernel.org
+Packager        : John Rigby
+Group           : System Environment/Kernel
+Source          : %{pkg_name}-%{dversion}.tar.bz2
+Patch1		: linux-2.6.22-mpc5121-0001-Add-IPIC-config-option.patch
+Patch2		: linux-2.6.22-mpc5121-0002-Add-mpc512x-ipic-support.patch
+Patch3		: linux-2.6.22-mpc5121-0003-Basic-Freescale-MPC512x-support.patch
+Patch4		: linux-2.6.22-mpc5121-0004-Device-tree-for-MPC5121-ADS.patch
+Patch5		: linux-2.6.22-mpc5121-0005-PSC-FIFO-registers.patch
+Patch6		: linux-2.6.22-mpc5121-0006-Add-mpc512x_find_ips_freq.patch
+Patch7		: linux-2.6.22-mpc5121-0007-PSC-serial.patch
+Patch8		: linux-2.6.22-mpc5121-0008-Clock.patch
+Patch9		: linux-2.6.22-mpc5121-0009-fs_enet.patch
+Patch10		: linux-2.6.22-mpc5121-0010-DIU.patch
+Patch11		: linux-2.6.22-mpc5121-0011-FEC-PM.patch
+Patch12		: linux-2.6.22-mpc5121-0012-NOR-flash.patch
+Patch13		: linux-2.6.22-mpc5121-0013-I2C.patch
+Patch14		: linux-2.6.22-mpc5121-0014-FEC-TX-Alignment.patch
+Patch15		: linux-2.6.22-mpc5121-0015-DMA.patch
+Patch16		: linux-2.6.22-mpc5121-0016-PATA.patch
+Patch17		: linux-2.6.22-mpc5121-0017-AC97.patch
+Patch18		: linux-2.6.22-mpc5121-0018-USB.patch
+Patch19		: linux-2.6.22-mpc5121-0019-AXE-and-MBX.patch
+Patch20		: linux-2.6.22-mpc5121-0020-PSC-SPI.patch
+Patch21		: linux-2.6.22-mpc5121-0021-USB-OTG.patch
+Patch22		: linux-2.6.22-mpc5121-0022-Clock-driver-fixes.patch
+Patch23		: linux-2.6.22-mpc5121-0023-DMA-desc-count.patch
+Patch24		: linux-2.6.22-mpc5121-0024-PATA-cleanup.patch
+Patch25		: linux-2.6.22-mpc5121-0025-USB-Force-Full-Speed.patch
+Patch26		: linux-2.6.22-mpc5121-0026-USB-always-build-mpc5121_usb.patch
+Patch27		: linux-2.6.22-mpc5121-0027-AC97-variable-rate.patch
+Patch28		: linux-2.6.22-mpc5121-0028-NAND-basic-1.patch
+Patch29		: linux-2.6.22-mpc5121-0029-DIU-32-bit-fbconsole-support.patch
+Patch30		: linux-2.6.22-mpc5121-0030-SPI-device-node-clock-fix.patch
+Patch31		: linux-2.6.22-mpc5121-0031-NAND-Flash-name.patch
+Patch32		: linux-2.6.22-mpc5121-0032-Post-beta-DIU-fixes.patch
+Patch33		: linux-2.6.22-mpc5121-0033-Post-beta-AC97-fixes.patch
+Patch34		: linux-2.6.22-mpc5121-0034-8610-and-5121-DIU.patch
+Patch35		: linux-2.6.22-mpc5121-0035-DIU-platform-funcs.patch
+Patch36		: linux-2.6.22-mpc5121-0036-Silicon-1.5-NAND.patch
+Patch37		: linux-2.6.22-mpc5121-0037-Remove-old-ac97-driver.patch
+Patch38		: linux-2.6.22-mpc5121-0038-PSC-updates-from-2.6.24.patch
+Patch39		: linux-2.6.22-mpc5121-0039-AC97-ASoC-driver.patch
+
+
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+From kernel.org
+All patches from Freescale
+
+%Prep
+%setup -n %{pkg_name}-%{dversion}
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1
+%patch18 -p1
+%patch19 -p1
+%patch20 -p1
+%patch21 -p1
+%patch22 -p1
+%patch23 -p1
+%patch24 -p1
+%patch25 -p1
+%patch26 -p1
+%patch27 -p1
+%patch28 -p1
+%patch29 -p1
+%patch30 -p1
+%patch31 -p1
+%patch32 -p1
+%patch33 -p1
+%patch34 -p1
+%patch35 -p1
+%patch36 -p1
+%patch37 -p1
+%patch38 -p1
+%patch39 -p1

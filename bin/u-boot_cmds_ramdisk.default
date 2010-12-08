@@ -1,0 +1,23 @@
+=> 
+=> echo "RAMDISK deployment"
+=> setenv tftp_path    $tftp_path
+=> setenv serverip     $serverip
+=> setenv ipaddr       $ipaddr
+=> setenv netmask      $netmask
+=> setenv gatewayip    $gatewayip
+=> setenv rootpath     $rootpath
+=> setenv netdev       $netdev
+=> setenv consoledev   $consoledev
+=> setenv baud         $baud
+=> setenv bootargs     rw console=$consoledev,$baud simicsfs=0xf80fff00
+=> setenv loadkernaddr $loadkernaddr
+=> setenv loaddtbaddr  $loaddtbaddr
+=> setenv loadramaddr  $loadramaddr
+=> setenv bootfile     $bootfile
+=> setenv dtbfile      $dtbfile
+=> setenv rdfile       $rdfile
+=> sleep 5
+=> tftp  $loadkernaddr $bootfile
+=> tftp  $loaddtbaddr  $dtbfile
+=> tftp  $loadramaddr  $rdfile
+=> bootm $loadkernaddr $loadramaddr $loaddtbaddr

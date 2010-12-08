@@ -1,0 +1,48 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define dversion linux-2.6.16
+%define kernel vmlinux
+%define binary linux.bin
+%define pkg_name linux-2.6.16
+
+Summary         : Linux kernel (core of the Linux operating system)
+Name            : kernel
+Version         : 2.6.16.1
+Release         : uc0
+License         : GPL
+Vendor          : uClinux.org + freescale patches
+Packager        : Matt Waddel
+Group           : System Environment/Kernel
+Source          : %{pkg_name}.tar.bz2
+Patch1          : patch-2.6.16.1-1
+Patch2          : linux-2.6.16-uc0.patch
+Patch3          : m532x-core.7.patch
+Patch4          : m532x-nand.6.patch
+Patch5          : m532x-i2c.7.patch
+Patch6          : m5329-spi.5.patch
+Patch7          : m532x-fb.6.patch
+Patch8          : m532x-can.6.patch
+Patch9          : m532x-usb.6.patch
+Patch10         : m5329-codetest.4.patch
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+From kernel.org + freescale patches
+
+%Prep
+%setup -n %{dversion}
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+

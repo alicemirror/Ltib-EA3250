@@ -1,0 +1,423 @@
+<verbatim>
+Copyright © Freescale Semiconductor, Inc. 2004-2005. All rights reserved.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.2
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
+Texts.  A copy of the license is included in the file doc/COPYING
+</verbatim>
+
+%TOC%
+
+---+ General Setup for the MPC8349mITX-gp
+
+---++ Getting connected
+
+Here's the view of the back panel of the itx unit:
+
+<verbatim>
+ ------------------------------------------------------
+|                                                      |
+|----------------------------------------              |
+|                               -- --    |             |
+|                              |eth0 |   |             |
+|                              |-----|   |             |             
+|    _____                     |-----|   |             |
+|   \ ser /                    |     |   |        (+)  | 12V DC 5A centre +
+|    -----                      -- --    |             |
+ ------------------------------------------------------
+</verbatim>
+
+With the board powered down:
+
+   * Connect a serial cable between the host and the target board (as
+   shown marked 'ser')
+
+   * Plug in a network patch cable from the itx (as shown marked eth0)
+   to a free position on your network hub.
+
+   * Plug in the supplied power supply and connect to the itx board
+   at the connect on the back at the right (marked DC 12V/5A)
+
+   * On the Linux host run minicom (or other terminal emulator
+   program) and configure the serial line setting to: 115200 8 N 1 
+   with flow control off
+
+---++ Powering up to the boot prompt
+
+   * On the front of the itx, press (and briefly hold) the power switch
+   marked (on the right).
+
+   * On the terminal emulator you will see some text scroll by ending with
+   something like:
+
+<verbatim>
+Data in EEPROM (addr 0x50) is valid.
+In:    serial
+Out:   serial
+Err:   serial
+Net:   Freescale TSEC0: PHY is VSC8201 (fc413)
+Freescale TSEC0
+Board Revision: rev 1.0
+=>
+</verbatim>
+
+---+ Booting from Flash
+
+The system as shipped has a copy of GNU/Linux already burned into Flash.
+This consists of an area that contains the kernel and an area that
+contains the root filesystem (a compressed ramdisk with u-boot header).
+This can be run as a confidence check and as a basic system.  This
+is shown first as it's the simplest way to boot the system.  To
+do this, power up the itx to the u-boot prompt as described in the
+section 'General setup' and then run the following command:
+
+<verbatim>
+=> run flashramboot
+</verbatim>
+
+Note: the system will attempt to configure its network configuration
+using DHCP protocol.
+
+Note also: any changes will made to the system will be lost
+when you power down as you're running from a ramdisk image.
+
+
+---+ Other boot options (using the network)
+
+For other boot methods you'll need to have a working network connection.
+Not only that but you may also need to change some of the u-boot
+configuration parameters.
+
+
+---++ Configuring the u-boot parameters
+
+As supplied the u-boot parameters will be valid only for a particular
+environment (the defaults can be found in u-boot_default_environment.txt).
+
+In particular you'll need to check the following parameters
+and change them.  Here's a checklist and what I ended up 
+changing for my environment (you need to adjust appropriately).
+
+| Parameter | Default        | My setting  | Comment |
+| serverip  | 192.168.1.54   | 192.168.0.9 | The IP address of your host |
+| gatewayip | 192.168.1.254  | none        | I'm not using a gateway to boot |
+| tftp_path | 8349ITX-GP/fae | none        | I put stuff directly in /tftpboot |
+| ipaddr    | 192.168.1.200  | 192.168.0.254 | A free IP on your network |
+| rootpath  | /opt/fae-root1 | /tmp/ltib/rootfs | Your NFS rootfs location |
+
+So in my case here's what I did at the u-boot prompt:
+
+<verbatim>
+=> setenv serverip 192.168.0.9
+=> setenv gatewayip
+=> setenv tftp_path
+=> setenv ipaddr 192.168.0.254
+=> setenv rootpath /tmp/ltib/rootfs
+</verbatim>
+
+To make these permanent (in Flash) you need to use the following command:
+
+<verbatim>
+=> saveenv
+</verbatim>
+
+
+---++ How to run Linux with the default built filesystem (tftpboot Option)
+
+Using this method you download the kernel image and the root filesystem
+image across the network and then use u-boot to load and run them.
+
+This is useful if you build your own kernel and/or root filesystem
+and want to try them out.  The principal limitation of this method
+is that anything you change while the system is running will be lost
+(as your running a ramdisk image).
+
+Before you attempt this, you need to make sure that you have a running
+tftp server.  Setting this up is before the scope of this note, but
+one simple test I run is:
+
+<verbatim>
+$ netstat -a | grep tftp
+udp        0      0 *:tftp                      *:* 
+</verbatim>
+
+If you see the line output (udp....) then it's likely your tftp server
+is available.  Remember though, even if it is running you may have 
+other hurdles to overcome before you can download from it (e.g
+iptables/firewalls).
+
+Once you're confident your tftp server is working, to boot up use
+the following commands:
+
+On the host:
+
+<verbatim>
+$ cp rootfs/boot/uImage rootfs.ext2.gz.uboot /tftpboot
+</verbatim>
+On the target:
+
+<verbatim>
+=> run tftpramboot
+</verbatim>
+
+
+---++ How to boot using tftp for the kernel and NFS for the root filesystem
+
+This method is generally the most useful for developers.  Using this
+method and LTIB a user is able to change the configuration of their
+root filesystem (add/remove packages) and immediately see the result
+on your running system (e.g ./ltib -p strace).
+
+Before booting using this method, in addition to the tftp server,
+you'll also need a working NFS server.  Setting up an NFS server
+is also beyond the scope of this note but here is a brief guide (always
+remember to make sure your iptables/firewall is not blocking things).
+
+On your host (as root):
+
+   * Edit /etc/exports and add in the path to the root filesystem
+you will be referencing (e.g.  /tmp/ltib/rootfs).  Here is
+an example (note this entry allows any host from my network
+to mount the filesystem):
+
+<verbatim>
+/tmp/ltib/rootfs 192.168.0.0/24(rw,no_root_squash,sync)
+</verbatim>
+
+   * Re-start your NFS server
+
+<verbatim>
+# sh /etc/rc.d/init.d/nfs restart
+# exit 
+$
+</verbatim>
+
+---+++ Re-configure the network setup in your LTIB config
+
+Unfortunately the default configuration setup in LTIB is to use
+DHCP to get the network address for eth0.  If you're using NFS
+this won't work (you'll see an endless stream of 
+'RPC: sendmsg returned error 101').  This is because you mount
+the filesystem with one IP address and then subsequently get DHCP
+to change it.  To fix this, here's what you need to do:
+
+   * run ltib and ask it to configure the system 
+<verbatim>
+$ ./ltib --configure
+</verbatim>
+
+   * Navigate to the network setup page:
+
+<verbatim>
+--- Target System Configuration 
+    Options  --->
+
+      Network setup  ---> 
+[*]   get network parameters using dhcp
+</verbatim>
+
+   * Unselect this option and then set the following:
+
+<verbatim>
+[ ]   get network parameters using dhcp
+(192.168.0.254) IP address (NEW)
+(255.255.255.0) netmask (NEW)
+(192.168.0.255) broadcast address (NEW)
+(192.168.0.1) gateway address (NEW)
+(192.168.0.1) nameserver IP address (NEW)
+</verbatim>
+
+   * Then select exit and when prompted to save your new configuration
+   select 'yes'
+
+
+---+++ Boot the target
+
+Ltib will now run and build as required:  When it done, do the following:
+
+On the host:
+
+<verbatim>
+$ cp rootfs/boot/uImage /tftpboot
+</verbatim>
+
+On the target:
+
+<verbatim>
+=> run tftpnfsboot
+</verbatim>
+
+
+---+ Working with the Flash
+
+---++ The Boot Flash Map:
+
+The MPC8349E-mITX-GP platform contains one flash bank that may be used to boot
+a kernels/filesystem.  Here is the layout
+
+| From      | To          | Size    | Use/Comment                       |
+| FE00_0000 | -           | -       | Start of Flash                    |
+| FE00_0000 | FE05_FFFF   | 384K    | U-Boot (begins at start of Flash) |
+| FE06_0000 | FE25_FFFF   |   2M    | Linux Kernel                      |
+| FE26_0000 | FE7F_FFFF   |  5.625M | Root Filesystem                   |
+| FE7F_FFFF | -           | -       | End of Flash                      |
+
+
+---++ How To Flash U-Boot:
+
+This is not recommended as it can render the system unbootable.  If
+this happens you'll need a JTAG device to get into the system.
+
+
+---++ How to Flash your Linux kernel and ramdisk file system
+
+However if you'd like to have a completely self-contained system (that can
+independently boot), you have the option of Flashing the kernel and
+rootfilesystem into the board's Flash.  Then by changing the parameters in
+u-boot, you can have an stand-alone auto-booting system.  Obviously the space
+available for the root filesystem will limit the number of package that you
+can add.
+
+The space used with profile config/platform/mpc8349itx/defconfig-min-fs is:
+(please select linux-2.6.13.4 for the kernel when prompted)
+
+| Region           | Size   |
+| Kernel           | 1.5 MB |
+| Root filesystem  | 1.9 MB |
+
+
+   1. Re-build your BSP using the smaller Flash preconfig:
+
+<verbatim>
+$ ./ltib --preconfig config/platform/mpc8349itx/defconfig-min-fs
+</verbatim>
+
+When you get the blue configuration screen, select linux-2.6.13.4 for the
+kernel.
+
+   2. Copy the kernel and ramdisk images to your tftpboot server directory
+(by default /tftpboot).
+
+<verbatim>
+$ cp rootfs/boot/uImage <your tftp path>/
+$ cp ltib-mpc8349itx-gp-20061024/rootfs.ext2.gz.uboot <your tftp path>/
+</verbatim>
+
+   3. The following commands are used to program the flash using u-boot on the
+target.  After cycling the power on your target:
+
+    # download the kernel into RAM
+<verbatim>
+=> tftpboot $loadaddr $tftp_path/uImage
+</verbatim>
+
+    # erase the Flash memory that will hold this kernel image (takes a while)
+<verbatim>
+=> erase $kernaddr fe7fffff
+</verbatim>
+
+    # write the kernel to the flash
+<verbatim>
+=> cp.b $loadaddr $kernaddr $filesize
+</verbatim>
+
+    # verify that the kernel was programmed properly
+<verbatim>
+=> cmp.b $loadaddr $kernaddr $filesize
+</verbatim>
+
+    # download the root filesystem into RAM
+<verbatim>
+=> tftpboot $loadaddr $tftp_path/rootfs.ext2.gz.uboot
+</verbatim>
+
+    # write the ramdisk to the flash
+<verbatim>
+=> cp.b $loadaddr $ramdiskaddr $filesize
+</verbatim>
+
+    # verify
+<verbatim>
+=> cmp.b $loadaddr $ramdiskaddr $filesize
+</verbatim>
+
+    # verify that the images flashed are valid u-boot images
+<verbatim>
+=> imls
+</verbatim>
+
+
+---++ Flash deployment using JFFS2 for the root file system
+
+*WARNING:* beware this is untested on this platform.  Make sure you
+don't overwrite your Flash in the wrong area !!!!!!
+
+
+If you want to boot stand-alone from Flash but want to be able to make
+(persistent) updates to your root filesystem configuration, this is 
+the best option.  Unfortunately I don't have tthe details for this
+right now, but it's certainly possible.  The sort of things you need to
+do are:
+
+   * Enabled MTD/JFFS2 support in the kernel
+
+   * Reboot your target and load the new kernel (with tftpboot).
+   When booting supply a physmap for the MTD that give the right offset
+   for the rootfs partitions (e.g. add the following to the 
+   bootargs: mtdparts=phys_mapped_flash:384k(uboot)ro,2M(kernel)ro,5760(jffs2) 
+
+   * Once booted, sanity check your mtd partitions look right by doing:
+
+<verbatim>
+# cat /proc/mtd
+</verbatim>
+
+   * Configure LTIB to build a JFFS2 image (Target Image Generation/Options)
+
+   * Copy the build JFFS2 into Flash on the running target (make sure it's
+   not too big to fit into the allocated space).
+
+<verbatim>
+$ cp rootfs.jffs2 rootfs/tmp
+</verbatim>
+  
+   * Erase the Flash root filesystem area on the target.
+
+<verbatim>
+# flash_eraseall /dev/mtd2
+</verbatim>
+
+   * Copy the rootfs file into the Flash on the target
+
+<verbatim>
+# flashcp /tmp/rootfs.jffs2 /dev/mtd2
+</verbatim>
+
+   * Test that the image has been properly copied to flash
+
+<verbatim>
+# mount -t jffs2 /dev/mtdblock2 /mnt/src
+# /mnt/src
+# chroot /mnt/src
+# exit
+</verbatim>
+
+   * Cycle power and boot the system
+
+<verbatim>
+=> tftp $loadkernaddr uImage
+=> setenv bootargs 'root=1f03 rootfstype=jffs2 mtdparts=phys_mapped_flash:384k(uboot)ro,2M(kernel)ro,5760(jffs2)'
+=> bootm $loadkernaddr uImage
+</verbatim>
+
+---+ USB operation
+
+---++ How to insert and mount a USB Flash drive device
+
+*Connecting a USB key*
+
+TBD.
+
+

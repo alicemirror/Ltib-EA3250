@@ -1,0 +1,19 @@
+# template = dtc-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define buildsubdir %{name}-%{version}
+
+Summary		: The open firmware device tree compiler
+Name		: dtc
+Version		: local
+Release		: 0
+License		: GPL
+Vendor		: Freescale
+Packager	: Emil Medve
+Group		: Development/Tools
+URL		: http://git.jdl.com
+BuildRoot	: %{_tmppath}/%{name}
+Prefix		: %{pfx}
+
+%Description
+%{summary}

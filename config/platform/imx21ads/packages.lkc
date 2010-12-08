@@ -1,0 +1,30 @@
+comment 'Platform specific package selection'
+
+config PKG_DEMO_LAUNCHER
+    bool "demo launcher"
+    help
+      This is a simple MX21 GUI program for displaying license info
+      and selecting demo applications to launch.
+
+config PKG_DPM_UTILS_IMX
+    bool "dpm-utils-imx"
+    help
+      Dynamic power management policies for iMX21ADS
+
+config PKG_HARDWARETEST_IMX
+    bool "hardwaretest-imx"
+    help
+      Demos, tests and utilities for iMX platforms.  Combines these packages
+      from the PCS BSP: dma-demo, gw-demo, tvout-demo, perftest,
+      screentest-0.4, imx21_download-1.3.
+
+config PKG_PCMCIA_CS
+    select PKG_KERNEL_LEAVESRC
+    select PKG_WIRELESS_TOOLS
+    bool "pcmcia-cs"
+    help
+      This package contains the user space utilies for PCMCIA device
+      management, like cardmgr, cardctl, dump_cis, etc.  This package
+      does *not* contain any PCMCIA device drivers.  Those must be
+      configured and built in the kernel.
+

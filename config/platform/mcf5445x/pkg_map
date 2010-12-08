@@ -1,0 +1,5 @@
+PKG_SKELL = skell-mcf5445x
+PKG_PCIUTILS = pciutils-2.1.11
+PKG_MP3PLAY = mp3play-cf
+PKG_SYSCONFIG = sysconfig-mcf5445x
+PKG_APPTRK = apptrk-m54x5

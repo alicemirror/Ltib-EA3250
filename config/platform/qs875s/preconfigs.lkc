@@ -1,0 +1,26 @@
+config CONFIG_TITLE
+    string
+    default "LTIB: A&MLtd Adder MPC875 PowerPC board configurations"
+
+comment "Choose the sub-platform/configuration"
+choice
+    prompt "Selection"
+    default PCF_DEFAULT_GLIBC
+    config PCF_DEFAULT_GLIBC
+        bool "default config (glibc)"
+    config PCF_DEFAULT_UCLIBC
+        bool "default config (uClibc)"
+    config PCF_MIN_UCLIBC
+        bool "minimal config (uClibc)"
+endchoice
+
+config PCF_PRECONFIG
+    string
+    default defconfig         if PCF_DEFAULT_GLIBC
+    default defconfig-uc      if PCF_DEFAULT_UCLIBC
+    default defconfig-min-uc  if PCF_MIN_UCLIBC
+
+config PCF_KCONFIG
+    string
+    default main.lkc
+

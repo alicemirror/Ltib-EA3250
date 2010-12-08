@@ -1,0 +1,29 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define pkg_name linux
+
+Summary         : Linux kernel (core of the Linux operating system)
+Name            : kernel
+Version         : 2.6.15
+Release         : 1
+License         : GPL
+Vendor          : Zee2
+Packager        : Stuart Hughes
+Group           : System Environment/Kernel
+Source          : %{pkg_name}-%{version}.tar.bz2
+Patch0          : linux-2.6.15-ep93xx-gao33.patch
+Patch1          : linux-2.6.15-ep93x-MUTEX_INITIALIZER.patch
+Patch2          : linux-2.6.15-ep93x-setlocalversion-from-2.6.28.patch
+BuildRoot       : /tmp/%{name}-%{version}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+%Prep
+%setup -n %{pkg_name}-%{version}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+

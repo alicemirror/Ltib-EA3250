@@ -1,0 +1,45 @@
+menu dtc
+config DTC
+	depends CAP_HAS_MMU
+	bool "dtc"
+	help
+		Open firmware device tree compiler
+
+menu "dtc options"
+	depends on DTC
+
+	choice
+		prompt "Build type"
+		default DTC_PKG_BUILD
+		help
+			This menu will let you choose the source of the dtc to use
+
+		config DTC_PKG_BUILD
+			bool "Package"
+		config DTC_DIR_BUILD
+			bool "Local directory build"
+	endchoice
+
+	config PKG_DTC
+		string
+		default "dtc" if DTC_PKG_BUILD
+		default "dtc-dir-build" if DTC_DIR_BUILD
+
+	if DTC_DIR_BUILD
+		config PKG_DTC_PATH_PRECONFIG
+			string "Enter your dtc source directory"
+			default "../../../dtc"
+			help
+				If you are building the dtc using a local source tree,
+				specify the absolute path to the tree here. Relative path is
+				with respect to the rpm/BUILD directory
+	endif
+
+endmenu
+
+config PKG_DTC_WANT_FDT
+	bool "libfdt"
+	select DTC
+	help
+		Install libfdt headers and libraries
+endmenu

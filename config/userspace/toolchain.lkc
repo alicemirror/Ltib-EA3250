@@ -1,0 +1,791 @@
+# Toolchain selection and configuration file.
+comment "Toolchain selection."
+
+# PowerPC Toolchains.
+# -------------------
+
+# e500v2 Toolchains.
+if E500V2_ARCH
+    choice
+        prompt "Toolchain"
+        help
+            This menu will help to select the cross toolchain that will be
+            used to build the BSP.  To use a toolchain not present in the
+            list of choices select the custom option and enter the
+            toolchain path and prefix in the appropriate boxes.
+
+        config TOOLCHAIN_E500V2_GLIBC3
+            bool "gcc-4.3.2 eglibc-2.8 single library e500v2 toolchain." if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.3.2 eglibc-2.8 single library toolchain for e500v2 cores.
+                NPTL thread libraries.
+                Toolchain built by Freescale using CodeSourcery release
+                4.3-74 sources.
+        config TOOLCHAIN_E500V2_GLIBC1
+            bool "gcc-4.2.1 eglibc-2.5 single library e500v2 toolchain." if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.2.1 eglibc-2.5 single library toolchain for e500v2 cores.
+                NPTL thread libraries.
+                Toolchain built by Freescale using CodeSourcery release
+                4.2-171 sources.
+        config TOOLCHAIN_E500V2_GLIBC2
+            bool "gcc-3.4.3 glibc-2.3.4 DPFP e500v2 cores." if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-3.4.3  glibc-2.3.4 double precision floating point
+                toolchain for e500v2 cores.
+                NPTL threads libraries.
+                Toolchain built by Freescale.
+
+        config TOOLCHAIN_E500V2_UCLIBC1
+            bool "gcc-4.0.2 uClibc e500v2" if UCLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.0.2 uClibc double precision floating point toolchain for
+                e500v2 cores.
+                linuxthreads threads library.
+                Wasabi 20060628 patches applied to gcc.
+                Built using uClibc svn revision 18301.
+                Toolchain built by Freescale.
+
+        config TOOLCHAIN_E500V2_CUSTOM
+            bool "Custom"
+            help
+                Select the custom option to use toolchains that are not
+                in the available toolchain list.
+
+    endchoice
+endif
+
+
+# e500mc Toolchains.
+if E500MC_ARCH
+    choice
+        prompt "Toolchain"
+        help
+            This menu will help to select the cross toolchain that will be
+            used to build the BSP.  To use a toolchain not present in the
+            list of choices select the custom option and enter the
+            toolchain path and prefix in the appropriate boxes.
+
+        config TOOLCHAIN_E500MC_GLIBC3
+            bool "gcc-4.3.2 eglibc-2.8 multilib PowerPC 4.3-74" if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.3.2 eglibc-2.8 multilib toolchain for PowerPC cores with
+                support for e500mc cores.
+                NPTL thread libraries.
+                Toolchain built by CodeSourcery, Release 4.3-74
+                Library versions available for:
+                  - 603e        (Default)
+                  - e500v1      (-te500v1)
+                  - e500v2      (-te500v2)
+                  - e500mc      (-te500mc)
+                  - e600        (-te600)
+                  - soft float  (-msoft-float)
+
+        config TOOLCHAIN_E500MC_GLIBC1
+            bool "gcc-4.2.1 eglibc-2.5 multilib PowerPC 4.2-187" if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.2.1 eglibc-2.5 multilib toolchain for PowerPC cores with
+                support for e500mc cores.
+                NPTL thread libraries.
+                Toolchain built by CodeSourcery, Release 4.2-187
+                Library versions available for:
+                  - 603e        (Default)
+                  - e500v1      (-te500v1)
+                  - e500v2      (-te500v2)
+                  - e500mc      (-te500mc)
+                  - e600        (-te600)
+                  - soft float  (-msoft-float)
+
+        config TOOLCHAIN_E500MC_GLIBC2
+            bool "gcc-4.2.1 eglibc-2.5 multilib PowerPC 4.2-82" if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.2.1 eglibc-2.5 multilib toolchain for PowerPC cores with
+                support for e500mc cores.
+                NPTL thread libraries.
+                Toolchain built by Freescale, Release 4.2-82
+                Library versions available for:
+                  - 603e        (Default)
+                  - e500v1      (-te500v1)
+                  - e500v2      (-te500v2)
+                  - e600        (-te600)
+                  - soft float  (-msoft-float)
+
+        config TOOLCHAIN_E500MC_CUSTOM
+            bool "Custom"
+            help
+                Select the custom option to use toolchains that are not
+                in the available toolchain list.
+
+    endchoice
+endif
+
+
+# e500v1 Toolchains.
+if E500V1_ARCH
+    choice
+        prompt "Toolchain"
+        help
+            This menu will help to select the cross toolchain that will be
+            used to build the BSP.  To use a toolchain not present in the
+            list of choices select the custom option and enter the
+            toolchain path and prefix in the appropriate boxes.
+
+        config TOOLCHAIN_E500V1_GLIBC4
+            bool "gcc-4.3.2 eglibc-2.8 multilib PowerPC 4.3-74" if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.3.2 eglibc-2.8 multilib toolchain for PowerPC cores with
+                support for e500v1 cores.
+                NPTL thread libraries.
+                Toolchain built by CodeSourcery, Release 4.3-74
+                Library versions available for:
+                  - 603e        (Default)
+                  - e500v1      (-te500v1)
+                  - e500v2      (-te500v2)
+                  - e500mc      (-te500mc)
+                  - e600        (-te600)
+                  - soft float  (-msoft-float)
+
+        config TOOLCHAIN_E500V1_GLIBC1
+            bool "gcc-4.2.1 eglibc-2.5 multilib PowerPC toolchain." if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.2.1 eglibc-2.5 multilib toolchain for PowerPC cores.
+                NPTL thread libraries.
+                Toolchain built by CodeSourcery, Release 4.2-187
+                Library versions available for:
+                  - 603e        (Default)
+                  - e500v1      (-te500v1)
+                  - e500v2      (-te500v2)
+                  - e500mc      (-te500mc)
+                  - e600        (-te600)
+                  - soft float  (-msoft-float)
+
+        config TOOLCHAIN_E500V1_GLIBC2
+            bool "gcc-4.0.2 glibc-2.3.6 e500v1 cores." if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.0.2  glibc-2.3.6 single precision floating point
+                toolchain for e500v1 cores.
+                NPTL threads libraries.
+                Wasabi 20060628 patches applied to gcc.
+                Toolchain built by Freescale.
+
+        config TOOLCHAIN_E500V1_GLIBC3
+            bool "gcc-3.4.3 glibc-2.3.3 SPFP e500v1 cores." if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-3.4.3  glibc-2.3.3 single precision floating point
+                toolchain for e500v1 cores.
+                linuxthreads threads libraries.
+                Toolchain built by Freescale.
+
+        config TOOLCHAIN_E500V1_UCLIBC1
+            bool "gcc-4.0.2 uClibc e500v1" if UCLIBC || LIBC_NONE || LIBC_HACKING
+        help
+            gcc-4.0.2 uClibc single precision floating point toolchain for
+            e500v1 cores.
+            linuxthreads threads library.
+            Wasabi 20060628 patches applied to gcc.
+            Built using uClibc svn revision 18301.
+            Toolchain built by Freescale.
+
+        config TOOLCHAIN_E500V1_CUSTOM
+            bool "Custom"
+            help
+                Select the custom option to use toolchains that are not
+                in the available toolchain list.
+
+    endchoice
+endif
+
+
+# e600 Toolchains.
+if E600_ARCH
+    choice
+        prompt "Toolchain"
+        help
+            This menu will help to select the cross toolchain that will be
+            used to build the BSP.  To use a toolchain not present in the
+            list of choices select the custom option and enter the
+            toolchain path and prefix in the appropriate boxes.
+
+        config TOOLCHAIN_E600_GLIBC3
+            bool "gcc-4.3.2 eglibc-2.8 multilib PowerPC 4.3-74" if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.3.2 eglibc-2.8 multilib toolchain for PowerPC cores with
+                support for e600 cores.
+                NPTL thread libraries.
+                Toolchain built by CodeSourcery, Release 4.3-74
+                Library versions available for:
+                  - 603e        (Default)
+                  - e500v1      (-te500v1)
+                  - e500v2      (-te500v2)
+                  - e500mc      (-te500mc)
+                  - e600        (-te600)
+                  - soft float  (-msoft-float)
+
+        config TOOLCHAIN_E600_GLIBC1
+            bool "gcc-4.2.1 eglibc-2.5 multilib PowerPC toolchain." if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.2.1 eglibc-2.5 multilib toolchain for PowerPC cores.
+                NPTL thread libraries.
+                Toolchain built by CodeSourcery, Release 4.2-187
+                Library versions available for:
+                  - 603e        (Default)
+                  - e500v1      (-te500v1)
+                  - e500v2      (-te500v2)
+                  - e500mc      (-te500mc)
+                  - e600        (-te600)
+                  - soft float  (-msoft-float)
+
+        config TOOLCHAIN_E600_GLIBC2
+            bool "gcc-3.4.3 glibc-2.3.3 altivec" if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-3.4.3 glibc-2.3.3 optimized for altivec cores.
+                linuxthreads threads library.
+                Toolchain built by Freescale.
+
+        config TOOLCHAIN_E600_GLIBC4
+            bool "gcc-4.1.2 eglibc-2.5 multilib PowerPC toolchain." if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.1.2 eglibc-2.5 multilib toolchain for PowerPC cores.
+                NPTL thread libraries.
+                Toolchain built by CodeSourcery, Release 4.1-78
+                Library versions available for:
+                  - 603e        (Default)
+                  - e500v1      (-te500v1)
+                  - e500v2      (-te500v2)
+                  - e500mc      (-te500mc)
+                  - e600        (-te600)
+                  - soft float  (-msoft-float)
+
+        config TOOLCHAIN_E600_CUSTOM
+            bool "Custom"
+            help
+                Select the custom option to use toolchains that are not
+                in the available toolchain list.
+
+    endchoice
+endif
+
+
+# e300c2 Toolchains.
+if E300C2_ARCH
+    choice
+        prompt "Toolchain"
+        help
+            This menu will help to select the cross toolchain that will be
+            used to build the BSP.  To use a toolchain not present in the
+            list of choices select the custom option and enter the
+            toolchain path and prefix in the appropriate boxes.
+
+        config TOOLCHAIN_E300C2_GLIBC3
+            bool "gcc-4.3.2 eglibc-2.8 multilib PowerPC 4.3-74" if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.3.2 eglibc-2.8 multilib toolchain for PowerPC cores with
+                support for e300c2 cores.
+                NPTL thread libraries.
+                Toolchain built by CodeSourcery, Release 4.3-74
+                Library versions available for:
+                  - 603e        (Default)
+                  - e500v1      (-te500v1)
+                  - e500v2      (-te500v2)
+                  - e500mc      (-te500mc)
+                  - e600        (-te600)
+                  - soft float  (-msoft-float)
+
+        config TOOLCHAIN_E300C2_GLIBC1
+            bool "gcc-4.2.1 eglibc-2.5 multilib PowerPC toolchain." if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.2.1 eglibc-2.5 multilib toolchain for PowerPC cores.
+                NPTL thread libraries.
+                Toolchain built by CodeSourcery, Release 4.2-187
+                Library versions available for:
+                  - 603e        (Default)
+                  - e500v1      (-te500v1)
+                  - e500v2      (-te500v2)
+                  - e500mc      (-te500mc)
+                  - e600        (-te600)
+                  - soft float  (-msoft-float)
+
+        config TOOLCHAIN_E300C2_GLIBC2
+            bool "gcc-3.4.3 glibc-2.3.4 soft float e300c2 powerpc" if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-3.4.3 glibc-2.3.4 soft float e300c2 powerpc.
+                linuxthreads threads library.
+                Toolchain build by Freescale.
+
+        config TOOLCHAIN_E300C2_CUSTOM
+            bool "Custom"
+            help
+                Select the custom option to use toolchains that are not
+                in the available toolchain list.
+
+    endchoice
+endif
+
+
+# e300c3 Toolchains.
+if E300C3_ARCH
+    choice
+        prompt "Toolchain"
+        help
+            This menu will help to select the cross toolchain that will be
+            used to build the BSP.  To use a toolchain not present in the
+            list of choices select the custom option and enter the
+            toolchain path and prefix in the appropriate boxes.
+
+        config TOOLCHAIN_E300C3_GLIBC2
+            bool "gcc-4.3.2 eglibc-2.8 multilib PowerPC 4.3-74" if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.3.2 eglibc-2.8 multilib toolchain for PowerPC cores with
+                support for e300c3 cores.
+                NPTL thread libraries.
+                Toolchain built by CodeSourcery, Release 4.3-74
+                Library versions available for:
+                  - 603e        (Default)
+                  - e500v1      (-te500v1)
+                  - e500v2      (-te500v2)
+                  - e500mc      (-te500mc)
+                  - e600        (-te600)
+                  - soft float  (-msoft-float)
+
+        config TOOLCHAIN_E300C3_GLIBC1
+            bool "gcc-4.2.1 eglibc-2.5 multilib PowerPC toolchain." if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.2.1 eglibc-2.5 multilib toolchain for PowerPC cores.
+                NPTL thread libraries.
+                Toolchain built by CodeSourcery, Release 4.2-187
+                Library versions available for:
+                  - 603e        (Default)
+                  - e500v1      (-te500v1)
+                  - e500v2      (-te500v2)
+                  - e500mc      (-te500mc)
+                  - e600        (-te600)
+                  - soft float  (-msoft-float)
+
+        config TOOLCHAIN_E300C3_CUSTOM
+            bool "Custom"
+            help
+                Select the custom option to use toolchains that are not
+                in the available toolchain list.
+    endchoice
+endif
+
+
+# e300 Toolchains.
+if E300_ARCH
+    choice
+        prompt "Toolchain"
+        help
+            This menu will help to select the cross toolchain that will be
+            used to build the BSP.  To use a toolchain not present in the
+            list of choices select the custom option and enter the
+            toolchain path and prefix in the appropriate boxes.
+
+        config TOOLCHAIN_E300_GLIBC2
+            bool "gcc-4.3.2 eglibc-2.8 multilib PowerPC 4.3-74" if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.3.2 eglibc-2.8 multilib toolchain for PowerPC cores with
+                support for e300 cores.
+                NPTL thread libraries.
+                Toolchain built by CodeSourcery, Release 4.3-74
+                Library versions available for:
+                  - 603e        (Default)
+                  - e500v1      (-te500v1)
+                  - e500v2      (-te500v2)
+                  - e500mc      (-te500mc)
+                  - e600        (-te600)
+                  - soft float  (-msoft-float)
+
+        config TOOLCHAIN_E300_GLIBC1
+            bool "gcc-4.2.1 eglibc-2.5 multilib PowerPC toolchain." if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.2.1 eglibc-2.5 multilib toolchain for PowerPC cores.
+                NPTL thread libraries.
+                Toolchain built by CodeSourcery, Release 4.2-187
+                Library versions available for:
+                  - 603e        (Default)
+                  - e500v1      (-te500v1)
+                  - e500v2      (-te500v2)
+                  - e500mc      (-te500mc)
+                  - e600        (-te600)
+                  - soft float  (-msoft-float)
+
+        config TOOLCHAIN_E300_UCLIBC1
+            bool "gcc-4.2.4 uClibc hard float generic PowerPC" if UCLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.2.4 uClibc hard float generic PowerPC cores.
+                linuxthreads threads library.
+                Built using uClibc-0.9.29
+                Toolchain built by Freescale.
+
+        config TOOLCHAIN_E300_CUSTOM
+            bool "Custom"
+            help
+                Select the custom option to use toolchains that are not
+                in the available toolchain list.
+    endchoice
+endif
+
+
+# 8xx Toolchains.
+if 8XX_ARCH
+    choice
+        prompt "Toolchain"
+        help
+            This menu will help to select the cross toolchain that will be
+            used to build the BSP.  To use a toolchain not present in the
+            list of choices select the custom option and enter the
+            toolchain path and prefix in the appropriate boxes.
+
+        config TOOLCHAIN_8XX_GLIBC3
+            bool "gcc-4.3.2 eglibc-2.8 multilib PowerPC 4.3-74" if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.3.2 eglibc-2.8 multilib toolchain for PowerPC cores with
+                support for 8xx cores.
+                NPTL thread libraries.
+                Toolchain built by CodeSourcery, Release 4.3-74
+                Library versions available for:
+                  - 603e        (Default)
+                  - e500v1      (-te500v1)
+                  - e500v2      (-te500v2)
+                  - e500mc      (-te500mc)
+                  - e600        (-te600)
+                  - soft float  (-msoft-float)
+
+        config TOOLCHAIN_8XX_GLIBC1
+            bool "gcc-4.2.1 eglibc-2.5 multilib PowerPC toolchain." if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.2.1 eglibc-2.5 multilib toolchain for PowerPC cores.
+                NPTL thread libraries.
+                Toolchain built by CodeSourcery, Release 4.2-187
+                Library versions available for:
+                  - 603e        (Default)
+                  - e500v1      (-te500v1)
+                  - e500v2      (-te500v2)
+                  - e500mc      (-te500mc)
+                  - e600        (-te600)
+                  - soft float  (-msoft-float)
+
+        config TOOLCHAIN_8XX_GLIBC2
+            bool "gcc-3.3.2 glibc-2.3.2 soft float 8xx toolchain." if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-3.3.2 glibc-2.3.2 soft float 8xx powerpc.
+                linuxthreads threads library.
+                Toolchain build by Freescale.
+
+        config TOOLCHAIN_8XX_UCLIBC1
+            bool "gcc-4.2.4 uClibc soft float generic PowerPC" if UCLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.2.4 uClibc soft float generic PowerPC cores.
+                linuxthreads threads library.
+                Built using uClibc-0.9.29
+                Toolchain built by Freescale.
+
+        config TOOLCHAIN_8XX_CUSTOM
+            bool "Custom"
+            help
+                Select the custom option to use toolchains that are not
+                in the available toolchain list.
+    endchoice
+endif
+
+
+# PPC64 Toolchains.
+if PPC64_ARCH
+    choice
+        prompt "Toolchain"
+        help
+            This menu will help to select the cross toolchain that will be
+            used to build the BSP.  To use a toolchain not present in the
+            list of choices select the custom option and enter the
+            toolchain path and prefix in the appropriate boxes.
+
+        config TOOLCHAIN_PPC64_GLIBC1
+            bool "gcc-4.0.2 glibc-2.3.6 64 bit cores." if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.0.2  glibc-2.3.6 hard float toolchain for 64 bit cores.
+                NPTL threads libraries.
+                Wasabi 20060628 patches applied to gcc.
+                Toolchain built by Freescale.
+
+        config TOOLCHAIN_PPC64_CUSTOM
+            bool "Custom"
+            help
+                Select the custom option to use toolchains that are not
+                in the available toolchain list.
+    endchoice
+endif
+
+
+# arm Toolchains.
+# ---------------
+
+# arm OABI hard float Toolchains.
+if ARMOABI_ARCH
+    choice
+        prompt "Toolchain"
+        help
+            This menu will help to select the cross toolchain that will be
+            used to build the BSP.  To use a toolchain not present in the
+            list of choices select the custom option and enter the
+            toolchain path and prefix in the appropriate boxes.
+
+        config TOOLCHAIN_ARMOABI_GLIBC1
+            bool "arm gcc-3.3.2/glibc-2.3.2 hard-float" if ( ! ARMEABI_ARCH && ( GLIBC || LIBC_NONE || LIBC_HACKING ) )
+            help
+                gcc-3.3.2  glibc-2.3.2 generic arm little endian toolchain.
+                linuxthreads threads libraries.
+                Toolchain built by Freescale.
+
+        config TOOLCHAIN_ARMOABI_CUSTOM
+            bool "Custom"
+            help
+                Select the custom option to use toolchains that are not
+                in the available toolchain list.
+    endchoice
+endif
+
+# arm OABI soft float Toolchains.
+if ARMOABI_SOFTFP_ARCH
+    choice
+        prompt "Toolchain"
+        help
+            This menu will help to select the cross toolchain that will be
+            used to build the BSP.  To use a toolchain not present in the
+            list of choices select the custom option and enter the
+            toolchain path and prefix in the appropriate boxes.
+
+        config TOOLCHAIN_ARMOABI_SOFTFP_UCLIBC1
+            bool "arm gcc-4.2.4 uClibc-0.9.30.1 soft float" if ( ARMOABI_SOFTFP_ARCH && ( UCLIBC || LIBC_NONE || LIBC_HACKING ) )
+            help
+                gcc-4.2.4 uClibc-0.9.30.1 single library toolchain for generic
+                arm little endian soft float processors.
+                Toolchain built by Zee2.
+
+        config TOOLCHAIN_ARMOABI_SOFTFP_CUSTOM
+            bool "Custom"
+            help
+                Select the custom option to use toolchains that are not
+                in the available toolchain list.
+    endchoice
+endif
+
+# arm eABI Toolchains.
+if ARMEABI_ARCH
+    choice
+        prompt "Toolchain"
+        help
+            This menu will help to select the cross toolchain that will be
+            used to build the BSP.  To use a toolchain not present in the
+            list of choices select the custom option and enter the
+            toolchain path and prefix in the appropriate boxes.
+
+        config TOOLCHAIN_ARMEABI_GLIBC1
+            bool "ARMv5te gcc-4.1.2,Multi-lib,gnueabi/glibc-2.5-nptl-3" if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.1.2  glibc-2.5 multilib armeabi toolchain.
+                Optimized for armv5te cores.
+                Library versions available for:
+                  - Soft float       (Default)
+                  - Hard float, VFP  (-mfloat-abi=softfp -mfpu=vfp)
+                NPTL threads libraries.
+                Toolchain built by Freescale.
+
+        config TOOLCHAIN_ARMEABI_CUSTOM
+            bool "Custom"
+            help
+                Select the custom option to use toolchains that are not
+                in the available toolchain list.
+    endchoice
+endif
+
+
+# m68k nommu Toolchains.
+if M68KNOMMU_ARCH
+    choice
+        prompt "Toolchain"
+        help
+            This menu will help to select the cross toolchain that will be
+            used to build the BSP.  To use a toolchain not present in the
+            list of choices select the custom option and enter the
+            toolchain path and prefix in the appropriate boxes.
+
+        config TOOLCHAIN_68KNOMMU_UCLIBC1
+            bool "gcc-4.2.1 uClibc mk68knommu toolchain(rev 47)." if UCLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.2.1 uClibc toolchain for m68k NOMMU cores.
+                linuxthreads thread libraries.
+                Toolchain built by CodeSourcery, Release 4.2-47
+
+        config TOOLCHAIN_68KNOMMU_UCLIBC2
+            bool "gcc-4.2.1 uClibc mk68knommu toolchain(rev 153)." if UCLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.2.1 uClibc toolchain for m68k NOMMU cores.
+                linuxthreads thread libraries.
+                Toolchain built by CodeSourcery, Release 4.2-153
+
+        config TOOLCHAIN_68KNOMMU_UCLIBC3
+            bool "gcc-4.3.2 uClibc mk68knommu toolchain(rev 45)." if UCLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.3.2 uClibc toolchain for m68k NOMMU cores.
+                linuxthreads thread libraries.
+                Toolchain built by CodeSourcery, Release 4.3-45
+
+        config TOOLCHAIN_68KNOMMU_CUSTOM
+            bool "Custom"
+            help
+                Select the custom option to use toolchains that are not
+                in the available toolchain list.
+    endchoice
+endif
+
+
+# m68k Toolchains.
+if M68K_ARCH
+    choice
+        prompt "Toolchain"
+        help
+            This menu will help to select the cross toolchain that will be
+            used to build the BSP.  To use a toolchain not present in the
+            list of choices select the custom option and enter the
+            toolchain path and prefix in the appropriate boxes.
+
+        config TOOLCHAIN_68K_GLIBC1
+            bool "gcc-4.3.43 eglibc-2.5.43 mk68k toolchain." if GLIBC || LIBC_NONE || LIBC_HACKING
+            help
+                gcc-4.3.43 eglibc-2.5.43 toolchain for m68k cores.
+                linuxthreads thread libraries.
+                Toolchain built by CodeSourcery, Release 4.3-43
+
+        config TOOLCHAIN_68K_CUSTOM
+            bool "Custom"
+            help
+                Select the custom option to use toolchains that are not
+                in the available toolchain list.
+    endchoice
+endif
+
+
+config CUSTOM_TOOLCHAIN
+    bool
+    default y if TOOLCHAIN_E500V2_CUSTOM || TOOLCHAIN_E500MC_CUSTOM || TOOLCHAIN_E500V1_CUSTOM || TOOLCHAIN_E600_CUSTOM || TOOLCHAIN_E300C2_CUSTOM || TOOLCHAIN_E300C3_CUSTOM || TOOLCHAIN_8XX_CUSTOM || TOOLCHAIN_E300_CUSTOM || TOOLCHAIN_PPC64_CUSTOM || TOOLCHAIN_ARMOABI_CUSTOM || TOOLCHAIN_ARMOABI_SOFTFP_CUSTOM || TOOLCHAIN_ARMEABI_CUSTOM || TOOLCHAIN_68KNOMMU_CUSTOM || TOOLCHAIN_68K_CUSTOM
+
+
+config TOOLCHAIN
+    string
+    default tc-fsl-x86lnx-e500-dp-4.2.171-2.i386.rpm if TOOLCHAIN_E500V2_GLIBC1
+    default tc-fsl-x86lnx-e500-dp-4.3.74-2.i386.rpm if TOOLCHAIN_E500V2_GLIBC3
+    default tc-mtwk-x86lnx-e500-dp-nptl-3.4-1.i386.rpm if TOOLCHAIN_E500V2_GLIBC2
+    default tc-fsl-x86lnx-e500-dp-uclibc-4.0.2-1.i386.rpm if TOOLCHAIN_E500V2_UCLIBC1
+    default tc-fsl-x86lnx-ppc-mlib-4.2.82-2.i386.rpm if TOOLCHAIN_E500MC_GLIBC2
+    default freescale-powerpc-linux-gnu-4.1-78.i686.rpm if TOOLCHAIN_E600_GLIBC4
+    default freescale-powerpc-linux-gnu-4.2-187.i686.rpm if TOOLCHAIN_E500V1_GLIBC1 || TOOLCHAIN_E600_GLIBC1 || TOOLCHAIN_E300C2_GLIBC1 || TOOLCHAIN_E300C3_GLIBC1 || TOOLCHAIN_8XX_GLIBC1 || TOOLCHAIN_E300_GLIBC1 || TOOLCHAIN_E500MC_GLIBC1
+    default freescale-powerpc-linux-gnu-4.3-74.i686.rpm if TOOLCHAIN_E500MC_GLIBC3 || TOOLCHAIN_E500V1_GLIBC4 || TOOLCHAIN_E600_GLIBC3 || TOOLCHAIN_E300C2_GLIBC3 || TOOLCHAIN_E300C3_GLIBC2 || TOOLCHAIN_E300_GLIBC2 || TOOLCHAIN_8XX_GLIBC3
+    default tc-fsl-x86lnx-e500-sp-nptl-4.0.2-1.i386.rpm if TOOLCHAIN_E500V1_GLIBC2
+    default tc-mtwk-lnx-e500-sp-3.4.3-1.i686.rpm if TOOLCHAIN_E500V1_GLIBC3
+    default tc-fsl-x86lnx-e500-sp-uclibc-4.0.2-1.i386.rpm if TOOLCHAIN_E500V1_UCLIBC1
+    default tc-mtwk-lnx-7450-3.4.3-1.i686.rpm if TOOLCHAIN_E600_GLIBC2
+    default tc-mtwk-x86lnx-8325-3.4.3-1.i686.rpm if TOOLCHAIN_E300C2_GLIBC2
+    default tc-fsl-x86lnx-ppc-uclibc-4.2.4-1.i386.rpm if TOOLCHAIN_E300_UCLIBC1
+    default tc-fsl-x86lnx-ppc-uclibc-nfp-4.2.4-1.i386.rpm if TOOLCHAIN_8XX_UCLIBC1
+    default tc-fsl-x86lnx-ppc64-nptl-4.0.2-1.i386.rpm if TOOLCHAIN_PPC64_GLIBC1
+    default mtwk-lnx-powerpc-823-gcc-3.3.2-glibc-2.3.2-0.28-7.i686.rpm if TOOLCHAIN_8XX_GLIBC2
+    default tc-mtwk-lnx-arm-3.3.2-1.i686.rpm if TOOLCHAIN_ARMOABI_GLIBC1
+    default tc-z2-x86lnx-arm-nfp-uclibc-4.2.4-6.i386.rpm if TOOLCHAIN_ARMOABI_SOFTFP_UCLIBC1
+    default tc-fsl-x86lnx-armeabi-nptl-4.1.2-3.i386.rpm if TOOLCHAIN_ARMEABI_GLIBC1
+    default freescale-coldfire-m68k-uclinux-4.2-47.i686.rpm if TOOLCHAIN_68KNOMMU_UCLIBC1
+    default freescale-coldfire-m68k-uclinux-4.2-153.i686.rpm if TOOLCHAIN_68KNOMMU_UCLIBC2
+    default freescale-coldfire-m68k-uclinux-4.3-45.i686.rpm if TOOLCHAIN_68KNOMMU_UCLIBC3
+    default freescale-coldfire-m68k-linux-gnu-4.3-43.i686.rpm if TOOLCHAIN_68K_GLIBC1
+
+config TOOLCHAIN_PATH
+    string "Enter the custom toolchain path." if CUSTOM_TOOLCHAIN
+    help
+        Enter the path to the toolchain executables, headers, and libraries.
+        This path should be the top level directory for the toolchain.
+
+    default "/opt/freescale/usr/local/gcc-4.2.171-eglibc-2.5.171-dp-2/powerpc-none-linux-gnuspe" if TOOLCHAIN_E500V2_GLIBC1
+    default "/opt/freescale/usr/local/gcc-4.3.74-eglibc-2.8.74-dp-2/powerpc-none-linux-gnuspe" if TOOLCHAIN_E500V2_GLIBC3
+    default "/opt/mtwk/usr/local/gcc-3_4-e500-glibc-2.3.4-dp-nptl-1/powerpc-linux-gnuspe" if TOOLCHAIN_E500V2_GLIBC2
+    default "/opt/freescale/usr/local/gcc-4.0.2-uClibc-r18301-dp-1/powerpc-linux-uclibcgnuspe" if TOOLCHAIN_E500V2_UCLIBC1
+    default "/opt/freescale/usr/local/gcc-4.2.82-eglibc-2.5.82-2/powerpc-linux-gnu" if TOOLCHAIN_E500MC_GLIBC2
+    default "/opt/freescale/usr/local/gcc-4.1.78-eglibc-2.5.78/powerpc-linux-gnu" if TOOLCHAIN_E600_GLIBC4
+    default "/opt/freescale/usr/local/gcc-4.2.187-eglibc-2.5.187/powerpc-linux-gnu" if TOOLCHAIN_E500V1_GLIBC1 || TOOLCHAIN_E600_GLIBC1 || TOOLCHAIN_E300C2_GLIBC1 || TOOLCHAIN_E300C3_GLIBC1 || TOOLCHAIN_8XX_GLIBC1 || TOOLCHAIN_E300_GLIBC1 || TOOLCHAIN_E500MC_GLIBC1
+    default "/opt/freescale/usr/local/gcc-4.3.74-eglibc-2.8.74/powerpc-linux-gnu" if TOOLCHAIN_E500MC_GLIBC3 || TOOLCHAIN_E500V1_GLIBC4 || TOOLCHAIN_E600_GLIBC3 || TOOLCHAIN_E300C2_GLIBC3 || TOOLCHAIN_E300C3_GLIBC2 || TOOLCHAIN_E300_GLIBC2 || TOOLCHAIN_8XX_GLIBC3
+    default "/opt/freescale/usr/local/gcc-4.0.2-glibc-2.3.6-sp-nptl-1/powerpc-linux-gnuspe" if TOOLCHAIN_E500V1_GLIBC2
+    default "/opt/mtwk/usr/local/gcc-3.4.3-glibc-2.3.3-spe/powerpc-linux-gnuspe" if TOOLCHAIN_E500V1_GLIBC3
+    default "/opt/freescale/usr/local/gcc-4.0.2-uClibc-r18301-sp-1/powerpc-linux-uclibcgnuspe" if TOOLCHAIN_E500V1_UCLIBC1
+    default "/opt/mtwk/usr/local/gcc-3.4.3-glibc-2.3.3/powerpc-7450-linux" if TOOLCHAIN_E600_GLIBC2
+    default "/opt/mtwk/usr/local/gcc-3.4.3-e300-glibc-2.3.4/powerpc-8325-linux" if TOOLCHAIN_E300C2_GLIBC2
+    default "/opt/freescale/usr/local/gcc-4.2.4-uClibc-0.9.29-1/powerpc-linux-uclibc" if TOOLCHAIN_E300_UCLIBC1
+    default "/opt/freescale/usr/local/gcc-4.2.4-uClibc-0.9.29-nfp-1/powerpc-linux-uclibc" if TOOLCHAIN_8XX_UCLIBC1
+    default "/opt/freescale/usr/local/gcc-4.0.2-glibc-2.3.6-nptl-1/powerpc64-linux" if TOOLCHAIN_PPC64_GLIBC1
+    default "/opt/mtwk/usr/local/gcc-3.3.2-glibc-2.3.2/arm-linux" if TOOLCHAIN_ARMOABI_GLIBC1
+    default "/opt/z2/usr/local/gcc-4.2.4-uClibc-0.9.30.1-nfp-6/arm-linux-uclibc/usr" if TOOLCHAIN_ARMOABI_SOFTFP_UCLIBC1
+    default "/opt/mtwk/usr/local/powerpc-823-linux/gcc-3.3.2-glibc-2.3.2" if TOOLCHAIN_8XX_GLIBC2
+    default "/opt/freescale/usr/local/gcc-4.1.2-glibc-2.5-nptl-3/arm-none-linux-gnueabi" if TOOLCHAIN_ARMEABI_GLIBC1
+    default "/opt/freescale/usr/local/gcc-4.2.47-uclibc-0.9.47/m68k-uclinux" if TOOLCHAIN_68KNOMMU_UCLIBC1
+    default "/opt/freescale/usr/local/gcc-4.2.153-uclibc-0.9.153/m68k-uclinux" if TOOLCHAIN_68KNOMMU_UCLIBC2
+    default "/opt/freescale/usr/local/gcc-4.3.45-uclibc-0.9.45/m68k-uclinux" if TOOLCHAIN_68KNOMMU_UCLIBC3
+    default "/opt/freescale/usr/local/gcc-4.3.43-eglibc-2.5.43/m68k-linux" if TOOLCHAIN_68K_GLIBC1
+
+config CUSTOM_TOOLCHAIN_PREFIX
+    depends CUSTOM_TOOLCHAIN
+    string "Enter the toolchain prefix."
+    help
+        Enter the toolchain executable prefix, for example:
+        powerpc-linux-gnu-
+
+config TOOLCHAIN_PREFIX
+    string
+    default "powerpc-none-linux-gnuspe-" if TOOLCHAIN_E500V2_GLIBC1 || TOOLCHAIN_E500V2_GLIBC3
+    default "powerpc-linux-uclibcgnuspe-" if TOOLCHAIN_E500V2_UCLIBC1 || TOOLCHAIN_E500V1_UCLIBC1
+    default "powerpc-linux-gnu-" if TOOLCHAIN_E500MC_GLIBC1 || TOOLCHAIN_E500MC_GLIBC2 || TOOLCHAIN_E500V1_GLIBC1 || TOOLCHAIN_E600_GLIBC1 || TOOLCHAIN_E300C2_GLIBC1 || TOOLCHAIN_E300C3_GLIBC1 || TOOLCHAIN_8XX_GLIBC1 || TOOLCHAIN_E300_GLIBC1 || TOOLCHAIN_E500MC_GLIBC3 || TOOLCHAIN_E500V1_GLIBC4 || TOOLCHAIN_E600_GLIBC3 || TOOLCHAIN_E300C2_GLIBC3 || TOOLCHAIN_E300C3_GLIBC2 || TOOLCHAIN_E300_GLIBC2 || TOOLCHAIN_8XX_GLIBC3 || TOOLCHAIN_E600_GLIBC4
+    default "powerpc-linux-gnuspe-" if TOOLCHAIN_E500V1_GLIBC2 || TOOLCHAIN_E500V1_GLIBC3 || TOOLCHAIN_E500V2_GLIBC2
+    default "powerpc-7450-linux-" if TOOLCHAIN_E600_GLIBC2
+    default "powerpc-8325-linux-" if TOOLCHAIN_E300C2_GLIBC2
+    default "powerpc-linux-uclibc-" if TOOLCHAIN_E300_UCLIBC1 || TOOLCHAIN_8XX_UCLIBC1
+    default "powerpc64-linux-" if TOOLCHAIN_PPC64_GLIBC1
+    default "powerpc-823-linux-" if TOOLCHAIN_8XX_GLIBC2
+    default "arm-linux-" if TOOLCHAIN_ARMOABI_GLIBC1
+    default "arm-linux-uclibc-" if TOOLCHAIN_ARMOABI_SOFTFP_UCLIBC1
+    default "arm-none-linux-gnueabi-" if TOOLCHAIN_ARMEABI_GLIBC1
+    default "m68k-uclinux-" if TOOLCHAIN_68KNOMMU_UCLIBC1 || TOOLCHAIN_68KNOMMU_UCLIBC2 ||  TOOLCHAIN_68KNOMMU_UCLIBC3
+    default "m68k-linux-gnu-" if TOOLCHAIN_68K_GLIBC1
+    default CUSTOM_TOOLCHAIN_PREFIX if CUSTOM_TOOLCHAIN
+
+    config TOOLCHAIN_CFLAGS
+    string "Enter any CFLAGS for gcc/g++"
+    default "-mcpu=8548 -mspe=yes -mabi=spe -mhard-float -mfloat-gprs=double" if TOOLCHAIN_E500V2_GLIBC1 || TOOLCHAIN_E500V2_GLIBC2 || TOOLCHAIN_E500V2_GLIBC3 || TOOLCHAIN_E500V2_UCLIBC1
+    default "-te500mc" if TOOLCHAIN_E500MC_GLIBC1 || TOOLCHAIN_E500MC_GLIBC3
+    default "-mcpu=e500mc" if TOOLCHAIN_E500MC_GLIBC2
+    default "-te500v1" if TOOLCHAIN_E500V1_GLIBC1 || TOOLCHAIN_E500V1_GLIBC4
+    default "-te600" if TOOLCHAIN_E600_GLIBC1 || TOOLCHAIN_E600_GLIBC3 || TOOLCHAIN_E600_GLIBC4
+    default "-mcpu=8540 -mspe=yes -mabi=spe -mhard-float -mfloat-gprs=single" if TOOLCHAIN_E500V1_GLIBC2 || TOOLCHAIN_E500V1_GLIBC3 || TOOLCHAIN_E500V1_UCLIBC1
+    default "-mcpu=7400 -maltivec -mabi=altivec" if TOOLCHAIN_E600_GLIBC2
+    default "-msoft-float -mcpu=e300c2" if TOOLCHAIN_E300C2_GLIBC1 || TOOLCHAIN_E300C2_GLIBC2 || TOOLCHAIN_E300C2_GLIBC3
+    default "-mcpu=e300c3" if TOOLCHAIN_E300C3_GLIBC1 || TOOLCHAIN_E300C3_GLIBC2
+    default "-msoft-float -mcpu=860" if TOOLCHAIN_8XX_GLIBC1 || TOOLCHAIN_8XX_GLIBC2 || TOOLCHAIN_8XX_UCLIBC1 || TOOLCHAIN_8XX_GLIBC3
+    default "" if TOOLCHAIN_E300_GLIBC1 || TOOLCHAIN_E300_UCLIBC1 || TOOLCHAIN_PPC64_UCLIBC1 || TOOLCHAIN_E300_GLIBC2
+    default "-O2 -fsigned-char" if TOOLCHAIN_ARMOABI_GLIBC1
+    default "-O2 -fsigned-char -mfloat-abi=softfp -mfpu=vfp" if ( VFP_ARCH && TOOLCHAIN_ARMEABI_GLIBC1 )
+    default "-O2 -fsigned-char -msoft-float" if ( ! VFP_ARCH && TOOLCHAIN_ARMEABI_GLIBC1 )
+    default "-mcpu=5208 -DCONFIG_COLDFIRE" if TOOLCHAIN_68KNOMMU_UCLIBC2 && ( PLATFORM = m520xevb )
+    default "-mcpu=52277 -DCONFIG_COLDFIRE" if TOOLCHAIN_68KNOMMU_UCLIBC3 && ( PLATFORM = m5227xevb )
+    default "-mcpu=5253 -DCONFIG_COLDFIRE" if TOOLCHAIN_68KNOMMU_UCLIBC2 && ( PLATFORM = m5253demo || PLATFORM = m5253evb )
+    default "-m5307 -Wl,-elf2flt" if TOOLCHAIN_68KNOMMU_UCLIBC1 && ( PLATFORM = ucdimm_dbvz )
+    default "-DCONFIG_COLDFIRE" if TOOLCHAIN_68KNOMMU_UCLIBC3 && ( PLATFORM = m5301xevb )
+    default "-DCONFIG_COLDFIRE" if TOOLCHAIN_68KNOMMU_UCLIBC1 && ( PLATFORM = cf_nommu || PLATFORM = m532xevb || PLATFORM = m537xevb )
+    default "-mcpu=54455 -march=isac -msoft-float -DCONFIG_COLDFIRE" if TOOLCHAIN_68KNOMMU_UCLIBC1 && PLATFORM = m54455evb_uc
+    default "-mcfv4e" if TOOLCHAIN_68K_GLIBC1 && ( PLATFORM = m5475evb || PLATFORM = m5485evb || PLATFORM = m5484lite )
+    default "-march=isac -mcpu=54455 -msoft-float" if TOOLCHAIN_68K_GLIBC1 && ( PLATFORM = m54451evb || PLATFORM = m54455evb || PLATFORM = mcf5445x)
+    default "-msoft-float" if TOOLCHAIN_ARMOABI_SOFTFP_UCLIBC1
+
+    help
+        Enter any flags to be passed to gcc/g++ here.
+        These flags will be injected by the spoofing mechanism, so they only
+        work if the compiler is referenced as gcc/g++ in the rpm spec files.
+        For example they won't get injected if the c compiler is referenced
+        by powerpc-linux-gcc.
+
+
+

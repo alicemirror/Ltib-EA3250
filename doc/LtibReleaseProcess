@@ -1,0 +1,285 @@
+%TOPICTITLE%
+---
+
+<verbatim>
+Copyright © Freescale Semiconductor, Inc. 2004-2005. All rights reserved.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.2
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
+Texts.  A copy of the license is included in the file doc/COPYING
+</verbatim>
+
+
+%TOC%
+
+---+ Introduction
+
+This page gives a brief overview of how to make an LTIB binary BSP release.
+The specific example shown (for clarity) is for the mpc7448taiga, you
+should make substitutions for your own new platform as appropriate.
+
+If instead you just want to mark a release in CVS, but not make an iso image, 
+you should skip the sections:
+
+   * *Run a release cycle*
+   * *Test your iso image*
+
+Instead, the following actions should be taken:
+
+   * Tag CVS with some meaninful name, for instance:
+   <verbatim>$ cvs tag -c rel-mpc7448taiga-5-3-1-rc1</verbatim>
+
+If this is a release that will be sent to external parties, CVS should have
+already been branched as described [[#MakingBranch][below]]
+
+
+---+ Summary of strategy
+
+---++ If this is a brand new BSP
+
+   * Identify an existing BSP that is close to the new one you want to create
+   * Copy it's *config/platform/TARGET* to *config/platform/NEW_TARGET*
+   * Edit and modify your copied *main.lkc* as appropriate
+
+---++ Common steps (new or updating existing BSPs)
+
+   * Develop your BSP to the point where it roughly works and you'd like
+   to stabilise (e.g. you no longer want changes from the mainline CVS)
+   * Remove any development config options and non-default packages
+   * Make a branch in CVS.  This will protect you from mainline changes
+
+---++ Common steps that cycle
+
+   * Force re-build the image
+   * Make sure your boots and runs normally on the target
+   * Save your work
+   * Run a release cycle (making sure you build and tag from CVS)
+   * Test your iso (if you have made an binary release)
+   * Re-work any problems found in the release
+   * Repeat these "Common steps" until you are happy that you have something
+   that can be released to people outside the test group.  Conventionally
+   test releases will be: -rc1, -rc2,...-rcn.  Once you have something
+   to release you can drop the -rcn in the tag name
+   * To release this iso outside, make sure you have source/patch approval and
+   license sign off.
+  
+---++ Post release steps
+
+   * Merge back from your branch to the mainline.  This is essential if
+   you ever want to make a new (non-maintenance) release.  This is because
+   new (non-maintenace) releases will be branched from the CVS trunk and
+   so that trunk needs to contain all the changes you made on the branch.
+
+---++ Maintenance releases/updates
+
+Imagine you have made your iso release and people have found bugs and
+you want to fix them and possibly issue a new "maintenance release iso".
+Here's what you should do:
+
+   * Working on the branch you released from (not the CVS trunk!!!). Make
+   your changes and bug fixes.
+   * If you want to make an iso image, follow the "common steps" section.
+   If not, make sure tag the CVS branch to identify this maintenance release.
+   * When you are done, you must merge from your branch all the changes
+   from the last merge up until the tip of the branch.
+   
+
+---+ Planning
+
+---++ Mandatory requirements
+
+   * If this is a public release, make sure you don't include any
+   sources or patches that are
+   legally restricted.  Remember to check things like web pages for
+   copyrights etc.
+
+   * No files in the PPP/GPP can be overwritten.  If you want to modify a
+   file, you need to rename it and change the reference to it.
+
+---++ Guidelines
+
+These don't have to be followed, but I think are helpful and good practice.
+
+   * The release tag name could be rel-mpc7448taiga-5-3-1-rc1
+   The logic for this is as follows:
+      * rel (for release)
+      * mpc7448taiga (target name)
+      * 5-3-1 (2005, Q3, 1st release in this quarter)
+      * rc1 (release candidate 1, you may need some iterations)
+
+   * You should have branched CVS before you started the release process,
+   this will help with maintenance.  Only stabilisation of the release
+   should be done on the branch.  In this example, the branch name would
+   be, branch-mpc7448taiga-5-3-1
+
+
+---+ Execution details
+
+---++ If this is a new BSP
+
+   * Identify an existing BSP that is close to the new one you want to create
+   * Copy it's *config/platform/TARGET* to *config/platform/NEW_TARGET*
+   * Edit and modify your copied *main.lkc* as appropriate
+   * Upload any new sources/patches to the PPP (you can use ./ltib -m dltest
+   to identify them).
+   * Save your work, for example:
+<verbatim>
+$ cvs add config/platform/mpc7448taiga
+$ cvs add config/platform/mpc7448taiga/*
+$ cvs add dist/lfs-5.1/u-boot/u-boot-fsl-mpc7448.spec
+$ cvs add dist/lfs-5.1/kernel/kernel-2.6.11-mpc7448.spec
+$ cvs commit
+</verbatim>
+   * continue to work on your BSP until it basically works.
+
+
+#MakingBranch
+---++ Make a maintenance branch in CVS for this release
+
+Once you have your BSP basically working and you want to be protected
+from new development updates on the CVS trunk you should make a
+branch in CVS.  All further minor releases should be
+made on this branch.  The branch name should be the same as
+the release tag name with 'rel' replaced with 'branch', the
+'rc1' should also be dropped.  Here is an example:
+
+<verbatim>
+#### make sure you are up to date and commit all your work so far
+$ cvs up -dP
+$ cvs commit
+#### tag the trunk in cvs
+$ cvs rtag mpc7448taiga-5-3-1-bp ltib
+#### make the branch using your tag as the point to branch
+$ cvs rtag -b -r mpc7448taiga-5-3-1-bp branch-mpc7448taiga-5-3-1 ltib
+</verbatim>
+
+This say make a branch rooted at the tag 'mpc7448taiga-5-3-1-bp',
+the name of the branch is 'branch-mpc7448taiga-5-3-1'.
+
+---+++ Update your working copy of LTIB for this board to use the branch
+
+If want to work further on maintenance updates to this release, you
+need to use this branch.  To do this, updated your working copy
+to use the head of this branch:
+
+<verbatim>
+cvs up -r branch-mpc7448taiga-5-3-1
+</verbatim>
+
+
+---++ Remove any development config options and non-default packages
+
+   * Configure LTIB to the default state you want to adopt for the release.
+   Make sure you turn of any  development configuration options (such as
+   CONFIG_PKG_KERNEL_WANT_CF)
+
+<verbatim>
+./ltib -m config
+</verbatim>
+
+
+---++ Force re-build the image
+
+   * Make sure you force re-build at least all packages that are
+   turned on by the default configuration.
+
+<verbatim>
+./ltib -f
+</verbatim>
+
+---++ Make sure your image boots and runs normally on the target
+
+Before you even contemplate making a BSP as a release, you should be
+boot the image on board  and run without any problems.  Ideally
+do some more thorough testing.
+
+---++ Save your work
+
+---+++ Save your config files
+
+You need to save any updated or new configuration files so that they
+will get captured in CVS.  Here is an example:
+
+<verbatim>
+$ cp config/platform/mpc7448taiga/.config config/platform/mpc7448taiga/defconfig
+$ cp config/platform/mpc7448taiga/linux_2.6.11_mpc7448_taiga_def.config.dev config/platform/mpc7448taiga/linux_2.6.11_mpc7448_taiga_def.config
+</verbatim>
+
+---+++ Upload any new sources/patches to the PPP
+
+You now need to upload your sources/patches to the GPP.  To do this
+point your browser at:
+http://www.bitshrine.org/cgi-bin/gpp_upload.cgi
+
+And upload each file not already in the GPP.
+
+---+++ Check-in additions and changes to CVS
+
+<verbatim>
+$ cvs commit
+</verbatim>
+
+---++ Run a release cycle
+
+LTIB supports making a binary iso release.  The default action of
+running this is:
+
+   * LTIB source is checked to make sure it is in sync with CVS
+   * CVS is tagged with the release name (a default with timestamp is provided)
+   * config files are checked to make sure they are saved
+   * The LTIB sources are copied to a staging area
+   * All referenced sources in the GPP are copied to the staging area
+   * A RELEASE_INFO file is created and put in the staging area
+   * An iso image of the staging area is made.
+  
+Here is an example:
+
+<verbatim>
+./ltib -m release
+Please enter the cvs tag name for this release, or
+if you just type enter, the timestamp rel-mpc7448taiga-1122556078 will be used
+
+rel-mpc7448taiga-5-3-1-rc1
+</verbatim>
+  
+The above command created the iso image "ltib-mpc7448taiga-20050728.iso"
+
+
+---++ Test your iso image
+
+You should copy your iso image to another machine and mount it and test it:
+
+   * as root:
+<verbatim>
+mount ltib-mpc7448taiga-20050728.iso /mnt/cdrom -o loop
+</verbatim>
+
+   * as a normal user
+<verbatim>
+/mnt/cdrom/install
+</verbatim>
+
+By default, LTIB will get install in the dirctory 'ltib' in the current
+working directory.
+
+   * as a normal user, build and install
+<verbatim>
+cd ltib
+./ltib
+</verbatim>
+
+
+---++ Final release and post release merge
+
+Once you have been through -rc1, -rc2, -rcn and have a good release that
+you want to publish more widely.
+
+   * Release it and drop the -rc extension to the tag name
+   * Merge back from your branch into cvs
+
+
+----
+
+-- Main.StuartHughes - %SERVERTIME%

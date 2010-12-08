@@ -1,0 +1,50 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define dversion 2.6.10
+%define pkg_name linux
+
+Summary         : Linux kernel (core of the Linux operating system)
+Name            : Kernel
+Version         : 2.6.11
+Release         : 0
+License         : GPL
+Vendor          : Kernel.org + freescale patches
+Packager        : Jason Jin
+Group           : System Environment/Kernel
+Source          : %{pkg_name}-%{dversion}.tar.bz2
+Patch0          : patch-%{version}.bz2
+Patch1          : linux-tun-2.6.11-MPC7448_arch-2.patch
+Patch2          : linux-tun-2.6.11-MPC7448_tsec-3.patch
+Patch3          : linux-fsl-2.6.11-MPC7448_arch-4.patch
+Patch4          : linux-fsl-2.6.11-MPC7448_sata-2.patch
+Patch5          : linux-fsl-2.6.11-MPC7448_ial.patch
+Patch6          : linux-fsl-2.6.11-MPC7448_scsi.patch
+Patch7          : linux-tun-2.6.11-MPC7448_uart-2.patch
+Patch8          : linux-fsl-2.6.11-MPC7448_ct43-3.patch
+Patch9          : linux-fsl-2.6.11-MPC7448_cw.patch
+Patch10         : kernel-2.6.11-gcc4.patch
+Patch11         : kernel-2.6.11-mpc7448-tsi_common-gcc4-lvalue.patch
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+From kernel.org plus Freescale patches
+
+%Prep
+%setup -n %{pkg_name}-%{dversion}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+

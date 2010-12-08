@@ -1,0 +1,150 @@
+config ERASE_BLOCK_SIZE
+    string
+    default 64
+config FLASH_SIZE_KB
+    string
+    default 8192
+config SYSCFG_RAM_DIRS
+    string
+    default ""
+config CAP_UCLIBC
+    bool
+    default y
+config CAP_GLIBC
+    bool
+    default y
+config CAP_LFS_5_1
+    bool
+    default y
+config CAP_FC2
+    bool
+config CAP_DEPLOYMENT_ROMFS
+    bool
+config CAP_HAS_MMU
+    bool
+    default y
+config CAP_HAS_SHARED
+    bool
+    default y
+config 8XX_ARCH
+    bool
+    default y if PLATFORM = mpc860fads || PLATFORM = qs875s || PLATFORM = tqm823l
+config E300_ARCH
+    bool
+    default y if PLATFORM = mpc5200 || PLATFORM = mpc8349emds || PLATFORM = mpc8349itx || PLATFORM = mpc8349itx-gp || PLATFORM = mpc8360epb || PLATFORM = mpc8272ads
+config E300C2_ARCH
+    bool
+    default y if PLATFORM = mpc8323eisr || PLATFORM = mpc832xemds || PLATFORM = mpc832x_rdb
+config E300C3_ARCH
+    bool
+    default y if PLATFORM = mpc5121ads || PLATFORM = mpc8313erdb || PLATFORM = mpc8313erdb_revb || PLATFORM = mpc8315eds || PLATFORM = mpc8315erdb || PLATFORM = mpc837xemds || PLATFORM = mpc837xerdb
+config E500V1_ARCH
+    bool
+    default y if PLATFORM = mpc8540eval || PLATFORM = mpc8541ads || PLATFORM = mpc8555amc || PLATFORM = mpc8555cds || PLATFORM = mpc8560ads
+config E500V2_ARCH
+    bool
+    default y if PLATFORM = mpc8536ds || PLATFORM = mpc8544ds || PLATFORM = mpc8548cds || PLATFORM = mpc8568mds || PLATFORM = mpc8572ds || PLATFORM = e500v2
+config E600_ARCH
+    bool
+    default y if PLATFORM = mpc7448hpcii || PLATFORM = mpc8610hpcd || PLATFORM = mpc8641hpcn || PLATFORM = macg4
+config SOFT_FP_ARCH
+    bool
+    default y if 8XX_ARCH || E300C2_ARCH
+config E500MC_ARCH
+    bool
+    default y if PLATFORM = e500mc
+config PPC64_ARCH
+    bool
+    default y if PLATFORM = altair
+config ARMOABI_ARCH
+    bool
+    default y if PLATFORM = imx21ads
+config ARMOABI_SOFTFP_ARCH
+    bool
+    default y if PLATFORM = edb9302
+config ARMEABI_ARCH
+    bool
+    default y if PLATFORM = imx27ads || PLATFORM = imx31ads || PLATFORM = imx32ads
+config VFP_ARCH
+    bool
+    default y if PLATFORM = imx31ads || PLATFORM = imx32ads
+config M68KNOMMU_ARCH
+    bool
+    default y if PLATFORM = cf_nommu || PLATFORM = m520xevb || PLATFORM = m5227xevb || PLATFORM = m5253demo || PLATFORM = m5253evb || PLATFORM = m5301xevb || PLATFORM = m532xevb || PLATFORM = m537xevb || PLATFORM = m54455evb_uc || PLATFORM = m5253demo || PLATFORM = ucdimm_dbvz
+config M68K_ARCH
+    bool
+    default y if PLATFORM = m54451evb || PLATFORM = m54455evb || \
+		 PLATFORM = m5475evb || PLATFORM = m5484lite || PLATFORM = m5485evb \
+      || PLATFORM = mcf5445x
+config PKG_GCC_NAME
+    string
+    default "gcc-3.3.2" if ( TOOLCHAIN = mtwk-lnx-powerpc-823-gcc-3.3.2-glibc-2.3.2-0.28-7.i686.rpm || TOOLCHAIN = tc-mtwk-lnx-arm-3.3.2-1.i686.rpm )
+    default "gcc-3.4.3" if TOOLCHAIN = mtwk-lnx-powerpc-gcc-3.4.3-glibc-2.3.3-0.28-1.i686.rpm
+    default "gcc-4.1-78" if ( ( ( TOOLCHAIN = tc-fsl-x86lnx-e500-dp-4.1.78-2.i386.rpm || TOOLCHAIN = tc-fsl-ppclnx-e500-dp-4.1.78-2.ppc.rpm ) && E500V2_ARCH ) || ( TOOLCHAIN = freescale-powerpc-linux-gnu-4.1-78.i686.rpm && ! E500V2_ARCH ) )
+    default "gcc-4.2-82" if ( ( ( TOOLCHAIN = tc-fsl-x86lnx-e500-dp-4.2.82-1.i386.rpm || TOOLCHAIN = tc-fsl-ppclnx-e500-dp-4.2.82-1.ppc.rpm ) && E500V2_ARCH ) || ( TOOLCHAIN = freescale-powerpc-linux-gnu-4.2-82.i686.rpm && ! E500V2_ARCH ) )
+    default "gcc-e500mc-4.2-82" if TOOLCHAIN = tc-fsl-x86lnx-ppc-mlib-4.2.82-2.i386.rpm || TOOLCHAIN = tc-fsl-ppclnx-ppc-mlib-4.2.82-2.ppc.rpm
+    default "gcc-4.2-171" if ( ( ( TOOLCHAIN = tc-fsl-x86lnx-e500-dp-4.2.171-2.i386.rpm || TOOLCHAIN = tc-fsl-ppclnx-e500-dp-4.2.171-2.ppc.rpm ) && E500V2_ARCH ) || ( TOOLCHAIN = freescale-powerpc-linux-gnu-4.2-187.i686.rpm && ! E500V2_ARCH && ! E500V1_ARCH ) )
+    default "gcc-4.3-74" if ( ( ( TOOLCHAIN = tc-fsl-x86lnx-e500-dp-4.3.74-2.i386.rpm ) && E500V2_ARCH ) || ( TOOLCHAIN = freescale-powerpc-linux-gnu-4.3-74.i686.rpm && ! E500V2_ARCH && ! E500V1_ARCH ) )
+    default "nobuild"
+
+config DISTRO
+    string
+    default "dist/lfs-5.1"
+
+config BI_ENDIAN
+    bool
+config ENDIAN
+    string
+    default "big" if LINTARCH = "ppc" || LINTARCH = "powerpc" || LINTARCH = "sparc" || LINTARCH = "m68k" || LINTARCH = "m68knommu" || LINTARCH = "ppc64"
+    default "little"
+config SYSCFG_TMPFS
+    string
+    default "tmpfs"
+config SYSCFG_TMPFS_SIZE
+    string
+    default "512k"
+config INITTAB_LINE
+    string
+    default "::respawn:-/sbin/getty -L console 0 screen" if !PKG_SYSVINIT
+    default "/sbin/getty -L console 0 screen" if PKG_SYSVINIT && PKG_BUSYBOX && !PKG_UTIL_LINUX
+    default "/sbin/getty -L console 115200 screen" if PKG_SYSVINIT && PKG_TINYLOGIN && !PKG_UTIL_LINUX
+    default "/sbin/agetty -L console 115200 screen" if PKG_SYSVINIT && PKG_UTIL_LINUX
+config UCLIBC_DYNAMIC_LINKER
+    string
+    default "/lib/ld-uClibc.so.0"
+config GLIBC_DYNAMIC_LINKER
+    string
+    default "/lib/ld.so.1"
+config SYSCFG_BAUD
+    string
+    default "115200"
+config SYSCFG_CONSOLEDEV
+    string
+    default "ttyS0"
+config SYSCFG_BOOTLOADER
+    string
+    default "u-boot"
+config U_BOOT_IMAGE_TYPE
+    string
+    default "ppc"
+config SYSCFG_RUNKERNELADDR
+    string
+    default "0x0"
+config SYSCFG_LOADKERNELADDR
+    string
+    default "0x800000"
+config SYSCFG_LOADDTBADDR
+    string
+    default "0x9F0000"
+config SYSCFG_LOADRAMADDR
+    string
+    default "0xB00000"
+config SYSCFG_CUTARG
+    string
+    default "zImage"
+config CAP_FSL_INT
+    bool
+    default n
+config LTIB_RELEASE
+    string
+    default "9.1.1"

@@ -1,0 +1,19 @@
+#!/bin/sh
+
+if [ ! -x /sbin/hwclock ]
+then
+    exit 0
+fi
+
+if [ "$1" = "stop" -o "$1" = "restart" ]
+then
+    echo "Syncing hardware clock to system time"
+    /sbin/hwclock -w
+fi
+
+if [ "$1" = "start" -o "$1" = "restart" ]
+then
+    echo "Setting system clock to RTC"
+    /sbin/hwclock -s
+    /sbin/hwclock -r
+fi

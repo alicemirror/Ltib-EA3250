@@ -1,0 +1,130 @@
+
+# constants (forced values) for this platform
+config CONFIG_TITLE
+    string
+    default "LTIB: TQ Components TQM823L PowerPC board"
+
+config CPU
+    string
+    default "MPC823"
+
+config PLATFORM_COMMENT
+    string
+    default "TQ Components TQM823L PowerPC board"
+
+config VENDOR
+    string
+    default "TQ Components"
+
+config PLATFORM
+    string
+    default tqm823l
+
+config GNUTARCH
+    string
+    default powerpc
+
+config LINTARCH
+    string
+    default ppc
+
+config CFGHOST
+    string
+    default powerpc-linux
+
+
+# capabilities if different from defaults.lkc
+config ERASE_BLOCK_SIZE
+    string
+    default 128
+config SYSCFG_LOADKERNELADDR
+    string
+    default "0x100000"
+config SYSCFG_LOADRAMADDR
+    string
+    default "0x200000"
+
+source ../../userspace/endian.lkc
+source ../../userspace/libc_type.lkc
+source ../../userspace/toolchain.lkc
+
+
+comment "Bootloader"
+
+config BOOTLOADER1
+    bool "Build a boot loader"
+    default y
+    help
+        Selecting this will build the u-boot boot loadwer
+
+config PKG_U_BOOT
+    string
+    default "u-boot" if BOOTLOADER1
+config PKG_U_BOOT_CONFIG_TYPE
+    string
+    default "TQM823L_config" if BOOTLOADER1
+config PKG_U_BOOT_BUILD_ARGS
+    string
+    default "OPTFLAGS=-Os"
+
+comment "Choose your Kernel"
+choice
+    prompt "kernel"
+    default KERNEL3
+    help
+        This menu will let you choose the kernel to use with your board.
+        If you don't want to build a kernel, unselect this option.
+
+    config KERNEL1
+        bool "Linux-2.4.24 (DENX)"
+    config KERNEL3
+        bool "Linux-2.4.32 (kernel.org)"
+    config KERNEL_DIR_BUILD
+        bool "Local Linux directory build"
+        help
+            Build using a local copy of the kernel sources
+    config KERNEL_NONE
+        bool "Dont build the Linux kernel"
+        help
+            Select this if you dont want to build the kernel
+endchoice
+
+config PKG_KERNEL
+    string
+    default "kernel-denx-2.4.24"      if KERNEL1
+    default "kernel-2.4.32"           if KERNEL3
+    default "kernel26-dir-build"      if KERNEL_DIR_BUILD
+
+source ../../userspace/kernel_dir_build.lkc
+
+config PKG_KERNEL_PRECONFIG
+    string "kernel config"
+    default "linux-2.4.x-tqm823l-devel.config" if KERNEL1
+    default "linux-2.4.32-tqm823l.config"      if KERNEL3
+    default "linux-2.4.32-tqm823l.config"      if KERNEL_DIR_BUILD
+    default "" if KERNEL_NONE
+
+config PKG_KERNEL_WANT_HEADERS
+    depends ! KERNEL_NONE
+    bool "Include kernel headers"
+    help
+        Selecting this will copy kernel headers to rootfs/usr/src/linux/include
+
+config PKG_KERNEL_WANT_CF
+    depends ! KERNEL_NONE
+    bool "Configure the kernel"
+    default n
+
+config PKG_KERNEL_LEAVESRC
+    depends ! KERNEL_NONE
+    bool "Leave the sources after building"
+    default n
+    help
+        This is a one shot option that can be used to build the kernel and
+        leave the build source tree in rpm/BUILD in place
+
+source ../../userspace/distro.lkc
+source ../../userspace/packages.lkc
+source ../../userspace/sysconfig.lkc
+source ../../userspace/deployment.lkc
+source ../../userspace/defaults.lkc

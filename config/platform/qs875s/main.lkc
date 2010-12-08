@@ -1,0 +1,160 @@
+
+# constants (forced values) for this platform
+config CONFIG_TITLE
+    string
+    default "LTIB: A&MLtd Adder MPC875 PowerPC board"
+
+config CPU
+    string
+    default "MPC875"
+
+config PLATFORM_COMMENT
+    string
+    default "A&MLtd Adder MPC875 PowerPC board"
+
+config VENDOR
+    string
+    default "Analogue Micro Ltd"
+
+config PLATFORM_SUBDIR
+    string
+    default qs875s
+
+config PLATFORM
+    string
+    default qs875s
+
+config GNUTARCH
+    string
+    default powerpc
+
+config LINTARCH
+    string
+    default ppc
+
+config CFGHOST
+    string
+    default powerpc-linux
+
+# capabilities if different from defaults.lkc
+config SYSCFG_BAUD
+    string
+    default 38400
+config SYSCFG_CONSOLEDEV
+    string
+    default ttyCPM0
+    default ttyS0 if KERNEL1
+
+source ../../userspace/endian.lkc
+source ../../userspace/libc_type.lkc
+source ../../userspace/toolchain.lkc
+
+
+comment "Bootloader"
+
+config SYSCFG_DTC_NAME
+    string
+    default "mpc885ads"
+
+config SYSCFG_CUBOOT_KERNEL
+    string
+    default "arch/powerpc/boot/cuImage.8xx"
+
+source ../../userspace/cuimage.lkc
+
+config BOOTLOADER1
+    bool "See help: Build a boot loader"
+    default n
+    help
+        The board comes with Redboot, this should be used.  We have
+        not tested replacing this with u-boot.
+
+config PKG_U_BOOT
+    string
+    default "u-boot" if BOOTLOADER1
+config PKG_U_BOOT_CONFIG_TYPE
+    string
+    default "TQM823L_config" if BOOTLOADER1
+config PKG_U_BOOT_BUILD_ARGS
+    string
+    default "OPTFLAGS=-Os"
+
+comment "Choose your Kernel"
+choice
+    prompt "kernel"
+    default KERNEL_NONE
+    help
+        This menu will let you choose the kernel to use with your board.
+        If you don't want to build a kernel, unselect this option.
+
+    config KERNEL1
+        bool "2.4.27 (Analogue Micro Ltd)"
+    config KERNEL3
+        bool "2.6.16 (Analogue Micro Ltd)"
+    config KERNEL_DIR_BUILD
+        bool "Local Linux directory build"
+        help
+            Build using a local copy of the kernel sources
+    config KERNEL_NONE
+        bool "Dont build the Linux kernel"
+        help
+            Select this if you dont want to build the kernel
+endchoice
+
+config PKG_KERNEL
+    string
+    default "kernel-2.4.27-875"               if KERNEL1
+    default "kernel-2.6.16-875"               if KERNEL3
+    default "kernel26-dir-build"              if KERNEL_DIR_BUILD
+
+source ../../userspace/kernel_dir_build.lkc
+
+config PKG_KERNEL_WANT_OBJCOPY
+    bool
+    default y if SYSCFG_BOOTLOADER = redboot && SYSCFG_CUIMAGE = n
+
+config PKG_KERNEL_WANT_HEADERS
+    depends ! KERNEL_NONE
+    bool "Include kernel headers"
+    help
+        Selecting this will copy kernel headers to rootfs/usr/src/linux/include
+
+config PKG_KERNEL_PRECONFIG
+    string "kernel config"
+    default "linux-2.4.x-am_adder_87x.config" if KERNEL1
+    default "linux-2.6.16-am_adder_87x.config" if KERNEL3
+    default "adder875_config" if KERNEL_DIR_BUILD
+
+config PKG_KERNEL_WANT_CF
+    depends ! KERNEL_NONE
+    bool "Configure the kernel"
+    default n
+
+config PKG_KERNEL_LEAVESRC
+    depends ! KERNEL_NONE
+    bool "Leave the sources after building"
+    default n
+    help
+        This is a one shot option that can be used to build the kernel and
+        leave the build source tree in rpm/BUILD in place
+
+config SYSCFG_BOOTLOADER
+    string
+    default "redboot" if ! BOOTLOADER1
+    default "u-boot"  if BOOTLOADER1
+
+config SYSCFG_KTARG
+    string
+    default "zImage" if ! BOOTLOADER1
+    default "uImage" if BOOTLOADER1
+
+config SYSCFG_BOOT_KERNEL
+    string
+    default "arch/ppc/boot/images/zImage.embedded" if KERNEL1
+    default "arch/ppc/boot/images/zImage.elf"      if KERNEL3 || KERNEL_DIR_BUILD
+
+source ../../userspace/distro.lkc
+source ../../userspace/packages.lkc
+source ../../userspace/sysconfig.lkc
+source ../../userspace/deployment.lkc
+source ../../userspace/defaults.lkc

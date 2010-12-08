@@ -1,0 +1,2 @@
+source = pkg_map-mx
+PKG_GST_FSLV4LSINK               = gst-fslv4lsink

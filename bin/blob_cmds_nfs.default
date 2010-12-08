@@ -1,0 +1,6 @@
+blob> 
+blob> ip $ipaddr
+blob> server $serverip
+blob> Tftpfile $rootpath/boot/zImage
+blob> tftp kernel
+blob> boot noinitrd root=/dev/nfs nfsroot=$serverip\:$rootpath ip=$ipaddr\:$serverip\::::$netdev\:

@@ -1,0 +1,82 @@
+#!/usr/bin/perl -w
+eval 'LANG=C exec perl -w -S $0 ${1+"$@"}'
+    if $running_under_some_shell;
+$running_under_some_shell = 0;
+
+######################################################################
+#
+# Copyright © Freescale Semiconductor, Inc. 2007. All rights reserved.
+#
+# Stuart Hughes, stuarth@freescale.com, June 2007
+#
+# This file is part of LTIB.
+#
+# LTIB is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# LTIB is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with LTIB; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+#
+#
+# Replace the package selection content in a .config with only the
+# packages enabled in the profile
+#
+# Example usage:
+# splice_profile config/platform/mpc8349itx-gp/.config config/profile/min.config > newconfig
+#
+######################################################################
+
+$con = shift;
+$pro = shift;
+die "splice_profile <.config> <profile>\n" unless $con && $pro;
+
+open(CON, $con) or die "open $con : $!\n";
+$st = 0;
+while(<CON>) {
+    if($st == 0) {
+        if(m,^# Package list$,) {
+            $st = 1;
+            print;
+            print "#\n";
+        } else {
+            print;
+        }
+        next;
+    }
+    if($st == 1) {
+        $st = 2;
+        profile();
+        next;
+    }
+    if($st == 2) {
+        if(m,^# Target System Configuration$,) {
+            $st = 3;
+            print;
+            next;
+        }
+        next;
+    }
+    if($st == 3) {
+        print;
+        next;
+    }
+}
+close CON;
+
+sub profile
+{
+    local $_;
+    open(PRO, $pro) or die "open $pro : $!\n";
+    while(<PRO>) {
+        print;
+    }
+    close PRO;
+}

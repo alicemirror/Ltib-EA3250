@@ -1,0 +1,224 @@
+#!/usr/bin/perl -w
+eval 'LANG=C exec perl -w -S $0 ${1+"$@"}'
+    if $running_under_some_shell;
+$running_under_some_shell = 0;
+
+######################################################################
+# 
+# Copyright © Freescale Semiconductor, Inc. 2004-2007. All rights reserved.
+#
+# Stuart Hughes, stuarth@freescale.com,  20th April 2005
+# 
+# This file is part of LTIB.
+#
+# LTIB is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# LTIB is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with LTIB; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+#
+
+# autobuild ltib bsps and mail the results
+#
+# To use this:
+#  1/ Create a directory that will hold your ltib projects
+#  2/ In that directory unpack and configure ltib a number of times
+#     once for each BSP you want to test
+#  3/ Copy this script into the top level directory containing the 
+#     ltib BSPs
+#  4/ Edit the values in the section: EDIT THESE
+#  2/ Add an entry in your crontab to run the script, for instance,
+#     I run a build at 10 minutes past 9pm Mon-Fri:
+#     10 21 * * 1-5 (cd /home/seh/ltib_bsps ; ./autobuild_ltib 2>&1 )
+#
+#
+######################################################################
+use Getopt::Std;
+
+($day, $month, $year) = (gmtime)[3,4,5];
+$yyyymmdd = sprintf("%04d%02d%02d", $year+1900, $month+1, $day);
+$stime = time();
+$sdate = scalar(gmtime());
+
+####### EDIT THESE ######
+$from = 'fromname@somedomain.org';
+$fpw  = 'plain_auth_password';
+$to   = 'toname@somedomain.org';
+$cc   = '';
+$subject = 'Build results for ' . $yyyymmdd;
+$smtp = 'server.somedomain.org';
+$tag  = '';
+####### END OF EDIT THESE ######
+
+$opt_d = ".";
+$opt_P = "";
+$opt_h = 0;
+$opt_f = 0;
+$opt_c = 0;
+
+$usage = <<TXT;
+
+Usage: autobuild_ltib [ -d <dir> -f -h -P profile ]
+  where:
+    -d <dir>  : base ltib directory containing bsps (default is $opt_d)
+    -f        : full force build
+    -c        : continue on error
+    -P <pf>   : profile
+    -h        : help
+TXT
+getopts("d:P:hfc") or die $usage;
+die "$opt_d is not a directory" unless -d $opt_d;
+die $usage if $opt_h;
+
+$ltib_cmd  = "./ltib -b ";
+$ltib_cmd .= "--profile $opt_P " if $opt_P;
+$ltib_cmd .= "-f " if $opt_f;
+$ltib_cmd .= "-C " if $opt_c;
+
+# before we get started, wait for any unfinished earlier autobuilds
+wait_until_ready('autobuilder.lock', 6, 60 * 60, "$$\n$sdate GMT\n");
+
+foreach $dir ( glob("$opt_d/*") ) {
+    next unless -d $dir;
+    next unless -f "$dir/.config";
+    next if $dir eq 'noautobuild';
+    $log  = "Processing directory $dir\n";
+    $log .= "$ltib_cmd \n";
+    system_nb(<<TXT) == 0 or die "autobuild died: $?";
+cd $dir
+rm -rf rpm/BUILD/*
+cvs -q up $tag -dP -A &> /dev/null
+rm -f build.log  build.log.end.txt
+$ltib_cmd &> build.log 
+tail -30 build.log > build.log.end.txt
+# delete the pax_global_header stuff (from git tarballs)
+rm -f rpm/BUILD/* 2>/dev/null
+cd - >/dev/null
+TXT
+}
+# build failure summary
+system_nb(<<TXT) == 0 or die "autobuild died: $?";
+./mk_pkg_results -s $stime -d > build_res.html
+#scp build_res.html hostname:/path/
+./mk_pkg_results -s $stime > pkg_build_list.html
+#scp pkg_build_list.html hostname:/path/
+TXT
+
+open(RES, "build_res.html") or die "open build_res.html: $!\n";
+while(<RES>) { $res .= $_; }
+close RES;
+email(from    => $from, 
+      fpw     => $fpw,
+      do_auth => $fpw ? 1 : 0,
+      to      => $to, 
+      cc      => $cc,
+      subject => $subject, 
+      body    => $res, 
+      smtp_server => $smtp);
+
+# run autotest
+system_nb(<<TXT);
+
+# run local BSP autotest
+#./run_autotest
+
+# run kernel autotest
+#ssh autotest_host 'echo "cd; ./run_autotest_pb01" | at now+1min' 2>&1 >/dev/null
+TXT
+
+exit 0;
+
+
+# send an email message (extracted from twikicopytogppstage)
+sub email
+{
+    require Net::SMTP;
+    my $a = {
+        from_name    => 'autobuilder',
+        from         => 'automail@bitshrine.org',
+        to_name      => 'ltib-users',
+        to           => 'ltib@nongnu.org',
+        cc           => '',
+        subject      => 'no subject',
+        body         => '',
+        do_auth      => 0,
+        fpw          => '',
+        smtp_server  => 'localhost',
+        content_type => 'text/html', 
+        @_
+    };
+    my $smtp = Net::SMTP->new($a->{smtp_server},
+                              Debug => 0) or die "Net::SMTP->new";
+    $smtp->auth($a->{from}, $a->{fpw}) if $a->{do_auth};
+    $smtp->mail($a->{from});
+    $smtp->to($a->{to});
+    $smtp->cc($a->{cc});
+    $smtp->data();
+    $smtp->datasend("From: $a->{from_name} <$a->{from}>\n");
+    $smtp->datasend("To: $a->{to_name} <$a->{to}>\n");
+    $smtp->datasend("Subject: $a->{subject}\n");
+    $smtp->datasend("MIME-Version: 1.0\n");
+    $smtp->datasend("Content-type: $a->{content_type}\n");
+    $smtp->datasend("Content-Transfer-Encoding: 7bit\n");
+    $smtp->datasend("\n");
+    $smtp->datasend($a->{body});
+    $smtp->quit;
+    return 1;
+}
+
+# Normally system will block SIGINT and SIGQUIT
+# We don't want to do this, or we can't properly CNTRL-C
+sub system_nb
+{
+    my (@cmd) = @_;
+    if(my $pid = fork) {
+        waitpid($pid, 0);
+        return $?;
+    } else {
+        die "cannot fork: $!\n" unless defined $pid;
+        exec(@cmd) or die "exec: @cmd: $!";
+    }
+}
+
+# we use this to make sure we don't overlap jobs
+# the file will unlock when this process exits
+use Fcntl qw(:DEFAULT :flock);
+sub wait_until_ready
+{
+    my ($lf, $tries, $sec, $lockinfo) = @_;
+    my ($i, $msg) = (0, '');
+
+    sysopen(LF, $lf, O_RDWR|O_CREAT) or die("can't open $lf: $!\n");
+    while(1) {
+        last if flock(LF, LOCK_EX|LOCK_NB);
+        $i++ if $tries > 0;
+        $msg = $i > $tries ? "Can't get lock after $tries tries, giving up\n"
+                           :  scalar gmtime() . " GMT: $lf locked, attempt "
+                            . "$i of $tries.\nWill retry in $sec seconds\n";
+        email(from    => $from,
+              fpw     => $fpw,
+              do_auth => $fpw ? 1 : 0,
+              to      => $to,
+              subject => 'autobuilder waiting for lock',
+              body    => $msg,
+              smtp_server => $smtp);
+        warn($msg);
+        die if $i > $tries;
+        sleep($sec);
+    }
+    flock(LF, LOCK_EX) or die("can't lock $lf: $!\n");
+    seek(LF, 0, 0)     or die("can't seek to start of $lf: $!\n");
+    truncate(LF, 0)    or die("can't truncate $lf $!\n");
+    my $ofh = select(LF); $| = 1; select($ofh);
+    print LF $lockinfo;
+}
+
+

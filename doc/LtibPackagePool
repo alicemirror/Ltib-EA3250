@@ -1,0 +1,56 @@
+%TOPICTITLE%
+---
+
+%TOC%
+
+---+ LTIB Package Pools
+
+---++ Introduction
+
+LTIB is used to build Linux target images.  A target image is composed of a set of packages. Each package will normally consist of a main tarball (from the maintainer) and often some additional patches.
+
+Rather than shipping all the package payloads that may be selected with the LTIB tool, these components are downloaded as required.  The idea is that you only download what you need.  The locations that packages are downloaded from are the Package Pools described below.
+
+---++ Definitions
+
+---+++ PPP (Private Package Pool)
+
+The PPP is an area that is inside Freescale.  If you wish you
+could setup a private download area for your work.
+
+---+++ GPP (Global Package Pool)
+
+The contents of the GPP are public, this means that files in the GPP should not have any retrictions on their copying.  Files stored here should have a suitable license for copying, or have no legal copy restrictions (public domain).
+
+
+---+++ LPP (Local Package Pool)
+
+The LPP is the local directory where LTIB will cache packages/patches that it downloads from the PPP/GPP.  In addition, users on that machine can put their own local packages/patches there during development.  The purpose of the LPP is to limit the number of downloads for a given host machine.  All users on a given host machine can shared the same open source packages stored in the LPP.
+
+
+---++ Data flow
+
+%ATTACHURL%/ppp_gpp.gif
+
+---++ Policies
+
+---+++ Uploads to the GPP
+
+   * These are available to trusted LTIB developers and require a password
+until then please submit patches to the public LTIB mailing list.
+
+
+---+++ Once uploaded files may not be changed
+
+   * <b><u><font color=red> Files are immutable (cannot be updated)</font></u></b> .  If you need to update a file, you must provide a new one wit a different name.  For instance if you summitted *lkc-1.4-defaults.patch* and you find out this is incorrect and needs updating, you should use a new name, for instance *lkc-1.4-defaults-1.patch*
+
+
+---++ Resources: listings, upload, download 
+
+   * [[http://bitshrine.org resources]]
+
+
+----
+
+-- Main.StuartHughes - %SERVERTIME%
+

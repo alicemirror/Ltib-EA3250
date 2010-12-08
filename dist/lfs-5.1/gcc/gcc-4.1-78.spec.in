@@ -1,0 +1,41 @@
+# Template = gcc-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu} 
+
+%define cs_version 4.1-78
+
+# WARNING: This package can NOT be built using the CodeSourcery multilib
+#          toolchain, it will NOT function as expected!  This is due to
+#          limitations in the gcc configuration system; the e500v2 cross
+#          toolchain on the build system MUST be configured identically
+#          to the final toolchain (which is this package).  Stevep
+
+
+Summary         : Various compilers (C, C++, Objective-C, Java, ...)
+Name            : gcc
+Version         : 4.1
+Release         : 1
+License         : GPL
+Vendor          : Freescale
+Packager        : Steve Papacharalambous
+Group           : Development/Languages
+Source          : %{name}-%{cs_version}.tar.bz2
+Patch0          : gcc-4.1-78-mcpu8548-as.patch
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+This gcc package is built using the %{cs_version} sources from CodeSourcery.
+
+The source can be obtained by downloading the source rpm:
+freescale-powerpc-linux-gnu-%{cs_version}.src.rpm from:
+http://www.codesourcery.com/gnu_toolchains/power/download.html and then
+extracting the gcc source archive from this source rpm.
+
+
+%Prep
+%setup
+%patch0 -p1
+

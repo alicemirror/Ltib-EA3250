@@ -1,0 +1,23 @@
+=> 
+=> echo "NFS deployment"
+=> setenv tftp_path    $tftp_path
+=> setenv serverip     $serverip
+=> setenv ipaddr       $ipaddr
+=> setenv netmask      $netmask
+=> setenv gatewayip    $gatewayip
+=> setenv rootpath     $rootpath
+=> setenv netdev       $netdev
+=> setenv netautoconf  $netautoconf
+=> setenv consoledev   $consoledev
+=> setenv baud         $baud
+=> setenv bootargs root=/dev/nfs rw nfsroot=$serverip:$rootpath ip=$ip console=$consoledev,$baud
+=> setenv loadkernaddr $loadkernaddr
+=> setenv loaddtbaddr  $loaddtbaddr
+=> setenv loadramaddr  $loadramaddr
+=> setenv bootfile     $bootfile
+=> setenv dtbfile      $dtbfile
+=> setenv rdfile       $rdfile
+=> sleep 5
+=> tftp  $loadkernaddr $bootfile
+=> tftp  $loaddtbaddr  $dtbfile
+=> bootm $loadkernaddr

@@ -1,0 +1,181 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define dversion 2.6.24
+%define pkg_name linux
+
+Summary         : Linux kernel for M547X/M548X
+Name            : kernel
+Version         : 2.6.24
+Release         : 1
+License         : GPL
+Vendor          : kernel.org
+Packager        : Kurt Mahan
+Group           : System Environment/Kernel
+Source          : %{pkg_name}-%{dversion}.tar.bz2
+Patch1		: lin2-6-23-m5445x-0001-Scripts-checkfiles.patch
+Patch2		: lin2-6-23-m5445x-0002-Add-CF-into-headers.patch
+Patch3		: lin2-6-23-m5445x-0003-Add-Coldfire-specific-header-files.patch
+Patch4		: lin2-6-23-m5445x-0004-Add-MCF5445x-Specific-Header-Files.patch
+Patch5		: lin2-6-23-m5445x-0005-Core-MCF54455-kernel-changes.patch
+Patch6		: lin2-6-23-m5445x-0006-Core-MCF5445x-arch-lib-changes.patch
+Patch7		: lin2-6-23-m5445x-0007-Core-MCF5445x-arch-mm-changes.patch
+Patch8		: lin2-6-23-m5445x-0008-Core-Coldfire-MCF5445x-specific-code.patch
+Patch9		: lin2-6-23-m5445x-0009-MCF5445x-core-serial-support.patch
+Patch10		: lin2-6-23-m5445x-0010-MCF5445x-FEC-support.patch
+Patch11		: lin2-6-23-m5445x-0011-Coldfire-align.patch
+Patch12		: lin2-6-23-m5445x-0012-MCF54455-testing-defconfig.patch
+Patch13		: lin2-6-23-m5445x-0013-MCF54455-EVB-default-configuration.patch
+Patch14		: lin2-6-23-m5445x-0014-MCF54455EVB-default-configuration.patch
+# Patch15		: lin2-6-23-m5445x-0015-Ignore-restart_syscall.patch
+# Patch16		: lin2-6-23-m5445x-0016-libffi-cachectl.patch
+Patch15		: lin2-6-24-m5445x-0017-Add-M5445x-ATA.patch
+Patch16		: lin2-6-23-m5445x-0018-Short-circuit-IOREMAP.patch
+Patch17		: lin2-6-23-m5445x-0019-Add-Coldfire-CAU.patch
+Patch18		: lin2-6-23-m5445x-0020-USB-initial-port-to-2.6.23.patch
+Patch19		: lin2-6-23-m5445x-0021-Change-elf-entry-point.patch
+Patch20		: lin2-6-23-m5445x-0022-Add-crypto-and-pata-support.patch
+Patch21		: lin2-6-23-m5445x-0023-USB-use-new-header-file-location.patch
+Patch22		: lin2-6-23-m5445x-0024-Rewrite-coldfire-linker-script.patch
+Patch23		: lin2-6-23-m5445x-0025-Fix-typo.patch
+Patch24		: lin2-6-23-m5445x-0026-Add-M5445x-SPI-support.patch
+Patch25		: lin2-6-23-m5445x-0027-Codetest-Patches.patch
+Patch26		: lin2-6-23-m5445x-0028-Inline-memory-params.patch
+Patch27		: lin2-6-23-m5445x-0029-Defconfig-add-various-filesystems.patch
+Patch28		: lin2-6-23-m5445x-0030-USB-pre-cleanup-checkpoint.patch
+Patch29		: lin2-6-23-m5445x-0031-pre-merge.patch
+Patch30		: lin2-6-23-m5445x-0032-Fix-bitfield-definitions.patch
+Patch31		: lin2-6-23-m5445x-0033-Rewrite-Coldfire-cache-code.patch
+Patch32		: lin2-6-23-m5445x-0034-Enable-Cache-Store-Buffer.patch
+Patch33		: lin2-6-23-m5445x-0035-USB-restore-usb_autosuspend_delay.patch
+Patch34		: lin2-6-23-m5445x-0036-USB-cleanup.patch
+Patch35		: lin2-6-23-m5445x-0037-Change-USB-to-SDRAM-priority.patch
+Patch36		: lin2-6-23-m5445x-0038-Zero-len-checking-to-cache.patch
+Patch37		: lin2-6-23-m5445x-0039-USB-gadget-turn-off-DEBUG.patch
+Patch38		: lin2-6-23-m5445x-0040-USB-add-is_dualspeed.patch
+Patch39		: lin2-6-23-m5445x-0041-USB-add-default-USB-settings.patch
+Patch40		: lin2-6-23-m5445x-0042-Update-EDMA.patch
+Patch41		: lin2-6-23-m5445x-0043-Fix-DMA-mode-and-cleanup-driver.patch
+Patch42		: lin2-6-23-m5445x-0044-Fix-use-of-deprecated-API.patch
+Patch43		: lin2-6-23-m5445x-0045-Clean-up-formatting.patch
+Patch44		: lin2-6-23-m5445x-0046-Coldfire-M5445x-PCI-Bits.patch
+Patch45		: lin2-6-23-m5445x-0047-EDMA-callback-arg-changes.patch
+Patch46		: lin2-6-23-m5445x-0048-Allow-playback-at-other-than-44.1.patch
+#
+Patch47		: lin2-6-24-m5445x-kbuild.patch
+Patch48		: lin2-6-24-m5445x-usb-header-fix.patch
+Patch49		: lin2-6-24-m5445x-lock-header.patch
+Patch50		: lin2-6-24-m5445x-pata-struct.patch
+Patch51		: lin2-6-24-m5445x-remove-cdev.patch
+#
+Patch52		: linux-2.6.24-m547x_8x-548x-headers.patch
+Patch53		: linux-2.6.24-m547x_8x-initial.patch
+Patch54		: linux-2.6.24-m547x_8x-serial.patch
+Patch55		: linux-2.6.24-m547x_8x-init-defconfig.patch
+Patch56		: linux-2.6.24-m547x_8x-dma.patch
+Patch57		: linux-2.6.24-m547x_8x-fec.patch
+Patch58		: linux-2.6.24-m547x_8x-fec-cleanup.patch
+Patch59		: linux-2.6.24-m547x_8x-dma-cleanup.patch
+Patch60		: linux-2.6.24-m547x_8x-xtra-disable.patch
+Patch61		: linux-2.6.24-m547x_8x-cache.patch
+Patch62		: linux-2.6.24-m547x_8x-kernphys.patch
+Patch63		: linux-2.6.24-m547x_8x-uboot.patch
+Patch64		: linux-2.6.24-m547x_8x-phys-defconfig.patch
+Patch65		: linux-2.6.24-m547x_8x-fec-remove-debug.patch
+# drop2
+Patch66		: linux-2.6.24-m547x_8x-fix-internal.patch
+Patch67		: linux-2.6.24-m547x_8x-move-bss.patch
+Patch68		: linux-2.6.24-m547x_8x-int-c2-mask.patch
+Patch69		: linux-2.6.24-m547x_8x-mcddma-cleanup.patch
+Patch70		: linux-2.6.24-m547x_8x-add-dspi.patch
+Patch71		: linux-2.6.24-m547x_8x-add-i2.patch
+Patch72		: linux-2.6.24-m547x_8x-add-rtc-rv5c387a.patch
+Patch73		: linux-2.6.24-m547x_8x-sec1.1-hook-driver.patch
+Patch74		: linux-2.6.24-m547x_8x-sec1.1-crypto-driver.patch
+
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+From kernel.org
+All patches from Freescale
+
+%Prep
+%setup -n %{pkg_name}-%{dversion}
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1
+%patch18 -p1
+%patch19 -p1
+%patch20 -p1
+%patch21 -p1
+%patch22 -p1
+%patch23 -p1
+%patch24 -p1
+%patch25 -p1
+%patch26 -p1
+%patch27 -p1
+%patch28 -p1
+%patch29 -p1
+%patch30 -p1
+%patch31 -p1
+%patch32 -p1
+%patch33 -p1
+%patch34 -p1
+%patch35 -p1
+%patch36 -p1
+%patch37 -p1
+%patch38 -p1
+%patch39 -p1
+%patch40 -p1
+%patch41 -p1
+%patch42 -p1
+%patch43 -p1
+%patch44 -p1
+%patch45 -p1
+%patch46 -p1
+%patch47 -p1
+%patch48 -p1
+%patch49 -p1
+%patch50 -p1
+%patch51 -p1
+%patch52 -p1
+%patch53 -p1
+%patch54 -p1
+%patch55 -p1
+%patch56 -p1
+%patch57 -p1
+%patch58 -p1
+%patch59 -p1
+# %patch60 -p1
+%patch61 -p1
+%patch62 -p1
+%patch63 -p1
+%patch64 -p1
+%patch65 -p1
+# drop 2
+%patch66 -p1
+%patch67 -p1
+%patch68 -p1
+%patch69 -p1
+%patch70 -p1
+%patch71 -p1
+%patch72 -p1
+%patch73 -p1
+%patch74 -p1

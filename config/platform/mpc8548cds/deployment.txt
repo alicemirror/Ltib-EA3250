@@ -1,0 +1,171 @@
+= Connections/configuration =
+
+Serial port:       
+Serial setting:    115200 N81
+Lan connector:     
+Power connector:   
+
+= Bootloader =
+
+When you power on, you should see something like:
+
+{{{
+U-Boot 1.1.3 (FSL Development) (Aug 26 2005 - 11:24:04)
+
+CPU:   8548_E, Version: 1.1, (0x80390011)
+Core:  E500, Version: 1.0, (0x80210010)
+Clock Configuration:
+       CPU: 990 MHz, CCB: 396 MHz,
+       DDR: 198 MHz, LBC:  49 MHz
+L1:    D-cache 32 kB enabled
+       I-cache 32 kB enabled
+Board: CDS Version 0x11, PCI Slot 1
+CPU Board Revision 0.0 (0x0000)
+    PCI1: 32 bit, 33 MHz, async
+    PCI2: disabled
+I2C:   ready
+DRAM:  Initializing
+    SDRAM: 64 MB
+    DDR: 256 MB
+FLASH: 16 MB
+L2 cache 512KB: enabled
+In:    serial
+Out:   serial
+Err:   serial
+Net:   eTSEC0: PHY is Cicada Cis8204 (fc446)
+eTSEC1: PHY is Cicada Cis8204 (fc446)
+eTSEC2: PHY is Cicada Cis8204 (fc446)
+eTSEC3: PHY is Cicada Cis8204 (fc446)
+eTSEC0, eTSEC1, eTSEC2, eTSEC3
+Hit any key to stop autoboot:  0 
+=> 
+}}}
+
+Unless a key is hit the system will autoboot the linux kernel in the system
+flash, and mount the ramdisk root file system saved in flash.
+
+= Booting Linux with a NFS mounted root file system. =
+
+Example:
+
+tftp/nfs server  : <host_ip>
+target ip address: <target_ip> 
+
+= booting using nfs =
+
+ * Make a symlink to your rootfs directory
+ {{{
+cd /tftpboot
+ln -s <ltib_dir>/rootfs <target_ip>
+ }}}
+
+ * Make a directory /tftpboot/8548 and then make sure to:
+ {{{
+mkdir /tftpboot/8548
+ }}}
+
+ * Copy the 8548 kernel to /tftpboot/8548.
+ {{{
+cp <ltib_dir>/rootfs/boot/uImage /tftpboot/8548
+ }}}
+
+ * Export the rootfs directory, edit /etc/exports and add the line:
+ {{{
+/tftpboot/<target_ip> <target_ip>(rw,no_root_squash,async,no_subtree_check)
+ }}}
+ YES: this is insecure, so if you're worried change appropriately.
+
+ * Re-start/export your nfs server (here's one way)
+ {{{
+sh /etc/rc.d/init.d/nfs restart
+ }}}
+
+ * At the u-boot prompt:
+ {{{
+tftp 1000000 8548/uImage
+setenv bootargs "root=/dev/nfs nfsroot=<host_ip>:/tftpboot/<target_ip>
+ip=<target_ip>:<host_ip>::::eth0: console=ttyS1,115200"
+bootm 1000000
+ }}}
+
+
+= Change Default u-boot Parameters in Flash. =
+
+ * To list the default u-boot parameters:
+{{{
+printenv
+}}}
+
+ * To change the u-boot parameters:
+{{{
+setenv <Parameter_Name>
+}}}
+
+ * To save new parameters in flash:
+{{{
+saveenv
+}}}
+
+
+= How to Re-Flash U-Boot/Linux Image Using U-Boot =
+
+There are two banks of Flash memory in the CDS system, and they are selected
+by switch 2, bits 1 and 2 on the carrier card.  The instructions to program
+the u-boot binary file, the Linux kernel image and the ramdisk root file
+system into the bank of Flash memory as sent from the factory:
+
+Requirement:
+  * A running TFTP server which hosts the files to be transferred to flash.
+  * The resident u-boot should have the correct ipaddr, serverip, and
+    netmask parameters.  If not these should be initialized using the u-boot
+    setenv command.  The syntax of the setenv command is:
+{{{
+setenv <Variable_Name> <Variable_Value>
+}}}
+
+
+  * To program a new u-boot image into flash:
+    Boot the 8548 with u-boot and hit any key to stop the linux kernel
+    autoboot.  Enter the following commands:
+{{{
+tftp 1000000 8548/u-boot.bin
+prot off all
+erase fff80000 ffffffff
+cp.b 1000000 fff80000 80000
+reset
+}}}
+
+   * To program a new linux kernel image and root file system image into
+     flash:
+
+     Boot the 8548 with u-boot and hit any key to stop the linux kernel
+     autoboot.  Enter the following commands:
+{{{
+tftp 1000000 8548/uImage
+tftp 2000000 8548/rootfs.ext2.gz.uboot
+erase ff800000 ffdfffff
+cp.b 1000000 ff800000 1fffff
+cp.b 2000000 ffa00000 3fffff
+}}}
+
+   * To program new environment variables into flash:
+     Boot the 8548 with u-boot and hit any key to stop the linux kernel
+     autoboot.  Enter the following commands:
+{{{
+setenv bootargs root=/dev/ram rw console=ttyS1,115200
+setenv bootcmd bootm ff800000 ffa00000
+saveenv
+reset
+}}}
+
+   * To program the second flash bank with a later version of u-boot enter
+     the following commands at the u-boot prompt:
+{{{
+tftp 1000000 u-boot.bin
+erase ff780000 ff7fffff
+cp.b 1000000 ff780000 80000
+}}}
+   * Once the commands listed above have been completed then set switch SW2[2]
+     on the carrier Board to the opposite state to enable booting from the
+     second bank.
+

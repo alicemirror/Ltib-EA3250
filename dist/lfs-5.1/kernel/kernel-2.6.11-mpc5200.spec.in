@@ -1,0 +1,40 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define dversion 2.6.10
+%define pkg_name linux
+
+Summary         : Linux kernel (core of the Linux operating system)
+Name            : kernel
+Version         : 2.6.11
+Release         : 7
+License         : GPL
+Vendor          : kernel.org + freescale patches
+Packager        : Stuart Hughes
+Group           : System Environment/Kernel
+Source          : %{pkg_name}-%{dversion}.tar.bz2
+Patch0          : patch-%{version}.bz2
+Patch1          : patch-%{version}.%{release}.bz2
+Patch2          : linux-2.6.11.7-mpc5200-20050422.patch
+Patch3          : linux-2.6.11.7-mpc5200-rtprefix-20050422.patch
+Patch4          : linux-2.6.11-realtime-preempt-V0.7.40-04.patch
+Patch5          : linux-2.6.11.7-mpc5200-rtprefix-rt-rtpostfix-20050422.patch
+Patch6          : linux-2.6.11.7-mpc5200-rtprefix-rt-rtpostfix-config2ecd3-20040428.patch
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+From kernel.org
+
+%Prep
+%setup -n %{pkg_name}-%{dversion}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+

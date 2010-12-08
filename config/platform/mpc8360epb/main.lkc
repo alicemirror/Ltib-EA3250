@@ -1,0 +1,371 @@
+# constants (forced values) for this platform
+config CONFIG_TITLE
+    string
+    default "LTIB: Freescale MPC8360E PB PowerPC board"
+
+config CPU
+    string
+    default "MPC8360EPB"
+
+config PLATFORM_COMMENT
+    string
+    default "Freescale MPC8360E PB PowerPC board"
+
+config VENDOR
+    string
+    default "Freescale"
+
+config PLATFORM
+    string
+    default mpc8360epb
+
+config GNUTARCH
+    string
+    default powerpc
+
+config LINTARCH
+    string
+    default ppc
+
+config CFGHOST
+    string
+    default powerpc-linux
+
+# capabilities if different from defaults.lkc
+comment "Choose the platform revision"
+choice
+    prompt "Platform Revision"
+    default PLATFORM_REV21
+    config PLATFORM_REV1
+	bool "REV 1.x"
+    config PLATFORM_REV2
+	bool "REV 2.0"
+    config PLATFORM_REV21
+	bool "REV 2.1"
+endchoice
+
+source ../../userspace/endian.lkc
+source ../../userspace/libc_type.lkc
+source ../../userspace/toolchain.lkc
+
+
+comment "Board hardware configuration"
+choice
+    prompt "Target hardware"
+    default HWOPT_BASIC
+    help
+      This choice list is used to indicate the actual configuration of board hardware.
+
+    config HWOPT_BASIC
+	bool "Basic features"
+	help
+	   Basic features include Duart, Ethernet, PCI host, RTC, SPI and SEC.
+    config HWOPT_ATM
+	bool "ATM"
+	help
+	   ATM is an additional option to the basic features.
+    config HWOPT_USB_HOST
+	bool "USB host"
+	help
+	   USB host is an additional option to the basic features.
+    config HWOPT_USB_GADGET
+	bool "USB gadget"
+	help
+	   USB gadget is an additional option to the basic features.
+    config HWOPT_CUSTOM
+	bool "Custom HW configuration"
+endchoice
+
+config CUSTOM_DTC_NAME
+    depends HWOPT_CUSTOM
+    string "Enter your device tree filename"
+
+config SYSCFG_DTC_NAME
+    string
+    default "mpc836x_mds" if HWOPT_BASIC
+    default "mpc836x_mds_atm" if HWOPT_ATM
+    default "mpc836x_mds_usbhost" if HWOPT_USB_HOST
+    default "mpc836x_mds_udc" if HWOPT_USB_GADGET
+    default CUSTOM_DTC_NAME if HWOPT_CUSTOM
+
+comment "Choose a bootloader"
+
+choice
+    prompt "The U-Boot"
+    default BOOTLOADER2
+    help
+	This menu let you choose the u-boot version to build
+
+    config BOOTLOADER1
+	bool "u-boot-1.1.3"
+	depends !PLATFORM_REV21
+	help
+	    This boot loader supports Linux kernels before 2.6.19
+    config BOOTLOADER2
+	bool "u-boot-1.1.6"
+	depends !PLATFORM_REV21
+	help
+	    This boot loader supports Linux kernels 2.6.19 or later
+    config BOOTLOADER3
+	bool "u-boot-1.2.0"
+	help
+	    This boot loader supports Linux kernels 2.6.19 or later, and silicon chips rev. 2.0 or later
+    config U_BOOT_DIR_BUILD
+        bool "u-boot local directory build"
+    config BOOTLOADER_NONE
+        bool "Don't build the boot loader"
+endchoice
+
+source ../../userspace/u-boot-dir-build.lkc
+
+config PKG_U_BOOT
+    string
+    default "u-boot-1.1.3-mpc8360epb"		if BOOTLOADER1 && PLATFORM_REV1
+    default "u-boot-1.1.3-mpc8360epb-rev2"	if BOOTLOADER1 && PLATFORM_REV2
+    default "u-boot-1.1.6-mpc8360epb"		if BOOTLOADER2
+    default "u-boot-1.2.0-mpc8360epb-rev2"	if BOOTLOADER3 && PLATFORM_REV2
+    default "u-boot-1.2.0-mpc8360epb-rev2.1"	if BOOTLOADER3 && PLATFORM_REV21
+
+choice
+    depends BOOTLOADER1
+    prompt "u-boot target board type"
+    default PKG_U_BOOT_GENERAL
+    help
+	This menu let you choose the exact u-boot target to build
+
+    config PKG_U_BOOT_GENERAL
+	bool "General"
+    config PKG_U_BOOT_PCI33M
+	bool "PCI host 33M"
+    config PKG_U_BOOT_PCI66M
+	bool "PCI host 66M"
+    config PKG_U_BOOT_PCIAGENT
+	bool "PCI agent"
+endchoice
+
+choice
+    depends ! BOOTLOADER_NONE
+    prompt "u-boot target board type"
+    default PKG_U_BOOT_EMDS_GENERAL
+    help
+	This menu let you choose the exact u-boot target to build
+
+    config PKG_U_BOOT_EMDS_GENERAL
+	depends !HWOPT_ATM
+	bool "General"
+    config PKG_U_BOOT_EMDS_PCI33M
+	depends !HWOPT_ATM
+	bool "PCI host 33M"
+    config PKG_U_BOOT_EMDS_PCI66M
+	depends !HWOPT_ATM
+	bool "PCI host 66M"
+    config PKG_U_BOOT_EMDS_ATM
+	depends PLATFORM_REV21 && HWOPT_ATM
+	bool "ATM"
+    config PKG_U_BOOT_EMDS_PCIAGENT
+	depends !HWOPT_ATM
+	bool "PCI agent"
+endchoice
+
+config PKG_U_BOOT_CONFIG_TYPE
+    string
+    default "MPC8360EPB_config" if PKG_U_BOOT_GENERAL
+    default "MPC8360EPB_PCI33M_config" if PKG_U_BOOT_PCI33M
+    default "MPC8360EPB_PCI66M_config" if PKG_U_BOOT_PCI66M
+    default "MPC8360EPB_PCIAGENT_config" if PKG_U_BOOT_PCIAGENT
+    default "MPC8360EMDS_config" if PKG_U_BOOT_EMDS_GENERAL
+    default "MPC8360EMDS_HOST_33_config" if PKG_U_BOOT_EMDS_PCI33M
+    default "MPC8360EMDS_HOST_66_config" if PKG_U_BOOT_EMDS_PCI66M
+    default "MPC8360EMDS_ATM_config" if PKG_U_BOOT_EMDS_ATM
+    default "MPC8360EMDS_SLAVE_config" if PKG_U_BOOT_EMDS_PCIAGENT
+config PKG_U_BOOT_BUILD_ARGS
+    string
+    default "OPTFLAGS=-Os"
+
+comment "Choose your Kernel"
+
+choice
+    prompt "kernel"
+    default KERNEL2
+    help
+	This menu will let you choose the kernel to use with your board.
+	If you don't want to build a kernel, unselect this option.
+
+    config KERNEL1
+	bool "linux 2.6.11"
+	depends !PLATFORM_REV21
+    config KERNEL2
+	bool "linux 2.6.19"
+	depends !PLATFORM_REV21
+    config KERNEL3
+	bool "linux 2.6.22"
+    config KERNEL_DIR_BUILD
+	bool "Local Linux directory build"
+	help
+	    Build using a local copy of the kernel sources
+    config KERNEL_NONE
+	bool "Dont build the Linux kernel"
+endchoice
+
+config PKG_KERNEL
+    string
+    default "kernel-2.6.11-mpc8360epb"		if KERNEL1 && PLATFORM_REV1
+    default "kernel-2.6.11-mpc8360epb-rev2"	if KERNEL1 && PLATFORM_REV2
+    default "kernel-2.6.19-mpc8360epb"		if KERNEL2
+    default "kernel-2.6.22-mpc8360epb"		if KERNEL3 && !PLATFORM_REV21
+    default "kernel-2.6.22-mpc8360epb-rev2.1"	if KERNEL3 && PLATFORM_REV21
+    default "kernel26-dir-build"		if KERNEL_DIR_BUILD
+
+source ../../userspace/kernel_dir_build.lkc
+
+choice
+    depends !KERNEL_NONE && !PLATFORM_REV21
+    prompt "config file"
+    default KERNEL_CONFIG1
+    help
+	This menu lets you select a kernel config file
+
+    config KERNEL_CONFIG1
+	bool "basic features"
+    config KERNEL_CONFIG2
+	bool "PCI host"
+    config KERNEL_CONFIG3
+	bool "PCI agent"
+    config KERNEL_CONFIG4
+	bool "ATM driver"
+    config KERNEL_CONFIG5
+	bool "SPI"
+    config KERNEL_CONFIG6
+	bool "USB host"
+    config KERNEL_CONFIG7
+	bool "USB Gadget"
+    config KERNEL_CONFIG8
+	bool "Security Engine"
+    config KERNEL_CONFIG9
+	bool "CodeTEST SWIC"
+    config KERNEL_CONFIG10
+	depends PLATFORM_REV2
+	bool "IEEE 1588"
+    config KERNEL_CONFIG11
+	bool "Interworking"
+    config KERNEL_CONFIG12
+	bool "SWANG"
+    config KERNEL_CONFIG_CUSTOM
+	bool "custom"
+endchoice
+
+choice
+    depends !KERNEL_NONE && PLATFORM_REV21
+    prompt "config file"
+    default KERNEL_CONFIG13
+    default KERNEL_CONFIG21	KERNEL_DIR_BUILD
+    help
+	This menu lets you select a kernel config file
+
+    config KERNEL_CONFIG13
+	depends HWOPT_BASIC
+	bool "basic features"
+	help
+	   Basic features include Duart, Ethernet, PCI host, RTC, SPI and SEC.
+    config KERNEL_CONFIG14
+	depends HWOPT_ATM
+	bool "ATM"
+	help
+	   ATM is an additional option to the basic features.
+    config KERNEL_CONFIG15
+	depends HWOPT_BASIC
+	bool "PCI agent"
+	help
+	   PCI agent is an additional option to the basic features.
+    config KERNEL_CONFIG16
+	depends HWOPT_USB_HOST
+	bool "USB host"
+	help
+	   USB host is an additional option to the basic features.
+    config KERNEL_CONFIG17
+	depends HWOPT_USB_GADGET
+	bool "USB gadget"
+	help
+	   USB gadget is an additional option to the basic features.
+    config KERNEL_CONFIG18
+	depends HWOPT_BASIC
+	bool "IEEE 1588"
+	help
+	   IEEE 1588 is an additional option to the basic features.
+    config KERNEL_CONFIG19
+	depends HWOPT_BASIC
+	bool "CodeTEST"
+	help
+	   CodeTEST support is an additional option to the basic features.
+    config KERNEL_CONFIG20
+	depends HWOPT_BASIC
+	bool "CodeWarrior Debug"
+	help
+	   CodeWarrior debug is an additional option to the basic features.
+    config KERNEL_CONFIG21
+	bool "Tree default config"
+	help
+	   Tree default config file (*_defconfig)
+endchoice
+
+config PKG_KERNEL_PRECONFIG
+    depends !KERNEL_NONE
+    string "kernel config file"
+    default "linux-2.6.11-mpc8360epb-basic.config"		if KERNEL_CONFIG1 && PLATFORM_REV1 && !KERNEL2
+    default "linux-2.6.11-mpc8360epb-pci.config"		if KERNEL_CONFIG2 && PLATFORM_REV1
+    default "linux-2.6.11-mpc8360epb-pci-agent.config"		if KERNEL_CONFIG3 && PLATFORM_REV1
+    default "linux-2.6.11-mpc8360epb-atm.config"		if KERNEL_CONFIG4 && PLATFORM_REV1
+    default "linux-2.6.11-mpc8360epb-spi.config"		if KERNEL_CONFIG5 && PLATFORM_REV1
+    default "linux-2.6.11-mpc8360epb-usb-host.config"		if KERNEL_CONFIG6 && PLATFORM_REV1
+    default "linux-2.6.11-mpc8360epb-usb-gadget.config"		if KERNEL_CONFIG7 && PLATFORM_REV1
+    default "linux-2.6.11-mpc8360epb-SEC2.config"		if KERNEL_CONFIG8 && PLATFORM_REV1
+    default "linux-2.6.11-mpc8360epb-CodeTEST-SWIC.config"	if KERNEL_CONFIG9 && PLATFORM_REV1
+    default "linux-2.6.11-mpc8360epb-rev2-basic.config"		if KERNEL_CONFIG1 && PLATFORM_REV2 && !KERNEL2
+    default "linux-2.6.11-mpc8360epb-rev2-pci.config"		if KERNEL_CONFIG2 && PLATFORM_REV2
+    default "linux-2.6.11-mpc8360epb-rev2-pci-agent.config"	if KERNEL_CONFIG3 && PLATFORM_REV2
+    default "linux-2.6.11-mpc8360epb-rev2-atm.config"		if KERNEL_CONFIG4 && PLATFORM_REV2
+    default "linux-2.6.11-mpc8360epb-rev2-spi.config"		if KERNEL_CONFIG5 && PLATFORM_REV2
+    default "linux-2.6.11-mpc8360epb-rev2-usb-host.config"	if KERNEL_CONFIG6 && PLATFORM_REV2
+    default "linux-2.6.11-mpc8360epb-rev2-usb-gadget.config"	if KERNEL_CONFIG7 && PLATFORM_REV2
+    default "linux-2.6.11-mpc8360epb-rev2-SEC2.config"		if KERNEL_CONFIG8 && PLATFORM_REV2
+    default "linux-2.6.11-mpc8360epb-rev2-CodeTEST-SWIC.config"	if KERNEL_CONFIG9 && PLATFORM_REV2
+    default "linux-2.6.11-mpc8360epb-rev2-ieee1588.config"	if KERNEL_CONFIG10 && PLATFORM_REV2
+    default "linux-2.6.19-mpc8360epb-basic.config"		if KERNEL_CONFIG1 && KERNEL2
+    default "linux-2.6.19-mpc8360epb-iw.config"			if KERNEL_CONFIG11 && KERNEL2
+    default "linux-2.6.19-swang.config"				if KERNEL_CONFIG12 && KERNEL2
+    default "linux-2.6.22-mpc8360epb-iw.config"			if KERNEL_CONFIG11 && KERNEL3
+    default "linux-2.6.22-mpc8360epb-rev2.1-basic.config"	if KERNEL_CONFIG13 && KERNEL3
+    default "linux-2.6.22-mpc8360epb-rev2.1-atm.config"		if KERNEL_CONFIG14 && KERNEL3
+    default "linux-2.6.22-mpc8360epb-rev2.1-pci-agent.config"	if KERNEL_CONFIG15 && KERNEL3
+    default "linux-2.6.22-mpc8360epb-rev2.1-usb-host.config"	if KERNEL_CONFIG16 && KERNEL3
+    default "linux-2.6.22-mpc8360epb-rev2.1-usb-gadget.config"	if KERNEL_CONFIG17 && KERNEL3
+    default "linux-2.6.22-mpc8360epb-rev2.1-ieee1588.config"	if KERNEL_CONFIG18 && KERNEL3
+    default "linux-2.6.22-mpc8360epb-rev2.1-codetest.config"	if KERNEL_CONFIG19 && KERNEL3
+    default "linux-2.6.22-mpc8360epb-rev2.1-codewarrior.config" if KERNEL_CONFIG20 && KERNEL3
+    default "mpc836x_mds_defconfig"				if KERNEL_CONFIG21
+    default "enter config filename"				if KERNEL_CONFIG_CUSTOM
+
+config PKG_KERNEL_WANT_HEADERS
+    depends !KERNEL_NONE
+    bool "Include kernel headers"
+    help
+	Selecting this will copy kernel headers to rootfs/usr/src/linux/include
+
+config PKG_KERNEL_WANT_CF
+    depends !KERNEL_NONE
+    bool "Configure the kernel"
+    default n
+
+config PKG_KERNEL_LEAVESRC
+    depends !KERNEL_NONE && !KERNEL_DIR_BUILD
+    bool "Leave the sources after building"
+    default n
+    help
+	This is a one shot option that can be used to build the kernel and
+	leave the build source tree in rpm/BUILD in place
+
+source ../../userspace/distro.lkc
+source ../../userspace/packages.lkc
+source ../../userspace/sysconfig.lkc
+source ../../userspace/deployment.lkc
+source ../../userspace/defaults.lkc

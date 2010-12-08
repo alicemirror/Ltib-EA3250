@@ -1,0 +1,75 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define dversion 2.6.23
+%define pkg_name linux
+
+Summary         : Linux kernel (core of the Linux operating system)
+Name            : kernel
+Version         : 2.6.23
+Release         : 1
+License         : GPL
+Vendor          : Kernel.org + freescale patches
+Packager        : Ebony Zhu
+Group           : System Environment/Kernel
+Source          : %{pkg_name}-%{dversion}.tar.bz2
+Patch1          : linux-fsl-2.6.23-MPC85xx_EEPROM512.patch
+Patch2          : linux-fsl-2.6.23-MPC8548_DTS-3.patch
+Patch3          : linux-fsl-2.6.23-MPC85xx_OF_TREE.patch
+Patch4          : linux-fsl-2.6.23-MPC8548_ERRATA_MACRO.patch
+Patch5          : linux-fsl-2.6.23-MPC8548_ETSEC_ERRATA_FIX.patch
+Patch6          : linux-fsl-2.6.23-MPC8548_PIC_ERRATA_FIX.patch
+Patch7          : linux-fsl-2.6.23-MPC8548_PCI_ERRATA_FIX.patch
+Patch8          : linux-fsl-2.6.23-MISC_FIX_FOR_GIANFAR_DRIVER.patch
+Patch9          : linux-fsl-2.6.23-GIANFAR_SKB_BUFFER_RECYCLING_SUPPORT.patch
+Patch10         : linux-fsl-2.6.23-GIANFAR_PARAMETER_ADJUST.patch
+Patch11         : linux-fsl-2.6.2x-E500V2_IEEE754_spfp-2.patch
+Patch12         : linux-fsl-2.6.2x-E500V2_IEEE754_dpfp-2.patch
+Patch13         : linux-fsl-2.6.2x-E500V2_IEEE754_vspfp-2.patch
+Patch14         : linux-fsl-2.6.2x-E500V2_IEEE754_round.patch
+Patch15         : linux-fsl-2.6.2x-E500V2_IEEE754_general-2.patch
+Patch16         : linux-fsl-2.6.2x-E500V2_IEEE754_fix_packing.patch
+Patch17         : linux-fsl-2.6.23-MPC85xx_DMA.patch
+Patch18         : linux-fsl-2.6.23-MPC85xx_RIO.patch
+Patch19         : linux-fsl-2.6.23-OpenSwan.patch
+Patch20         : linux-fsl-2.6.23-OpenSwan_kernel.patch
+Patch21         : linux-fsl-2.6.23-OCF_Framework.patch
+Patch22         : linux-fsl-2.6.23-POWERPC_FIX_MODPOST_WARNING.patch
+Patch23         : linux-fsl-2.6.23-PROM.patch
+Patch24         : linux-fsl-2.6.23-CT.patch
+Patch25         : linux-fsl-2.6.23-MPC85xx_CW.patch
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+From kernel.org plus Freescale patches
+
+%Prep
+%setup -n %{pkg_name}-%{dversion}
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1
+%patch18 -p1
+%patch19 -p1
+%patch20 -p1
+%patch21 -p1
+%patch22 -p1
+%patch23 -p1
+%patch24 -p1
+%patch25 -p1

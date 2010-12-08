@@ -1,0 +1,179 @@
+# constants (forced values)
+config CONFIG_TITLE
+    string
+    default "LTIB: Freescale MPC8560ADS PQ3 PowerPC board"
+
+config PLATFORM_COMMENT
+    string
+    default "Freescale MPC8560ADS PQ3 PowerPC board"
+
+config VENDOR
+    string
+    default "Freescale"
+
+config PLATFORM
+    string
+    default mpc8560ads
+
+config GNUTARCH
+    string
+    default powerpc
+
+config LINTARCH
+    string
+    default ppc
+
+config CFGHOST
+    string
+    default powerpc-linux
+
+# capabilities if different from defaults.lkc
+config SYSCFG_CONSOLEDEV
+    string
+    default ttyCPM0
+
+source ../../userspace/endian.lkc
+source ../../userspace/libc_type.lkc
+source ../../userspace/toolchain.lkc
+
+
+comment "Bootloader"
+
+config SYSCFG_DTC_NAME
+    string
+    default "mpc8560ads"
+
+config SYSCFG_CUBOOT_KERNEL
+    string
+    default "arch/powerpc/boot/cuImage.85xx" if KERNEL1 || KERNEL2
+    default "arch/powerpc/boot/cuImage.mpc8560ads"
+
+source ../../userspace/cuimage.lkc
+
+config BOOTLOADER1
+    bool "Build a boot loader"
+    default y
+    help
+        Selecting this will build the u-boot boot loader
+    
+menu "U-Boot options" 
+    depends on BOOTLOADER1 
+choice
+    prompt "Board Type" 
+    depends BOOTLOADER1
+    default MPC8560
+    help
+    	This option lets you build MPC8560 U-Boot or MPC8540 U-Boot
+	
+    config MPC8560
+    bool "MPC8560"
+    help
+        Select this to build a MPC8560 U-Boot
+
+    config MPC8540
+    bool "MPC8540"
+    help
+        Select this to build a MPC8540 U-Boot
+endchoice
+
+choice
+    prompt "debugging port on"
+    depends MPC8560
+    default MPC8560_tsec
+    help
+    	This option lets you build U-Boot with debugging port on TSEC or FCC for MPC8560ADS board
+
+    config MPC8560_tsec
+    bool "TSEC"
+    help
+    	Select this will enable TSEC as debugging port on MPC8560ADS board
+
+    config MPC8560_fcc
+    bool "FCC"
+    help
+    	Select this will enable FCC as debugging port on MPC8560ADS board
+endchoice
+
+config PKG_U_BOOT_CW
+    bool "CodeWarrior support"
+    default n
+    help
+        Select this to enable CodeWarrior debugging support in U-Boot
+endmenu
+
+config PKG_U_BOOT
+    string
+    default "u-boot-fsl-pq3" if BOOTLOADER1
+config PKG_U_BOOT_CONFIG_TYPE
+    string 
+    default "MPC8560ADS_config debug_port_on_tsec" if MPC8560_tsec
+    default "MPC8560ADS_config debug_port_on_fcc" if MPC8560_fcc
+    default "MPC8540ADS_config" if MPC8540
+config PKG_U_BOOT_BUILD_ARGS
+    string
+    default "OPTFLAGS=-O2" if !PKG_U_BOOT_CW
+    default "OPTFLAGS=-O2 CONFIG_CW=1" if PKG_U_BOOT_CW
+
+comment "Choose your Kernel"
+choice
+    prompt "kernel"
+    default KERNEL1
+    help
+        This menu will let you choose the kernel to use with your board.
+        If you don't want to build a kernel, unselect this option.
+
+    config KERNEL1
+        bool "Linux 2.6.11+pq3 patches, MPC8560 Mode" if MPC8560 || ! BOOTLOADER1
+        help
+            2.6.11 kernel in MPC8560 mode on ADS board
+    config KERNEL2
+        bool "Linux 2.6.11+pq3 patches, MPC8540 Mode" if MPC8540 || ! BOOTLOADER1
+        help
+            2.6.11 kernel in MPC8540 mode on ADS board
+    config KERNEL_DIR_BUILD
+        bool "Local Linux directory build"
+        help
+            Build using a local copy of the kernel sources
+    config KERNEL_NONE
+        bool "Dont build the Linux kernel"
+        help
+            Select this if you dont want to build the kernel or provide your own
+endchoice
+
+config PKG_KERNEL
+    string
+    default "kernel-2.6.11-pq3" if KERNEL1 || KERNEL2
+    default "kernel26-dir-build" if KERNEL_DIR_BUILD
+
+source ../../userspace/kernel_dir_build.lkc
+
+config PKG_KERNEL_WANT_HEADERS
+    depends ! KERNEL_NONE
+    bool "Include kernel headers"
+    help
+        Selecting this will copy kernel headers to rootfs/usr/src/linux/include
+
+config PKG_KERNEL_PRECONFIG
+    string "kernel preconfig"
+    default "linux_2.6.11_mpc8560_ads.config"        if KERNEL1
+    default "linux_2.6.11_mpc8540_ads.config"        if KERNEL2
+    default "mpc8560_ads_defconfig"                  if KERNEL_DIR_BUILD
+
+config PKG_KERNEL_WANT_CF
+    depends ! KERNEL_NONE
+    bool "Configure the kernel"
+    default n
+
+config PKG_KERNEL_LEAVESRC
+    depends ! KERNEL_NONE
+    bool "Leave the sources after building"
+    default n
+    help
+        This is a one shot option that can be used to build the kernel and
+        leave the build source tree in rpm/BUILD in place
+
+source ../../userspace/distro.lkc
+source ../../userspace/packages.lkc
+source ../../userspace/sysconfig.lkc
+source ../../userspace/deployment.lkc
+source ../../userspace/defaults.lkc

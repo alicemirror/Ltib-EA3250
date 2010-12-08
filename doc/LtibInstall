@@ -1,0 +1,79 @@
+%TOPICTITLE%
+---
+
+<verbatim>
+Copyright © Freescale Semiconductor, Inc. 2004-2005. All rights reserved.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.2
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
+Texts.  A copy of the license is included in the file doc/COPYING
+</verbatim>
+
+
+%TOC%
+
+---+ Installation of LTIB (GNU/Linux Target Image Builder)
+
+---+ Introduction
+
+LTIB is usually distributed in a tarball, which includes this file.
+
+You should unpack this tarball in your home directory, or somewhere
+else you have write permissions, this will create the sub-directory
+'ltib'
+
+
+---+ Running LTIB
+
+To run ltib, change into the directory you have unpacked ltib into
+and then run ./ltib.  For instance, the sequence could be:
+
+<verbatim>
+cd ~
+tar zxvf /tmp/ltib-5.1.1.tar.gz
+cd ltib
+./ltib
+</verbatim>
+
+If you have never installed a copy of ltib on your machine before,
+a number of host packages will be built and installed that will
+help support ltib (currently: texinfo, lkc, wget).  This may take
+a few minutes. 
+
+After the host packages have been installed, a 'blue screen' will be
+presented (similar to the kernel's menuconfig).  This will let
+you choose which platform you wish to install a target image for.
+
+Once you have chosen your target platform, exit and save.  You will
+be then put into the platform's configuration menu.  If the default
+is acceptable, simply exit and save.  You target image will then
+be installed (any packages that are needed will be downloaded and built)
+
+Your target image will be placed in the sub-directory 'rootfs'.  This
+should be NFS-exported and used as the root filesystem for your
+chosen target.
+
+
+---+ Changing the Target Image configuration
+
+If you later decide to add or remove a package from your target image,
+simply run:
+
+<verbatim>
+./ltib --configure
+</verbatim>
+
+This will re-prompt you for the platform/board config.  In the board
+config screens, select packages as appropriate.  When you exit
+the configuration screen, your target image will be adjusted accordinly.
+
+
+---+ Further information
+
+For further information, see LtibFAQ
+
+---
+-- Main.StuartHughes - %SERVERTIME%
+

@@ -1,0 +1,10 @@
+comment 'Platform specific package selection'
+
+config PKG_MXC_MISC
+    select PKG_KERNEL_LEAVESRC
+    bool "mxc-misc"
+    default n
+    help
+      This package provides unit tests and libraries that are specific to
+      the mxc platform.
+

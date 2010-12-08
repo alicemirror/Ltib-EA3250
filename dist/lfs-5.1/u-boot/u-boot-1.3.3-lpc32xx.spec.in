@@ -1,0 +1,30 @@
+# template = u-boot-common.tmpl
+%define pfx /opt/nxp/rootfs/%{_target_cpu}
+
+Summary         : Universal Bootloader firmware
+Name            : u-boot
+Version         : 1.3.3
+Release         : 1
+License         : GPL
+Vendor          : NXP
+Packager        : Kevin Wells
+Group           : Applications/System
+Source          : %{name}-%{version}.tar.bz2
+Patch0		: u-boot-1.3.3-lpc32xx.patch
+Patch1		: u-boot-1.3.3-lpc32xx_up1.patch
+Patch2		: u-boot-1.3.3-lpc32xx_armtskit.patch
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+This specfile attempts to recreate the u-boot binaries
+needed for boards usin u-boot and the LPC32XX.
+
+%Prep
+%setup -n %{name}-%{version}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+

@@ -1,0 +1,24 @@
+# Template = apex-common.tmpl
+%define pfx /opt/nxp/rootfs/%{_target_cpu}
+
+Summary         : Apex bootloader
+Name            : apex
+Version         : 1.6.8
+Release         : 1
+License         : GPL
+Vendor          : NXP
+Packager        : Kevin Wells
+Group           : Applications/System
+Source          : %{name}-%{version}.tar.bz2
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+This specfile attempts to recreate the Apex 1.6.8 binary
+needed for the Embedded Artists 3131 board.
+
+%Prep
+%setup -n %{name}-%{version}
+

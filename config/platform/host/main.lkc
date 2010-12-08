@@ -1,0 +1,127 @@
+# constants (forced values)
+config CONFIG_TITLE
+    string
+    default "LTIB: Host support packages"
+
+config PLATFORM_COMMENT
+    string
+    default "Host support packages"
+
+config VENDOR
+    string
+    default "Freescale"
+
+config PLATFORM
+    string
+    default host
+
+config GNUTARCH
+    string
+    default buildarch
+
+config LINTARCH
+    string
+    default buildarch
+
+config CFGHOST
+    string
+    default buildarch
+
+# capabilities if different from defaults.lkc
+config CAP_UCLIBC
+    bool
+    default n
+
+source ../../userspace/endian.lkc
+source ../../userspace/libc_type.lkc
+
+comment "Choose your toolchain"
+choice
+    prompt "Toolchain"
+    default TOOLCHAIN_CUSTOM
+    help
+        This menu will help you choose the cross toolchain to use to build
+        your packages with.  If you choose none, you can enter the
+        path to your toolchain by hand
+
+    config TOOLCHAIN_CUSTOM
+        bool "custom"
+endchoice
+
+config TOOLCHAIN
+    string
+
+config TOOLCHAIN_PATH
+    string
+    default "/usr"
+    string "Supply your toolchain path" if TOOLCHAIN_CUSTOM
+
+config TOOLCHAIN_PREFIX
+    string
+    default  "" if TOOLCHAIN_CUSTOM
+
+config TOOLCHAIN_CFLAGS
+    string
+    default ""
+    string "Enter any CFLAGS for gcc/g++"
+    help
+        This option lets you set flags that will be passed to gcc/g++
+        These will be injected by the spoofing mechanism, so they
+        only work if you reference the compiler as gcc/g++ in your
+        rpm spec files (you cannot say for instance powerpc-linux-gcc)
+
+comment "Choose your Kernel"
+choice
+    prompt "kernel"
+    default KERNEL_NONE
+    help
+        This menu will let you choose the kernel to use with your board.
+        If you don't want to build a kernel, unselect this option.
+    config KERNEL_DIR_BUILD
+        bool "Local Linux directory build"
+        help
+            Build using a local copy of the kernel sources
+    config KERNEL_NONE
+        bool "Dont build the Linux kernel"
+        help
+            Select this if you dont want to build the kernel
+endchoice
+
+source ../../userspace/kernel_dir_build.lkc
+
+config PKG_KERNEL
+    string
+    default "kernel26-dir-build" if KERNEL_DIR_BUILD
+
+config PKG_KERNEL_WANT_HEADERS
+    depends ! KERNEL_NONE
+    bool "Include kernel headers"
+    help
+        Selecting this will copy kernel headers to rootfs/usr/src/linux/include
+
+config PKG_KERNEL_PRECONFIG
+    string "kernel preconfig"
+    default ""
+
+config PKG_KERNEL_WANT_CF
+    depends ! KERNEL_NONE
+    bool "Configure the kernel"
+    default n
+
+config PKG_KERNEL_WANT_VMLINUX_STRIPPED
+    depends ! KERNEL_NONE
+    bool
+    default y
+
+config PKG_KERNEL_LEAVESRC
+    depends ! KERNEL_NONE
+    bool "Leave the sources after building"
+    default n
+    help
+        This is a one shot option that can be used to build the kernel and
+        leave the build source tree in rpm/BUILD in place
+
+
+source ../../userspace/distro.lkc
+source ../../userspace/packages.lkc
+source ../../userspace/defaults.lkc

@@ -1,0 +1,34 @@
+#!/bin/sh
+# Print additional version information for non-release trees.
+
+#
+# Note: this was taken and adapted from scripts/localversion/
+#       in the Linux kernel version 2.6.2x
+#
+
+usage() {
+	echo "Usage: $0 [srctree]" >&2
+	exit 1
+}
+
+cd "${1:-.}" || usage
+
+# Check for git and a git repo.
+if head=`git rev-parse --verify HEAD 2>/dev/null`; then
+	gitid=`git describe 2>/dev/null` ||
+		gitid=g`git rev-parse --short HEAD`
+	# Are there uncommitted changes?
+	git update-index --refresh --unmerged > /dev/null
+	if git diff-index --name-only HEAD | grep -v "^.ltibrc" \
+	    | read dummy; then
+		echo $gitid-dirty
+	else
+		echo $gitid
+	fi
+fi
+
+# Check for svn and a svn repo.
+if rev=`svn info 2>/dev/null` ; then
+	rev=`echo "${rev}" | grep '^Revision' | awk '{print $NF}'`
+	printf -- 'svn%s' $rev
+fi

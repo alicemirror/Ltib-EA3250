@@ -1,0 +1,1636 @@
+%TOPICTITLE%
+---
+
+<verbatim>
+Copyright © Freescale Semiconductor, Inc. 2004-2005. All rights reserved.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.2
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover
+Texts.  A copy of the license is included in the file doc/COPYING
+</verbatim>
+
+
+---+ Freescale GNU/Linux Target Image Builder FAQ
+
+%TOC%
+
+---+ Quick start
+
+For those of you who don't like to read documentation, here are the bare-bones
+instructions for installing LTIB.
+
+   * *Getting/installing the software*
+<verbatim>
+$ cvs -z3 -d:pserver:anonymous@cvs.savannah.nongnu.org:/sources/ltib co ltib
+</verbatim>
+   * *Configuring the software*
+<verbatim>
+$ cd ltib
+$ ./ltib
+</verbatim>
+
+You will be prompted if you need to do anything (for instance to add sudo
+access for your user).
+
+   * *Running your image*
+
+Having build your target image you'll find a directory call *rootfs*.  This 
+contains a sub-directory *boot*, which contains your bootable Linux kernel.
+The root filesystem itself can be NFS exported and NFS root mounted by
+your kernel.  
+
+The exact details of deployment for each target vary, but often there are
+helpful notes under your platform's config directory in a file called
+*deployment_details.txt*, for example: <verbatim>/config/platform/tqm823l/deployment_instructions.txt</verbatim>.
+
+
+---+ Before you begin
+
+---++ What is LTIB
+
+The LTIB (Linux Target Image Builder) project is a simple tool that can be used
+to develop and deploy BSPs (Board Support Packages) for various target
+platforms. Using this tool a user will be able to develop a GNU/Linux image for
+their target platform.  The following features are supported:
+
+---++ Main features
+
+   * Open source (GPL)
+   * Runs on most popular Linux host distributions (x86 32/64 and some PPC)
+   * Command line interface, with curses configuration screens 
+   * Support for multiple target architectures (PPC, ARM, Coldfire)
+   * Target platforms selectable from a menu (CVS version)
+   * More than 200 userspace packages selectable
+   * Common root filesystem package set across architectures
+   * Supports building of bootloaders and kernel images
+   * All package building as non-root user
+   * Configuration/selection of individual packages from a menu
+   * Auto package dependency resolution
+   * Auto file conflict resolution by package order build scaling
+   * Auto re-install/de-install of packages by changes in dependency tree
+   * Toolchain selectable at configuration time
+   * Configuration of the Linux kernel using it's native config language
+   * Kernel selection can easily be changed from choicelist during
+   configuration
+   * Configuration of target system from host (IP address, services etc)
+   * Supports *preconfigs* which allow developers to store different system 
+   configurations (e.g. toolchain selection, kernel selection, package
+   selection etc).
+   * Supports *profiles* this allows just the userspace package set to be
+   re-configured.  This is excellent for autobuilding or exchanging the
+   non platform specific configuration between targets.
+   * All packages are built as rpms and managed using rpm
+   * Target image files managed using a private rpm database per LTIB instance
+   on the host
+   * Supports single package developer mode using prep/scbuild/scdeploy analogs
+   * Provides a means of source capture (patches) and auto update of spec files
+   * Shell mode available to run all commands in ltib's spec environment
+   * Incremental deployment (over NFS) supported
+   * RAMDISK and JFFS2 Flash image creation supported
+   * Read-only root filesystem supported.
+   * LTIB is meta-data only, all sources are pulled using http and locally cached in a common area per-host.
+   * Remote source pulls support proxys
+   * Support for glibc and uclibc
+   * All meta-data formats are open source (rpm, Linux Kernel Config)
+   * Modular BSP architecture (easy to add new BSPs)
+   * Support *batch* mode and *--continue* for auto-builders
+   * Support *--dry* to preview ltib's actions
+   * Provides *--dltest* to check for availability of sources/patches 
+   * Provides *listpkgs* mode to show all available packages, whether selected
+   and their individual licenses.
+   * Provides a *release* mode, this encapsulates an LTIB project into an
+   iso images that will not require network access.
+
+---++ What license is LTIB released under
+
+The LTIB tool is released under the [[http://www.gnu.org/copyleft/gpl.html][GNU General Public License (GPL)]]
+
+---++ Where can I get it from
+
+
+LTIB is available either as iso images from [[http://www.freescale.com/webapp/sps/site/overview.jsp?code=CW_BSP Freescale]] or in CVS format from [[http://savannah.nongnu.org/projects/ltib/ savannah]]
+
+The iso images have the advantage that they are self-contained, the packages
+for the target are pre-built and they also have more BSP specific
+documentation.  They have the disadvantage that they target only one platform
+per iso, and are a snapshot so don't include the latest updates to the LTIB
+tool.
+
+LTIB from savannah's CVS has the advantage of being up to date and supporting
+multiple platforms.  The disadvantage is that the HEAD of CVS may not always be
+stable, and also it does not contain the sources/patches for building.  This
+means that if you use CVS, any toolchains/sources/patches needed for the
+configuration you select will need to be downloaded from over the Internet.
+
+#SavannahCvs
+---+++ Savannah read-only anonymous CVS
+
+This project's CVS repository can be checked out through anonymous CVS
+using the following instructions.
+
+Software repository :
+
+<verbatim>
+$ cvs -z3 -d:pserver:anonymous@cvs.savannah.nongnu.org:/sources/ltib co ltib
+</verbatim>
+
+Note: When you update from within the module's directory (with cvs update) you do not need the -d option anymore. 
+
+---+++ Savannah project member CVS acccess over SSH 
+
+Member access is performed using the CVS over SSH method.
+
+The SSHv2 public key fingerprints for the machine hosting the CVS trees are: 
+
+   * RSA: 1024 80:5a:b0:0c:ec:93:66:29:49:7e:04:2b:fd:ba:2c:d5 
+   * DSA: 1024 4d:c8:dc:9a:99:96:ae:cc:ce:d3:2b:b0:a3:a4:95:a5
+
+Software repository :
+
+<verbatim>
+$ export CVS_RSH=ssh
+$ cvs -z3 -d <membername>@cvs.savannah.nongnu.org:/sources/ltib co ltib
+</verbatim>
+
+---++ What is required on your host before installing LTIB 
+
+It is recommended that you have around 1GB of free disk space if you intend
+to full BSP builds.
+
+| *package* | *version*  | *comment* |
+| perl      | >= 5.6.1   | to run the ltib script |
+| glibc     | >= 2.2.x   | to build/run host packages |
+| glibc-headers | >= 2.2.x | to build/run host packages |
+| glibc-devel   | >= 2.2.x | to build/run host packages |
+| binutils  | >= 2.11.93 | to build host packages |
+| libstdc++       | any? | to build rpm-fs host package |
+| libstdc++-devel | any? | to build rpm-fs host package |
+| gcc       | >= 2.96    | to build host packages |
+| gcc-c++   | >= 2.26    | to build rpm-fs host package |
+| sudo      | any        | to run the 'rpm install' phase on each package |
+| zlib       | any       | to build rpm-fs and mtd-utils host packages |
+| zlib-devel | any       | to build rpm-fs and mtd-utils host packages |
+| rpm       | any        | to build initial rpm-fs host package |
+| rpm-build | any        | to build initial rpm-fs host package |
+| patch     | any        | used by rpm |
+| wget      | any        | to download packages/patches on demand |
+| ncurses   | >= 5.1     | to build lkc (config language) host package |
+| ncurses-devel | >= 5.1 | to build lkc (config language) host package |
+| m4        | any?       | may be needed by bison |
+| bison     | any        | to build lkc (config language) host package |
+| flex      | any        | Not required we install:for host lkc |
+| texinfo   | any        | to build genext2fs host package (requires ncurses-deve|
+| gettext   | any        | genext2fs target package |
+| autoconf  | >= 2.54    | Not required we install: automake target package |
+| libtool   | >= 1.4.2   | Not required we install: libusb target package |
+| glib2-devel | any?     | Needed if you want to build glib2 |
+
+---+++ Un-sorted reports
+
+   * Needed bison-1.875-53.2.i586.rpm which needed m4-1.4.2-3.i586.rpm
+   * Need byacc: support info on an 8548 install
+
+
+---+ Installing LTIB
+
+---++ What Linux distributions does LTIB run on
+
+It should run on most Linux host distributions that have glibc-2.2.x
+or later.
+
+The following platforms have been tried:
+
+---+++ x86 Linux 
+
+   * Redhat: 7.3, 8.0, 9.0, Enterprise release 4
+   * Fedora Core: 1, 2, 3, 4, 5, 8
+   * Debian: 3.1r0 (stable), unstable, 4.0
+   * Suse: 8.2, 9.1, 9.2, 10.0, 10.2, 10.3
+   * Ubuntu 6.10, 7.04, 7.10, 8.04
+
+---+++ PPC Linux
+
+   * Debian: 3.1r0 (stable), unstable
+
+
+---++ How do I install LTIB using CVS
+
+Checkout ltib from CVS as described [[#SavannahCvs][above]] and run these
+commands:
+
+<verbatim>
+$ cd ltib
+$ ./ltib
+</verbatim>
+
+
+---++ How do I install LTIB from a binary release (iso image)
+
+If you have a binary release, here are the steps needed to install
+it:
+
+   * Download the iso image
+
+   * Mount the iso image (as root)
+   <verbatim>
+# mount <bspname.iso> /mnt/cdrom -o loop
+   </verbatim>
+
+   * Install into a target directory (as a normal user)
+   <verbatim>
+$ /mnt/cdrom/install
+   </verbatim>
+   Follow the prompts and enter the target directory when prompted,
+   This defaults to the current working directory and so you'll end
+   up with a sub-directory of ltib.
+
+   * Once ltib has been copied to the target directory, run:
+   <verbatim>
+$ cd <target_dir>/ltib
+$ ./ltib
+   </verbatim>
+
+
+#ConfigurationSection
+---+ Configuration
+
+Configuration of ltib is started by using one of the following commands:
+
+   * <verbatim>./ltib</verbatim> on the very first run for a CVS instance
+   * <verbatim>./ltib -m config</verbatim> configure only
+   * <verbatim>./ltib --configure</verbatim> configure and build
+
+---++ Navigation
+
+Most of the navigation information is show at the top of the configuration.
+In addition you may use:
+
+   * <verbatim>/</verbatim> : This searches for a configuration keyword
+   and if found shows location and dependency information.
+
+   * <verbatim>s</verbatim> : This searches the text of the menus for key
+   words and re-postition you to the location of any matches.  You may
+   repeat this operation to continue a search.
+
+   * *page-up/page-dn* keys can be used to jump up and down lists a screen
+   at a time.  The mapping for these keys varies from system to system.
+
+---++ Top level platform selection screen
+
+The top level configuration screen shows the platform specific configuration
+points.  The exact composition of this screen varies from platform to
+platform depending on the available options it offers.  This example
+is taken for the mpc8548cds platform, I have broken down each section of
+the screen and given an explanation:
+
+<verbatim>
+--- Choose the target C library type
+    C library type (glibc)  --->
+</verbatim>
+
+Most platforms offer both *glibc* or *uClibc* C libraries.  What this option
+actually does is condition the choice of available toolchains from which
+you can select.
+
+<verbatim>
+--- Choose your toolchain
+Toolchain (gcc-3.4/glibc-2.3.4 e500 (DPFP))  --->
+(-mcpu=8548 -mhard-float -mfloat-gprs=double) Enter any CFLAGS for gcc
+</verbatim>
+
+This entry allows you to choose from the available list of toolchains.
+The choice you make will drive the CFLAGS entry which follows.  You may
+of course override the value for CGLAGS.  When ltib runs, it will download
+(if required) and install the toolchain you have selected it
+
+Note that every platform includes an option to select a custom toolchain.
+This allows you to use most standard cross compilers that are your 
+system.  The most common use of this option is to test new toolchains
+before wiring them in to the platforms toolchain selection list permanently.
+When using a custom toolchain, you'll be prompted for:
+
+   * *toolchain path* : This is the absolute base path name of your toolchain.
+   For instance, if wanted to use: <verbatim>/opt/mtwk/usr/local/gcc-3.4.3-glibc-2.3.4/arm-linux/bin/arm-linux-gcc</verbatim>
+   the correct entry would be: <verbatim>/opt/mtwk/usr/local/gcc-3.4.3-glibc-2.3.4/arm-linux</verbatim>
+
+   * *cross tools prefix* : This is the value that prefixes all the standard
+   toolchain executables for your given cross toolchain.  So for the example
+   just given, this would be <verbatim>powerpc-linux-</verbatim>
+
+   * *CFLAGS* : Normally this can be left blank
+
+<verbatim>
+--- Bootloader
+[*] Build a boot loader
+      U-Boot options  --->
+</verbatim>
+
+If available, this allows you select and built a bootloader for your platform.
+
+<verbatim>
+    kernel (Linux 2.6.11+pq3 patches)  --->
+[ ] Include kernel headers
+(linux_2.6.11_mpc8548_cds_def.config) kernel preconfig
+[ ] Configure the kernel
+[ ] Leave the sources after building
+
+</verbatim>
+
+   * *kernel* item lets you select from the list of available kernels for
+   the platform.
+
+   * *Include kernel headers* tells ltib to install the header files from
+   the kernel you have built into <verbatim>rootfs/usr/src/linux/include</verbatim>
+
+   * *kernel preconfig* shows the kernel config file that will be used
+   when building the kernel.  This is automatically selected according to
+   choice of kernel.  You may overrride this.
+
+   * *Configure the kernel* will cause ltib to drop into the Linux kernel
+   configuration screen when ltib is building the kernel package.
+
+   * *Leave the sources after building* : this option will leave the 
+   source for kernel unpacked after the kernel package has been built
+   and installed.
+
+<verbatim>
+--- Package selection
+    Package list  --->
+--- Target System Configuration
+    Options  --->
+--- Target Image Generation
+    Options  --->
+</verbatim>
+
+These items drop you into the non-package specific configuration screens,
+which are discussed in the next section.
+
+*Note:* at the bottom of the screen, you'll see:
+<verbatim>
+Load an Alternate Configuration File
+</verbatim>
+
+This can be used to import a complete configuration for your platform.  For
+instance, you may save out a particular config to a named file, for re-use
+later.  Alternatively, someone else working on the same platform may send
+you their platform configuration.  These should be placed in the 
+<verbatim>config/platform/<your_target>/</verbatim> directory.
+
+---++ Common Package selection screen
+
+<verbatim>
+--- Package selection
+    Package list  --->
+</verbatim>
+
+Selecting *Package list* will drop you into the package selection screen.  Use
+this screen to add and remove packages as required.  Normally the default
+configuration is just fine.
+
+Nearly all packages are common across platforms, with a few exceptions that are
+conditioned by the choice of the current platform.  If a package requires
+another package, it will auto-select it (auto-dependency resolution).  Here is
+an example of the beginning of this screen:
+
+<verbatim>
+[*] apptrk binary package for powerpc 
+[ ] autoconf
+[ ] automake
+[*] Include C library
+(base_libs) C library package
+[ ]   Include libc locale files ?
+[ ]   Include header files from toolchain ?
+[ ]   Include static libc libraries ?
+[ ] alsa-lib
+[ ] alsa-utils
+[ ] bash
+[ ] bind
+[ ] binutils
+[ ] bison
+[*] boa
+[ ] bonnie++
+[*] busybox 
+(busybox.config) busybox preconfig filename
+[ ]   Configure busybox at build time
+[ ] bzip2
+</verbatim>
+
+
+---++ Common Target System Configuration screen
+<verbatim>
+--- Target System Configuration
+    Options  --->
+</verbatim>
+
+Selecting *Options* will drop you into the target system configuration options
+screen.  The purpose of this screen is to allow you to configure your
+target system.  I have broken down this screen with an explanation of
+each item:
+
+<verbatim>
+(mpc8548cds) target hostname
+</verbatim>
+
+This option lets you configure the host name for your target.
+
+<verbatim>
+[*] boot up with a tty and login
+(::respawn:/sbin/getty -L ttyS1 115200 vt100) Enter your inittab startup line
+</verbatim>
+
+If unchecked, your target will boot straight to the shell prompt.  The 
+advantage of this is that you don't need to know the baud rate or tty device
+for your target.  Very often this option will be left unchecked during
+initial development of a BSP.
+
+If checked, a default entry is shown for the *inittab* startup line. This
+will vary from platform to platform.  You may override this entry.
+
+<verbatim>
+()  load these modules at boot
+</verbatim>
+
+You may enter a list of modules you want loaded at boot time here.
+
+<verbatim>
+[*] start networking
+      Network setup  --->
+</verbatim>
+
+By selecting *start networking*, you will be able to enter and configure
+the *Network setup* screen.  This screen allows you to configure up to
+5 eth devices.  The following shows the entries for eth0:
+<verbatim>
+[*] Enable interface 0
+(eth0) interface
+[ ]   get network parameters using dhcp
+(192.168.1.100) IP address
+(255.255.255.0) netmask 
+(192.168.1.255) broadcast address
+(192.168.0.1) gateway address
+(192.168.0.1) nameserver ip address
+</verbatim>
+
+By default most platforms are configured with a non-routeable fixed local
+IP address.  You need to change these as appropriate.  If you are unsure
+of what these settings do, please consult with your network administrator.
+
+Back in the target system configuration screen, after the network setup,
+you'll see a set of options that let you enable/disable whether or not
+the available services will run on the target board.  The exact list 
+depends on which packages have been selected.  Here is an example:
+<verbatim>
+[*] set the system time at startup
+(ntp.cs.strath.ac.uk) NTP server name/ipaddress
+[*] start syslogd/klogd
+[*] start inetd
+()    Enter command line arguments for inetd startup
+[*] start portmap
+[*] start boa (webserver)
+(-c /etc) command line arguments for boa
+</verbatim>
+
+---++ Common Target Image Generation
+<verbatim>
+--- Target Image Generation screen
+    Options  --->
+</verbatim>
+
+Selecting *Options* here will drop you into the target image generation
+options screen.  The purpose of thise screen is to allow you to configure
+certain aspects of the target image.
+
+By default, an NFS mountable image is always generated, but in addition you
+may also choose to package your image as a JFFS2 image or a compressed
+ext2 RAMDISK image.
+
+Here is an example screen for a system that is using ext2.gz RAMDISK.
+
+<verbatim>
+--- Choose your root filesystem image type
+     Target image: (ext2.gz ramdisk)  --->
+</verbatim>
+
+Here you can choose between NFS only, JFFS2 or ext2.gz RAMDISK image types
+
+<verbatim>
+[ ] read-only root filesystem 
+</verbatim>
+
+Selecting this option will cause your root filesytem to be mounted read-only.
+Certain directories that must have write permissions will be copied to
+a read/write ramfs/tmpfs at boot and bind mounted.
+
+<verbatim>
+[*] create a ramdisk that can be used by u-boot
+</verbatim>
+
+This option is available if you are using u-boot for your target.  It 
+turns the RAMDISK into a format that u-boot can understand (it adds headers)
+
+<verbatim>
+()  rootfs target directory
+</verbatim>
+
+This copies the output image (RAMDISK or JFFS2 image) to a chosen directory.
+You must have write permissions there.
+
+<verbatim>
+[ ] Keep temporary staging directory
+</verbatim>
+
+This is used mainly during debugging.  It keeps the intermediate directory 
+that is used as the staging directory for the RAMDISK/JFFS2 image.
+
+<verbatim>
+[*] remove man pages etc from the target image
+[*] remove the /boot directory
+[*] remove the /usr/src/ directory
+[*] remove the /usr/include directory
+()  remove these directories
+()  remove these files[*] remove the static libraries
+[*] strip any remaining binaries or libraries in the target image
+</verbatim>
+
+These options allow you to remove certain files/directories from the 
+RAMDISK/JFFS2 image.  The idea is to save space on footprint challenged
+platforms
+
+<verbatim>
+(0) Allocate extra space (Kbytes)
+</verbatim>
+
+This option allows you to reserve spare capcity for your JFFS2 image
+
+---++ How can I re-configure the kernel under LTIB
+
+Note: example here shown for the mpc8548cds platform
+
+   * Run ltib and select 'Configure the kernel'
+
+<verbatim>
+./ltib --configure
+</verbatim>
+
+   * Locate the section that looks like:
+<verbatim>
+         --- Choose your Kernel
+             kernel (Linux 2.6.11+pq3 patches)  --->
+         [ ] Include kernel headers
+         [ ] Configure the kernel
+         [ ] Leave the sources after building
+</verbatim>
+
+   * Enable 'Configure the kernel', exit and save.
+
+The kernel will build and stop in  menuconfig.  This will be
+set to the values stored in:
+
+<verbatim>
+config/platform/mpc8548cds/linux_2.6.11_mpc8548_cds_def.config
+</verbatim>
+
+After you've selected and changed any values, ltib will save these back to:
+
+<verbatim>
+config/platform/mpc8548cds/linux_2.6.11_mpc8548_cds_def.config.dev
+</verbatim>
+
+If you want to try out a number of different kernel options, but don't want to completely re-build each time:
+
+   * Select the option: <verbatim>    [ ] Configure the kernel</verbatim>
+
+   * run:
+<verbatim>
+./ltib -p kernel-2.6.11-pq3 -m prep
+</verbatim>
+
+   * build:
+<verbatim>
+./ltib -p kernel-2.6.11-pq3 -m scbuild
+</verbatim>
+
+This will stop and let you tune the kernel values.  If there is a file <verbatim>config/platform/mpc8548cds/linux_2.6.11_mpc8548_cds_def.config.dev</verbatim>, this will be used as a starting point.  The file gets saved back to the same filename, so you can incrementally change values.  
+
+   * To copy the built kernel to the rootfs/boot directory (optional)
+<verbatim>
+./ltib -p kernel-2.6.11-pq3 -m scdeploy
+</verbatim>
+
+This will also have the side effect of marking the kernel as built, so you
+can run <verbatim>./ltib</verbatim> on it's own without it complaining
+that the directory is in the way.
+
+*Note:* You can keep running the *scbuild* step until you're done.
+If you change any source  code in 'rpm/BUILD/linux-xxx/' you can capture
+your changes at the end by running:
+
+<verbatim>
+./ltib -p kernel-2.6.11-pq3 -m patchmerge
+</verbatim>
+
+This will generate a patch of your changes and update the spec file.
+
+To make your config changes permanent, you can do the following:
+<verbatim>
+mv config/platform/mpc8548cds/linux_2.6.11_mpc8548_cds_def.config.dev config/platform/mpc8548cds/linux_2.6.11_mpc8548_cds_def.config
+</verbatim>
+
+Normally at this point you'd do a cvs commit if you have CVS write access.
+
+
+---+  Deployment
+
+Some targets have specific instructions in their platform directory, this
+file is normally called *deployment_instructions.txt*, for example:
+<verbatim>config/platform/tqm823l/deployment_instructions.txt</verbatim>
+
+The following instructions are a general case (based on tqm823l), if you
+do find a *deployment_instructions.txt* follow the specific instructions
+in their after reading this general overview, that gives strategy pointers.
+
+Additionally, some iso images contain more formal BSP documentation, you
+should also consult this, if available.
+
+---++ I ran ltib, where's my bootloader/kernel/root filesystem
+
+This may vary from target to target (depends on the defconfig), but 
+here's the general case:
+
+---+++ root filesystem
+
+The root filesystem will be a directory tree found under *rootfs* . The
+files under here will generally be owned by root, with groups permissions
+etc set as required to run on the actual target board.  The purpose of
+this directory is to provide a node that can be NFS exported by your host
+and NFS mounted as your target's root filesystem.
+
+---+++ bootloader
+
+The bootloader (if built) will be found under *rootfs/boot/* for example
+many powerpc platforms would have the following bootloader components:
+
+   1 *rootfs/boot/u-boot* : the elf version of u-boot (for debug)
+   2 *rootfs/boot/u-boot.bin* the binary image of u-boot that could be
+   installed into Flash (*normally you don't need to do this*)
+
+---+++ kernel
+
+The kernel (if build) will be found under *rootfs/boot* for example
+many powerpc platforms would have the following bootloader components:
+
+   1 *vmlinux*: the elf image of the kernel (for debug if built appropriately)
+   2 *uImage*: the bootable kernel image (name depends on the target)
+   3 *System.map*: the symbol map file for the built kernel
+   4 *linux.config*: the configuration used to build the kernel image
+
+---++ How do get my kernel/root filesystem running on my target
+
+The most common way to deploy your kernel and root filesystem is
+to load the kernel on the target using tftp and then boot the
+kernel with the appropriate parameters to mount the root filesystem
+from the host using NFS.
+
+---+++ Export the root filesystem from your host using NFS
+
+The exact details to do this vary from distribution to distribution,
+but in general, here are the typical steps that you need carry out
+(you need to be root to do this):
+
+   * Choose an IP address on your network for the target (one not already
+   in use).  You need to make sure that you have configured ltib so
+   the root filesystem uses this IP address.
+   See [[#ConfigurationSection][configuration]]
+   The target can even use dhcp to get it's IP address, however if you 
+   select DHCP in ltib's config and you are doing NFS deployment,
+   what it actually does is bypass setting
+   up the eth device, and relies on the current setting inherited by
+   the kernel's boot parameters
+
+   * Make a note of the IP address for your host.
+   For this example, we'll assume the following values:
+      * Target IP address: *192.168.0.254*
+      * Host IP address: *192.168.0.204*
+      * Root filesystem location: *~/ltib/rootfs*
+
+   * Make a symlink from /tftpboot to the root filesystem:
+<verbatim>
+ln -s ~/ltib/rootfs /tftpboot/192.168.0.254
+</verbatim>
+
+   * Make sure you have the NFS server and portmap installed on your system
+
+   * Export this directory by editing */etc/exports*, add the entry:
+<verbatim>
+/home/<uid>/ltib/rootfs *(rw,no_root_squash)
+</verbatim>
+   *NOTE*: this example has all security for this directory turned off!
+   Any host may access this exported directory.  
+   See <verbatim>man exports</verbatim> for more information
+
+   * Re-start NFS:
+ <verbatim>
+sh /etc/rc.d/init.d/nfs restart
+ </verbatim>
+
+---+++ Make sure you have a tftp daemon running on your host
+
+Most boot loaders load the kernel over a network connection using tftp
+protocol.  So your target's bootloader can access the kernel you have built,
+you must make sure you have a tftp daemon on your host.  Here are some checks
+you can do:
+
+    1 Check that the tftp server program is present on your system.
+    by running the command below.  If it is not present you'll need to
+    install the tftp-server package.
+<verbatim>
+$ ls /usr/sbin/in.tftpd
+/usr/sbin/in.tftpd
+</verbatim>
+    2 Check to see if inetd is setup to run the tftp server by running the
+    command below, your output should be similar:
+<verbatim>
+$ netstat -a | grep tftp
+udp        0      0 *:tftp                      *:* 
+</verbatim>
+    It there is no output, make sure that it's not disabled in 
+    <verbatim>/etc/xinetd.d/tftp</verbatim>.  In my copy I note the following
+    line:
+<verbatim>
+    disable = no
+</verbatim>
+    3 Make sure that if you have a firewall on your host it will not block
+    incoming packages from your target.  
+
+
+---+++ Copy your kernel image to a location when tftp can retrieve it
+
+Generally the tftp server will be configured to *chroot* to the directory
+<verbatim>/tftpserver</tftpserver></verbatim>.  This means that you need to copy your
+kernels to this, or a subdirectory under that directory.  In our example,
+we do the following:
+<verbatim>
+$ cp rootfs/boot/uImage /tftpboot
+</verbatim>
+
+
+---+++ Setup the bootloader arguments for your kernel to use the exported RFS
+
+The example shown is for a system using uboot/ppcboot with the setup
+in the earlier section:
+
+   * Setup the network parameters. At the ppcboot prompt:
+<verbatim>
+=> setenv ipaddr 192.168.0.254
+=> setenv serverip 192.168.0.204
+=> setenv bootargs root=/dev/nfs nfsaddrs=192.168.0.254:192.168.0.204
+</verbatim>
+
+
+---+++ Load your kernel onto the target board and boot the target
+
+<verbatim>
+=> tftp 100000 vmlinux.gz.uboot
+.........
+=> bootm 100000
+</verbatim>
+
+
+#LtibSupport
+
+---+ Support
+
+---++ Savannah public mailing list
+
+The primary means of getting support if you are using LTIB from Savannah
+is to join the mailing list [[http://lists.nongnu.org/mailman/listinfo/ltib][here]] and to submit your questions.
+
+---++ iso images downloaded from freescale.com
+
+If you are using an iso image downloaded from http://www.freescale.com/ you
+may post support questions by doing the following:
+
+   * go to http://www.freescale.com
+   * click on "Support / Technical support"
+   * click on "Submit a Service Request" 
+   * register to get a user name and password.
+   * login in with your user name and password
+   * on the "New Service Request" page:
+      * category = Technical Request
+      * topic = Linux BSP
+      * Click on "Continue"
+   * fill out the information for the service request
+   * click on the "Submit" button at the bottom of the page.
+
+---+ Command line options explained
+
+If you run the command show below, you'll see the following summary:
+
+<verbatim>
+$ ./ltib --help
+
+This script is used to manage the building of BSPs with common target
+root filesystems.  The rpms are installed as they are built
+in the directory /home/seh/ltib_bsps/ltib-dev/rootfs (unless overriden in the resource file)
+
+Edit the file .ltibrc in this directory to change the default system
+configuration, or .ltibrc in your home directory.
+
+ltib [-m <mode>] [options....]
+    Where:
+        --mode|m
+          Where mode is either:
+            prep        just prep the package
+            scbuild     rpmbuild -bc --short-circuit
+            scinstall   rpmbuild -bi --short-circuit
+            scdeploy    does an scinstall followed by an install to the rootfs
+            patchmerge  generate and merge a patch (requires -p <pkg>)
+            clean       clean/uninstall target packages
+            distclean   full cleanup, removes nearly everything
+            listpkgs    list packages (alphanumeric)
+            release     make a binary release iso image
+            config      use with --configure to do configuration only
+            shell       enter ltib shell mode (sets up spoofing etc)
+        --pkg|p       : operate on this package only
+        --configure|c : run the interactive configuration
+        --preconfig   : configuration file to build from (defaults to .config)
+        --profile     : profile file.  This is used to select an alternate
+                        set of userspace packages, this is saved and used
+                        on later runs of ltib (e.g config/profiles/max.config)
+        --rcfile|r    : use this resource file
+        --batch|b     : batch mode, assume yes to all questions
+        --force|f     : force rebuilds even if they are up to date
+        --reinstall|e : re-install rpms (but don't force rebuild)
+        --nodeps|n    : turn off install/uninstall dependency checks
+        --conflicts|k : don't force install rpms that have file conflicts
+        --keepsrpms|s : keep the srpms after the build (deleted by default)
+        --verbose|v   : more output
+        --dry-run|d   : mostly a dry run (calls to system are just echos)
+        --continue|C  : try to continue on package build errors (autobuilds)
+        --version|V   : print the application version and quit
+        --noredir|N   : do not redirect any output
+        --deploy|D    : run the deploy scripts even if build is up to date
+        --dlonly      : just download the packages only
+        --dltest      : test that the BSP's packages are available
+        --leavesrc|l  : leave the sources unpacked (only valid for pkg mode)
+        --hostcf      : (re)configure/build/install the host support package set
+        --help|h      : help on usage
+
+</verbatim>
+
+
+---++ Without any arguments
+
+Running <verbatim>./ltib</verbatim> will do the following
+
+   1 Install common host site support packages (first time only)
+   2 Prompts the user for the target platform (first time only, CVS only)
+   3 Enters the main platform configuration menu (first time only). 
+   The initial state is the default config for that platform and is usually
+   okay for most users
+   4 Builds/installs the chosen packages as required
+
+#OptionConfig
+---++ -m config
+
+Bring up the platform configuration menu.  ltib does not continue to build
+packages after you exit the configuration menu
+
+#OptionConfigure
+---++ --configure
+
+Bring up the platform configuration menu.  After you exit the configuration
+menu, ltib build/installs the chosen packages as required
+
+---++ -m clean
+
+This uninstalls all rpm packages for this target.  This effectively
+de-populates the rootfs directory.
+
+*Notes:*
+   * There may be files left in <verbatim>rootfs</verbatim> if you have
+   NFS mounted this directory on your target 
+   (e.g. <verbatim>/var/log/xx</verbatim>
+   * It does not delete the binary rpm files, so if you re-run ltib, without
+   any changes, it will just re-install the currently selected binary rpms.
+
+---++ -m distclean
+
+This mode is used to completely remove all the current ltib project's files,
+as they would be found from a fresh cvs checkout.  It does not remove any
+files from the shared common areas.
+
+This mode is generally used with CVS versions so you can go back to the 
+target platform selection screen and build a different target.
+
+---++ -m release
+
+This encapsulates the current LTIB project into an iso image that will
+not require network access.
+
+---++ -m shell
+
+This is a developer function.  What it does is drops you to a shell prompt
+with the environment setup exactly as it would be during the building
+of an rpm spec file.  In this situation, all the ltib environment variables,
+and compiler spoofing are setup for you.
+
+This can be very useful when first developing a package when you are
+trying to make changes so that it can cross compile.
+
+#OptionListpkgs
+---++ -m listpkgs
+
+This mode is used to show all available packages, whether selected and their
+individual licenses.  Here is some sample output from the *tqm823l* platform:
+<verbatim>
+$ ./ltib -m listpkgs
+-----------------------  ----------------         ------- -------     -----------------------------------------
+Package                  Spec file                Enabled License     Summary
+-----------------------  ----------------         ------- -------     -----------------------------------------
+DirectFB-0.9.24-1        DirectFB                    n    LGPL        DirectFB is a graphics library for embedded syst
+NAS-config-1.0-1         NAS-config                  n    GPL         NAS setup scripts and instructions
+alsa-lib-1.0.10-0        alsa-lib                    n    distributab A libraries for ALSA (Advanced Linux Sound Archi
+</verbatim>
+
+---++ --preconfig
+
+Use the specified configuration file to configure and built your target
+platform.  This configuration must be consistent with your current target
+(e.g. it can't be from another architecture, or use an incompatible
+toolchain).
+
+The purpose of this option is to allow a method of quickly swapping between
+one set of configuration points and another.  Developers can use this
+as a means of exchanging their configuration setting.
+
+---++ --profile
+
+This is similar to preconfig, except it only changes the selection of
+userspace packages.
+
+The main purpose of this is to allow the creation of profiles, which are
+used to specifiy certain types of system.  For instance, a minimum root
+filesytem, a full system (for auto-test) etc.
+
+---++ --rcfile <f>
+
+This rarely used option allows you to override ltib's default resource file.
+
+---++ --batch|-b
+
+This option allows you to run ltib non-interactively.  It uses *conf* instead
+of *mconf* when running the configuration stages, and assumes defaults.
+
+The main purpose of this mode is to support auto-building
+
+---++ --force|-f
+
+This option forces either all packages, or the specified package to be
+re-built.
+
+---++ --reinstall|-e
+
+This option forces either all packages, or the specified package to be
+re-installed.  It does not force a rebuild of the packages.
+
+---++ --nodeps|-n
+
+This rarely used option disables rpm install/uninstall dependency checking.
+
+---++ --conflicts|-k
+
+Normally, ltib will allow packages that have overlapping files to be installed.
+This is a deliberate design choice, which allows scaling from small to 
+large filesystem footprints.
+
+This rarely used option disables this and will not allow a package to install
+if it's files will conflict with another installed package.  
+
+---++ --keepsrpms|-s
+
+Normally, ltib only builds binary rpms.  This rarely used option will
+cause ltib to also build srpms.  This may be useful if a developer wants
+to share a source package.
+
+---++ --verbose|-v
+
+Using this option will cause ltib to spew out lots of debug information.
+It's mainly used for debug purposes
+
+---++ --dry-run|-d
+
+This option is used to test-run ltib.  It will show what commands it will
+run, without actually running them.
+
+---++ --continue|-C
+
+Normally, ltib will stop as soon as it encounters an error when building 
+packages.  With this option, ltib will report the error, but continue
+to build.
+
+The main purpose of this option is to support auto-building.
+
+---++ --version|-V
+
+This option reports the version number of ltib.  The numbering scheme
+is <year>.<quarter>.<release>
+
+---++ --noredir|N
+
+Normally, during the first run of ltib, when it is building and installing
+the common host-packages, the output will be re-directed to the file
+<verbatim>host_config.log</verbatim>
+
+---++ --deploy|-D
+
+This option forces the running of just the deploy sections of ltib, even
+if the build is up to date.
+
+---++ --dlonly
+
+This rarely used option provides a way of downloading all the source/patches
+that will be required to build the current ltib configuration, without
+actually running the build.
+
+The main reason for this option is to support people who have temporary
+network connections (for instance over a VPN/proxy).  This allows them
+to get all the networking activity out the way before they build,.
+
+---++ --dltest
+
+This option is used to test whether or not the packages that are configured
+to be built can be downloaded.
+
+The main purpose of this to to check to see if the required sources/patches
+are available at http://bitshrine.org/gpp
+
+---++ --hostcf
+
+This rarely used option allows a user to re-configure/build/install packages
+to the common host package support area.
+
+It is mainly used by people developing the ltib tool itself when testing
+on different host distributions.
+
+---++ --help
+
+This displays the a summary of the command line options.
+
+---++ Operations on a single package (developer mode)
+
+---+++ -p pkg
+
+Build/install just this package.
+
+The purpose is to allow people to develop new packages and reference 
+their spec files, before the package has been fully added to the system.
+
+*Notes:*
+   * in this case, <verbatim>pkg</verbatim> is actually the name of the 
+   spec file, without the *.spec* extention.
+   * this option will not leave the source code unpacked
+
+---+++ -p pkg --leavesrc|-l
+
+This option tells ltib to leave the sources for a package unpacked after
+it has been built and installed.
+
+
+---+++ -p pkg -m prep
+
+In this mode, unpack the spec files sources and apply any patches.  The 
+sources will be found in <verbatim>rpm/BUILD/xxx</verbatim>
+
+---+++ -p pkg -m scbuild
+
+In this mode, just run the *%Build* section of the package's spec file.
+This is done using rpm's *--scbuild* option.
+
+This mode assumes you have previously done a *prep* of the package.
+
+---+++ -p pkg -m scinstall
+
+In this mode, just run the *%Install* section of the package's spec file.
+This is done using rpm's *--scinstall* option.
+
+This mode assumes you have previously done a *prep* and a *scbuild* of 
+the package.
+
+---+++ -p pkg -m scdeploy
+
+In this mode, ltib internally runs the *%Install* section of the package's spec file.  It then creates a temporary binary rpm and installs this into
+the *rootfs* area.
+
+Note that after running this mode ltib will allow you to run in 
+non-package mode, even with the sources for this package unpacked.
+
+This mode assumes you have previously done a *prep* and a *scbuild* of 
+the package.
+
+---+++ -p pkg -m patchmerge
+
+In this mode, ltib will generate a patch of the diffs between your currently
+unpacked sources (after running *make distclean*) and the sources for
+this package before your changes.  This patch is saved into the LPP
+and the spec file is updated to reference this new patch.
+
+The purpose is to allow developers to capture their changes to a package
+after they have completed their work/testing.
+
+
+---+ General questions
+
+---++ Do I need root permissions to use LTIB
+
+Yes, but only for the installation rpms after they have been built as your
+normal user.  This is because the target image must create device nodes and
+other files with particular ownerships and permissions.
+
+The way this is achieved is by using *sudo* for *rpm install*.  All
+other operations (building of packages) are performed as the non-root
+user.
+
+LTIB should never be run as root.  The main reason is to prevent
+mistakes during development from causing damage to the host file system.
+To minimise the chance of mistakes during rpm installation, all rpms
+have a non-standard re-locatable prefix, which would cause them
+to be installed in a benign place if a user accidentally runs a
+stand-alone rpm install.
+
+---++ LTIB is rpm based, will it work on Debian
+
+Yes, Debian supports rpms.  The *ltib* script will prompt you if
+anything is required to setup rpm on your Debian machine.
+
+---++ Why does it take so long for LTIB to install
+
+LTIB requires some known packages on the host to function correctly
+(notably rpm).  Also, there are some packages that are unlikely to 
+be on your host that get installed by LTIB (e.g. u-boot-tools, lkc, genext2fs, mtd-utils).
+
+The first time you install ltib on a machine, it will take quite a long time
+to build and install the host side packages (mostly rpm-fs).  These host
+packages are shared across ltib installs.  If you install (check-out) in
+another directory (or another user installs), it will be much quicker the next
+time.
+
+---++ How do I get LTIB to continue building, even if there are errors
+
+You have to take care, because sometimes if a package fails to build
+a package built later may fail because it needs something from the
+earlier packages (e.g. texinfo needs ncurses).
+
+If you really want to do this, add -C or --continue option
+to the ltib command line.
+
+---++ I don't see uclibc/glibc get built, what is going on
+
+The strategy in ltib is to always use the C library components that come
+from the toolchain.  This allows us to do the following:
+
+   * Ensure that the packages built exactly match the toolchain components
+   * Easily switch glibc/uclibc versions, just by toolchain selection
+
+Note that it is possible to build uclibc/glibc within ltib, but particularly
+with glibc, great care must be taken to ensure that packages you build 
+actually reference the built C library.  uClibc is far less problematic
+in that respect.  Either way, it is *highly recommended* that you stick
+with the strategy of using the C library components out of the toolchain
+(this facilitated by the *base_libs* package).
+
+
+---+ Packages
+
+---++ How do I know which packages are available/will be installed?
+
+Before configuring ltib, you can run bin/listpkgs on an ltib config file,
+for instance, for the mpc8548cds, you could run:
+
+<verbatim>
+bin/listpkgs config/platform/mpc8548cds/defconfig
+</verbatim>
+
+This will list all the packages that can be selected.  The ones with a 'y'
+in the 'Enabled' column will be built/installed by default.
+
+If you have configured ltib already, you can get a more accurate (exact)
+listing by running:
+
+<verbatim>
+./ltib -m listpkgs
+</verbatim>
+
+To select only those packages that are enabled, pipe either of the previous
+commands to grep as follows:
+
+<verbatim>
+ ./ltib -m listpkgs | grep ' y '
+</verbatim>
+
+---++ How do I know what license a package uses
+
+Use the [[#OptionListpkgs][-m listpkgs]] option
+
+---++ How do I change package selection/configuration and immediately build
+
+Use the [[#OptionConfigure][--configure]] option
+
+---++ How do I change package select/configuration without building
+
+Use the [[#OptionConfig][-m config]] option
+
+---++ How do I build/install just a single package?
+<verbatim>
+./ltib -p <package_name>
+</verbatim>
+
+*Note:* When specifying a package *-p*, the package will be force
+        re-built, even if it is up-to-date.
+
+*Note:* The build/install will fail if dependent packages are not
+        already installed.
+
+---++ How do I make changes to a package and capture them
+
+By default, rpm will unpack, configure, build, install and remove all sources
+in one step.  This is a deliberate feature to make sure a package is
+fully rebuilt from pristine sources plus patches in a consistent way.
+
+Obviously, if you're trying to work on a package, this scheme is not
+helpful.  To facilitate this kind of development process, rpm
+provides the notion of short-circuited builds/installs.
+
+---+++ Example work-flow
+
+ 1. Unpack the sources and apply all current patches:
+<verbatim>
+./ltib -m prep -p <package>
+</verbatim>
+
+ 2. Edit/add files under *rpm/BUILD/package/*
+
+ 3. Build the package with your changes:
+<verbatim>
+./ltib -m scbuild -p <package>
+</verbatim>
+
+ 4. Once the package builds successfully, check the install phase:
+<verbatim>
+./ltib -m scinstall -p <package>
+</verbatim>
+
+ 5. Test your package before committing the changes:
+<verbatim>
+./ltib -m scdeploy -p <package>
+</verbatim>
+
+ 6. Repeat steps 2 -> 5  until you are satisfied with your results.
+
+ 7. Generate a patch and update the spec file:
+<verbatim>
+./ltib -m patchmerge -p <package>
+</verbatim>
+
+ 8. Manually clean up the patch file (as required).
+
+ 9. Build from scratch and install
+<verbatim>
+./ltib -p <package>
+</verbatim>
+
+ 10. Once you're happy with all your changes, upload the patch to the GPP
+[[http://www.bitshrine.org/cgi-bin/gpp_upload.cgi][here]]
+
+ 11. Commit the updated specfile. If you have CVS write access:
+<verbatim>
+cvs commit dist/lfs-5.1/<pkg>/<pkg>.spec
+</verbatim>
+ If you do not have CVS write access, please send a patch to the
+ appropriate LTIB mailing list.
+
+---++ How can I add a completely new package to the root filesystem
+
+The following work-flow examples show the process of importing
+new packages to the root filesystem.
+
+---+++  I have a directory with some sources unpacked
+
+ 1. First clean your sources (remove any .o, .a, .so generated files)
+ and then make a 'tarball', for instance:
+ <verbatim>
+cd <my_new_package>-x.y
+make clean
+cd ..
+tar zcvf <my_new_package>-x.y.tar.gz <my_new_package>-x.y
+</verbatim>
+
+ 2. Move this tarball to the LPP so *ltib* can find it.
+<verbatim>
+mv <my_new_package>-x.y.tar.gz /opt/freescale/pkgs/
+</verbatim>
+
+3. Create a specfile using the existing template.
+<verbatim>
+mkdir dist/lfs-5.1/<my_new_package>
+cp dist/lfs-5.1/template/template.spec dist/lfs-5.1/<my_new_package>/<my_new_package>.spec
+</verbatim>
+
+ 4. Edit and fixup the template to reflect your package.  The fields
+ that need changing are:
+| *Field* | *Description* |
+| Summary | put in a summary of what the package is/does |
+| Name    | put in the name of the packge (usually from the tarball name) |
+| Version | put in the version (usually from the tarball/directory |
+| Release | start at 1 and rev each time you change the spec file |
+| License | e.g GPL/LGPL/BSD, look this up in the package's files |
+| Group   | If this exists on an rpm based machine, copy from rpm -qi <package> <br> If not, choose something from /usr/share/doc/rpm-<version>/GROUPS |
+| %Build  | often you'll need to add *--host=$CFGHOST --build=%{_build}* to the configure clause |
+
+ 5. Unpack the new package sources:
+<verbatim>
+./ltib -m prep -p <my_new_package>
+</verbatim>
+
+ 6. Make any changes you need to the sources to get them to cross compile
+
+ 7. Build the new package with your changes:
+<verbatim>
+./ltib -m scbuild -p <my_new_package>
+</verbatim>
+
+ 8. Once the new package builds okay, check the install phase:
+<verbatim>
+./ltib -m scinstall -p <my_new_package>
+</verbatim>
+
+ 9. Install the test package in the NFS root filesystem area (rootfs) and test
+<verbatim>
+./ltib -m scdeploy -p <my_new_package>
+</verbatim>
+
+ 10. Once you're happy the package is running correctly, capture your
+ changes.
+
+<verbatim>
+./ltib -m patchmerge <my_new_package>
+</verbatim>
+
+Any changes you've made will be put into a patch file and copied to
+/opt/freescale/pkgs.  In addition, the spec file will be updated to
+reference the new patch.  You should check the patch and eliminate any
+bogus diffs.
+
+ 11. Upload the sources to the GPP
+
+For external public files, use this link: 
+http://www.bitshrine.org/cgi-bin/gpp_upload.cgi.  You must have previously
+been blessed as a developer to do this.  For more information, 
+contact the mailing list: http://lists.nongnu.org/mailman/listinfo/ltib
+
+The files to be uploaded are your original tarball plus the patch generated
+by ltib.  You should take care to fill in the license/distributable/description
+fields accurately.
+
+If you do not have project membership and upload permissions, please
+send and email to the mailing list explaining what you want to do.
+
+ 12. Add your spec file to cvs
+
+<verbatim>
+cvs add dist/lfs-5.1/<my_new_package>
+cvs add dist/lfs-5.1/<my_new_package>/<my_new_package>.spec
+cvs commit -m "added new_package" dist/lfs-5.1/<my_new_package>/<my_new_package>.spec
+</verbatim>
+
+If you do not have CVS write access, please send a patch to the LTIB
+mailing list.
+
+ 13. Follow the steps in the next section on "adding to the config system"
+
+---++ How do I introduce my new package to the config system
+
+Here is an example for package 'strace'
+
+   1. Edit config/userspace/packages.lkc, this is in alphabetic order.
+   Just after the 'PKG_SKELL' entry add:
+<verbatim>
+   config PKG_STRACE
+       bool "strace"
+</verbatim>
+   1. Edit config/userspace/pkg_map. This is in build order.  Put your package where it should go in the
+   build order, and add an entry that ties
+   the config key, to the directory containing the spec file for the
+   package.  For strace, I put this after gdb as shown:
+<verbatim>
+   PKG_GDB             =   gdb
+   PKG_STRACE          =   strace
+</verbatim>
+   1. Commit your changes
+<verbatim>
+cvs commit -m "added new_package"
+</verbatim>
+
+---++ How to add a daemon to init
+   1. Add the package that provides your service (see above)
+   1. Write an init script.  This goes into the skell package.  The easiest thing is to copy and modify something that already exists (for instance dropbear). Your script should not have any numeric prefix.  For example etc/rc.d/init.d/named.
+   1. Add an entry into config/userspace/sysconfig.lkc, for instance:
+<verbatim>
+   config SYSCFG_START_NAMED
+       depends PKG_NAMED
+       bool "start named (nameserver)"
+       default y
+</verbatim>
+   1. Add entries in dist/lfs-5.1/sysconfig/sysconfig.spec to process this new service:
+<verbatim>
+   if [ "$SYSCFG_START_NAMED" = "y" ]
+   then
+       named=named
+   fi
+</verbatim>
+   1. Add 'named' into the all_services= line in the position you want it to be run.
+   1. Add 'named' into the all_services_r= line (this is the reverse of the previous line, for shutdown).
+   1. Add '$named' into cfg_services and cfg_services_r.
+
+
+---+ Source code
+
+---++ Where are the sources for the packages
+
+If not available in the local common cache area, they are downloaded
+and cached in a common area.  If you are using an iso image, these
+will have been pre-installed into the local common cache.
+
+---++ Where do the sources get downloaded from (what is the LPP/GPP/PPP)
+
+The primary system used is the GPP/LPP/PPP.
+
+The PPP (Private Package Pool) is a privately accessed http server that
+may optionally be used as a storage area for private sources/patches.
+
+The GPP (Global Package Pool) is a publicly available http server that is used
+to store sources/patches for LTIB.
+
+The LPP (Local Package Pool) is a local common cache that is used to store
+all sources/patches that have been accessed by LTIB.
+
+When ltib needs to build rpms, the spec-file for the
+package is parsed.  After parsing, the builder has a list of sources
+and patches that are needed to build the package.  The builder then
+does the following:
+
+   * Checks if the file/symlink (without any path/URL prefix) is present
+   in rpm/SOURCES, if it is that is used.  If not:
+
+   * Checks if the file (without any path/URL prefix) is present in the
+   LPP directory (see the *%lpp* entry in *.ltibrc*).  If the
+   file exists, a symlink is made from it to rpm/SOURCE and that link
+   is used.  If not:
+
+   * The builder tries to download the file from the PPP (if specified
+   by the *%ppp_url* tag in *.ltibrc* to the LPP using *wget*.
+   If that succeeds, a symlink is made from it to rpm/SOURCE and that link
+   is used.  If the download does not succeed:
+
+   * The builder tries to download the file from the GPP (specified by
+   the *%gpp_url* tag in *.ltibrc* to the LPP using *wget*
+   If that succeeds, a symlink is made from it to rpm/SOURCE and that link
+   is used.  If the download does not succeed:
+
+   * If all these final steps fail, the builder gives up and fails with
+   an error.
+
+*NOTE:* You may enter your proxy server information into the *.ltibrc*
+resource file.  This may be needed if you are working within a 
+company VPN environment and want to get at the external GPP on the
+Internet.
+
+---+ Auto building (unattended builds)
+
+---++ How do I autobuild a complete BSP
+
+Pass in the --preconfig option.  For example, to do an unattended
+build of the default configuration of the tqm823l BSP:
+
+<verbatim>
+$ ./ltib --preconfig config/platform/tqm823l/defconfig --batch
+</verbatim>
+
+---++ How do I autobuild a BSP but with a full package payload (for testing)
+
+<verbatim>
+$ ./ltib --preconfig config/platform/tqm823l/defconfig --profile config/profiles/max.config --batch
+</verbatim>
+
+In addition, there is an example autobuilder script that I run from a cron
+jobs for my nightly builds, it is located in:
+<verbatim>bin/autobuild_ltib</verbatim>
+
+
+---+ Cross toolchains
+
+---++ Do you supply the target cross-compilers for the LTIB BSPs
+
+Yes, these are stored on the GPP as the binary rpms and will be downloaded and installed as required.
+
+---++ Why don't you build cross toolchains in LTIB
+
+Every package that goes into the root filesystem depends on the 
+cross toolchain.  If there are any bugs in the toolchain that is used,
+these will have consequences to every package.  By supplying a toolchain
+that we have built in a known environment and tested, we can be confident
+that it works.
+
+---++ Can I get the sources to the toolchains and build my own
+
+Sources are always available as srpms, but building of toolchains is *NOT*
+ supported.
+
+If you have an iso release, the sources for your toolchain will have been
+installed into a local common cache area.  If not you 
+will find them on http://bitshrine.org/gpp . If you can't find your
+sources, please send a support request (see [[#LtibSupport]])
+
+Normally, the srpms provided use crosstool (http://kegel.com/crosstool/)
+to build the toolchains.  Crosstool and its patches are encapsulated in
+the srpm, but the external GNU components are not.  If you build using
+the srpm you will need to make sure that crosstool is able to 
+access the Internet to download these pieces.  Normally these pieces can
+be also found on http://bitshrine.org/gpp
+---+ Root Filesystems
+
+---++ Can I add files to the target root file system without creating a package
+
+Yes, to do this, you need to create a merge directory.  There are 2
+options:
+
+    1 Top level merge directory, that applies to all targets
+    2 Platform specific merge directory
+
+The platform specific merge directory contents override the top level merge
+directory, which overrides the corresponding file(s) in your rootfs
+
+*Example:*
+
+You have a CVS version of LTIB, and you have build the tqm823l default
+configuration, now:
+
+   1 You want to add the a platform specific file /home/fred/myfile1
+   2 You want all platforms you may build to use your own /etc/hosts file
+
+Here's what you would do:
+
+<verbatim>
+$ cd <my_ltib_dir>
+$ mkdir -p config/platform/tqm823l/merge/home/fred
+$ cp <my_files>/myfile1 config/platform/tqm823l/merge/home/fred
+$ mkdir -p merge/etc
+$ cp <my_files>/hosts merge/etc
+$ ./ltib
+</verbatim>
+
+The files from your merge directory will now have been placed into the
+corresponding directories under <verbatim>rootfs</verbatim>.
+
+---++ Can I have more than one root file system on my host at the same time
+
+Yes, the system will support multiple root file systems, for the same or
+for different target architectures.
+
+If you are using an iso image, install your ltib archive into an different
+directory by entering a new directory name for the installation when
+prompted by the install script..
+
+If you are using CVS, check-out CVS into a different directory by using the
+*-d* option to cvs co.  For example:
+<verbatim>
+$ cvs -z3 -d:pserver:anonymous@__SERVER_SPEC__ co -d newname ltib
+</verbatim>
+
+If the target architecture is different from the original one, a different
+cross compiler will be needed.  It will be downloaded and
+installed in the correct location if it isn't already present.
+
+---++ How to add device nodes
+Device nodes with static major/minor numbers can be added to the file ltib/bin/device_table.txt.  The format is described in the file itself.
+
+Since there is no dependency checking for device_table.txt, after adding a new entry, force rebuild devices to make sure the new /dev nodes are in the file system:
+<verbatim>
+$ ./ltib -p dev -f
+</verbatim>
+
+
+---+ Errors output from ltib
+
+---++ syntax error at ./ltib line 811, near "format twiki_top "
+
+Your version of perl is too old.  You need 5.6.1 or later
+
+
+----
+
+-- Main.StuartHughes
+-- Main.JenniferMitchell
+-- Main.JohnFaith

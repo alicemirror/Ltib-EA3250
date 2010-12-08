@@ -1,0 +1,5 @@
+MENUSELECT_MODULES=pciradio tor2 torisa wcfxo wct1xxp wct4xxp wctc4xxp wctdm wctdm24xxp wcte11xp wcte12xp wcusb xpp ztd-eth ztd-loc ztdynamic zttranscode 
+MENUSELECT_UTILS=fxstest sethdlc-new ztdiag zttool 
+MENUSELECT_FIRMWARE=
+MENUSELECT_BUILD_DEPS=wct4xxp wctc4xxp wctdm24xxp 
+MENUSELECT_DEPSFAILED=MENUSELECT_UTILS=zttool

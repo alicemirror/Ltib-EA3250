@@ -1,0 +1,15 @@
+config SYSCFG_CUIMAGE
+    bool "use cuImage boot capability"
+    help
+        Set this if you have an older version of u-boot on your board
+        and you are trying to boot a kernel later than 2.6.16 that
+        uses the flat device tree
+if SYSCFG_CUIMAGE
+config SYSCFG_KTARG
+    string
+    default SYSCFG_CUTARG
+config SYSCFG_BOOT_KERNEL
+    string
+    default SYSCFG_CUBOOT_KERNEL
+endif
+

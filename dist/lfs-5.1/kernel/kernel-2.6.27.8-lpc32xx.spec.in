@@ -1,0 +1,44 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/nxp/rootfs/%{_target_cpu}
+%define dversion 2.6.27.8
+%define pkg_name linux
+
+Summary         : Linux kernel (core of the Linux operating system)
+Name            : kernel
+Version         : 2.6.27.8
+Release         : 1
+License         : GPL
+Vendor          : Kernel.org + NXP lpc32xx patches
+Packager        : Kevin Wells
+Group           : System Environment/Kernel
+Source          : %{pkg_name}-%{dversion}.tar.bz2
+Patch1		: kernel-arm-2.6.27.8-lpc32xx.patch
+Patch2		: kernel-arm-2.6.27.8-update1.patch
+Patch3          : kernel-arm-2.6.27.8-lpc32xx_update2.patch
+Patch4          : kernel-arm-2.6.27.8-lpc32xx_update3.patch
+Patch5		: kernel-arm-2.6.27.8-lpc32xx_armtskit_update2.patch
+Patch6		: kernel-arm-2.6.27.8-lpc32xx_ea3250.patch
+Patch7		: kernel-arm-2.6.27.8-lpc32xx_update4.patch
+Patch8		: kernel-arm-2.6.27.8-lpc32xx_update5.patch
+Patch9		: kernel-arm-2.6.27.8-lpc32xx_ea3250_update1.patch
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+Linux 2.6.27.8 kernel from kernel.org + NXP LPC32XX patches
+
+%Prep
+%setup -n %{pkg_name}-%{dversion}
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+

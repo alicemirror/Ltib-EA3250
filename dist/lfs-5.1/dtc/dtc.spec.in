@@ -1,0 +1,26 @@
+# template = dtc-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+
+Summary		: The open firmware device tree compiler
+Name		: dtc
+Version		: 20080725
+Release		: 3
+License		: GPL
+Vendor		: Freescale
+Packager	: Ebony Zhu, Stuart Hughes, Emil Medve
+Group		: Development/Tools
+URL		: http://git.jdl.com/gitweb/?p=dtc.git
+Source		: %{name}-1.2.0.tar.gz
+Patch		: %{name}-v1.2.0-804fed8.patch
+BuildRoot	: %{_tmppath}/%{name}
+Prefix		: %{pfx}
+
+%Description
+%{summary}
+
+http://git.jdl.com/gitweb/?p=dtc.git;a=snapshot;h=804fed8dcdb44fe83fcfc2e310c09d45c7602d9d;sf=tgz
+
+%Prep
+%setup -n %{name}-1.2.0
+%patch -p1

@@ -1,0 +1,145 @@
+# constants (forced values)
+config CONFIG_TITLE
+    string
+    default "LTIB: Freescale MCF547x_8x Coldfire/M68k (MMU)"
+
+config PLATFORM_COMMENT
+    string
+    default "Freescale MCF547x_8x Coldfire/M68k (MMU)"
+
+config VENDOR
+    string
+    default "Freescale"
+
+config PLATFORM
+    string
+    default mcf547x_8x
+
+config GNUTARCH
+    string
+    default m68k
+
+config LINTARCH
+    string
+    default m68k
+
+config CFGHOST
+    string
+    default m68k-linux
+
+config ERASE_BLOCK_SIZE
+    string
+    default 128 
+
+# JKM -- HACK
+config CAP_DEPLOYMENT_ROMFS
+    bool
+    default y
+
+# capabilities if different from defaults.lkc
+config SYSCFG_BOOTLOADER
+    string
+    default "u-boot"
+
+source ../../userspace/endian.lkc
+source ../../userspace/libc_type.lkc
+source ../../userspace/toolchain.lkc
+
+comment "Bootloader"
+
+config BOOTLOADER1
+    bool "Build a boot loader"
+    default n
+    help
+        Selecting this will build the u-boot boot loader
+
+choice
+    depends BOOTLOADER1
+    prompt "u-boot target board type"
+    default PKG_U_BOOT_1_3_2_M5485HFE
+    help
+        This menu lets you choose the exact u-boot target to build
+
+    config PKG_U_BOOT_1_3_2_M5485HFE
+        bool "U-Boot 1.3.2 for MCF5485HFE LogicPD FireEngine(EVBE)"
+
+    config PKG_U_BOOT_1_3_2_M5485GFE
+        bool "U-Boot 1.3.2 for MCF5485GFE LogicPD FireEngine(Lite)"
+
+    config PKG_U_BOOT_1_3_2_M5475CFE
+        bool "U-Boot 1.3.2 for MCF5475CFE LogicPD FireEngine(EVBE)"
+endchoice
+
+config PKG_U_BOOT_CONFIG_TYPE
+    string
+    default "M5485HFE_config"	if PKG_U_BOOT_1_3_2_M5485HFE
+    default "M5485GFE_config"	if PKG_U_BOOT_1_3_2_M5485GFE
+    default "M5475CFE_config"	if PKG_U_BOOT_1_3_2_M5475CFE
+
+config PKG_U_BOOT
+    string
+    default "u-boot-1.3.2-m547x_8x"  	if BOOTLOADER1
+
+comment "Choose your Kernel"
+choice
+    prompt "kernel"
+    default KERNEL_NONE
+    help
+        This menu will let you choose the kernel to use with your board.
+        If you don't want to build a kernel, unselect this option.
+
+    config KERNEL1
+        bool "Linux 2.6.24"
+        help
+            This is the kernel and patches
+    config KERNEL_DIR_BUILD
+        bool "Local Linux directory build"
+        help
+            Build using a local copy of the kernel sources
+    config KERNEL_NONE
+        bool "Dont build the Linux kernel"
+        help
+            Select this if you dont want to build the kernel or provide your own
+endchoice
+
+
+config PKG_KERNEL
+    string
+    default "kernel-2.6.24-m547x_8x" if KERNEL1
+    default "kernel26-dir-build" if KERNEL_DIR_BUILD
+
+source ../../userspace/kernel_dir_build.lkc
+
+config PKG_KERNEL_WANT_OBJCOPY
+    bool
+    default y
+
+config PKG_KERNEL_WANT_HEADERS
+    depends ! KERNEL_NONE
+    bool "Include kernel headers"
+    help
+        Selecting this will copy kernel headers to rootfs/usr/src/linux/include
+
+config PKG_KERNEL_PRECONFIG
+    string "kernel preconfig"
+    default "linux-2.6.x.config" if KERNEL1
+    default "linux-2.6.x.config" if KERNEL_DIR_BUILD
+
+config PKG_KERNEL_WANT_CF
+    depends ! KERNEL_NONE
+    bool "Configure the kernel"
+    default n
+
+config PKG_KERNEL_LEAVESRC
+    depends ! KERNEL_NONE
+    bool "Leave the sources after building"
+    default n
+    help
+        This is a one shot option that can be used to build the kernel and
+        leave the build source tree in rpm/BUILD in place
+
+source ../../userspace/distro.lkc
+source ../../userspace/packages.lkc
+source ../../userspace/sysconfig.lkc
+source ../../userspace/deployment.lkc
+source ../../userspace/defaults.lkc

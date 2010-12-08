@@ -1,0 +1,32 @@
+# template = u-boot-common.tmpl
+%define pfx /opt/nxp/rootfs/%{_target_cpu}
+
+Summary         : Universal Bootloader firmware
+Name            : u-boot
+Version         : 2009.03
+Release         : 1
+License         : GPL
+Vendor          : NXP
+Packager        : Kevin Wells
+Group           : Applications/System
+Source          : %{name}-%{version}-rc1.tar.bz2
+Patch0		: u-boot-2009.03-lpc32xx.patch
+Patch1		: u-boot-2009.03-lpc32xx_ea3250.patch
+Patch2		: u-boot-2009.03-lpc32xx_update1.patch
+Patch3		: u-boot-2009.03-lpc32xx_gccfixes.patch
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+This specfile attempts to recreate the u-boot binaries
+needed for boards using u-boot and the LPC32XX.
+
+%Prep
+%setup -n %{name}-%{version}-rc1
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+

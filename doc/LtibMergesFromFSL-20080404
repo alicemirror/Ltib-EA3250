@@ -1,0 +1,637 @@
+---+ changelog for import-20080404
+
+   * .ltibrc 
+      * Changes to support rfsbase (rpmdb on target image)
+   
+   * ltib
+      * Remove dev-image and use rfsbase (for rpmdb on target image)
+      * Re-work rpmdb management (use --root option to rpm)
+      * Change tmppath to fit in with rpm --root change
+      * Add Make as a pre-install dependency
+      * Move the app_version from 7.4.1 -> 8.1.2
+      * Move RELEASE_INFO to the top level directory
+      * Bump up host_wait_warning to force re-evaluation of host packages
+      * Add --erase option (for a package)
+      * Add --fullbsp option to release mode (default is now skinny)
+      * Put in guard to make sure user can't set rpmroot to /
+      * Add SYSCFG_START_WATCHDOG as rebuild trigger to PKG_SYSCONFIG
+      * Add PKG_KERNEL as a rebuild trigger to PKG_HELLOWORLD_MOD
+      * Add --selectype option to allow menu selection of preconfigs/profiles
+      * Re-work __DIE_ and INT exits to print a traceback (for easier debug)
+      * Remove environment variable CROSS_COMPILE (from user)
+      * Split f_buildrpms from the actual rpm build engine (now build_rpm)
+      * Fix rebuild and re-install logic (make more robust)
+      * Improve f_scdeploy
+      * Implement a real callout to f_addsrpms (in separate module)
+      * Fixups to hostrpm building
+      * Fixups to setting up of initial rpm directory trees 
+      * Make plat_dir reflect the true platform (multi-target platforms)
+      * Fix toolchain name mangling (for ppc hosts)
+      * Clear existing keys in pkg_cache so multiple runs work
+      * Improve platform pkg_maps and allow sourcing of others
+      * Fixup/improve template specfiles
+      * Fix aliases etc in -m shell mode (rpmdb on target)
+
+   * bin/Ltibaddsrpms.pm
+      * New file to implement srpm import functionality
+
+   * bin/Ltibrelease.pm
+      * By default now make skinny BSPs (default selections only)
+      * Change parse_spec to return the hash reference
+      * Change platform directory to work with multi-targeted BSPs
+      * Fix unitialised warnings
+      * Remove rootfs.tmp
+      * Turn off CAP_FSL_INT
+      * Change placement of RELEASE_INFO
+      * Support 'addons' overlay (extra pieces to drop into iso)
+
+   * bin/Ltibutils
+      * Export md5sum func
+      * Return hash ref from parse_spec
+      * More checks in parse_spec
+      * Pickup more fields in parse_spec
+      * Whitespace changes
+      * Let die/warn show line numbers
+      * Take out m68kism from image creation
+      * Improve stack dump
+
+   * bin/autobuild_ltib
+      * Add tag support
+
+   * bin/device_genromfs.txt
+      * add event nodes, rtc0 and mice
+
+   * bin/device_table.txt
+      * Add ts0
+
+   * bin/listpkginfo
+      * Change calls to parse_spec to receive the hash ref in return
+
+   * bin/ltib_install
+      * change cp -a to cp -dR to work with selinux enforce
+      
+   * bin/mk_pkg_results
+      * Fix typos in nbsp (add closing ;)
+ 
+   * config/platform/imx21ads/defconfig
+   * config/platform/imx21ads/linux-arm-2.4.20-celf3-imx21ads.config
+   * config/platform/imx21ads/main.lkc
+   * config/platform/imx21ads/packages.lkc
+   * config/platform/imx21ads/pkg_map
+      * New file
+
+   * config/platform/imx27ads/busybox.config
+   * config/platform/imx27ads/defconfig
+   * config/platform/imx27ads/linux-2.6.22-mx27ads.config
+   * config/platform/imx27ads/main.lkc
+   * config/platform/imx27ads/packages.lkc
+   * config/platform/imx27ads/pkg_map
+   * config/platform/imx27ads/merge/etc/issue
+   * config/platform/imx27ads/merge/etc/modprobe.conf
+   * config/platform/imx27ads/merge/etc/profile
+   * config/platform/imx27ads/merge/etc/securetty
+   * config/platform/imx27ads/merge/etc/rc.d/init.d/local
+      * New file
+
+   * config/platform/imx31ads/defconfig
+      * Update
+
+   * config/platform/imx31ads/main.lkc
+      * Update toolchain selection
+
+   * config/platform/m5253evb/busybox.config.nonetwork
+   * config/platform/m5253evb/defconfig
+   * config/platform/m5253evb/deployment_instructions.txt
+   * config/platform/m5253evb/linux-2.6.17.7.config
+   * config/platform/m5253evb/main.lkc
+   * config/platform/m5253evb/packages.lkc
+   * config/platform/m5253evb/pkg_map
+   * config/platform/m5253evb/romfs-2.6.x.config
+   * config/platform/m5253evb/uclibc.config
+   * config/platform/m5253evb/merge/etc/rc.d/init.d/settime
+   * config/platform/m532xevb/busybox.config
+   * config/platform/m532xevb/defconfig
+   * config/platform/m532xevb/deployment_instructions.txt
+   * config/platform/m532xevb/linux-2.6.17.7.config
+   * config/platform/m532xevb/linux-2.6.22.config
+   * config/platform/m532xevb/linux-2.6.x.config
+   * config/platform/m532xevb/main.lkc
+   * config/platform/m532xevb/nfs-2.6.17.7.config
+   * config/platform/m532xevb/nfs-2.6.x.config
+   * config/platform/m532xevb/packages.lkc
+   * config/platform/m532xevb/pkg_map
+   * config/platform/m532xevb/romfs-2.6.17.7.config
+   * config/platform/m532xevb/romfs-2.6.x.config
+   * config/platform/m532xevb/uclibc.config
+   * config/platform/m532xevb/merge/etc/fstab
+      * New file
+
+   * config/platform/m537xevb/busybox.config
+   * config/platform/m537xevb/defconfig
+   * config/platform/m537xevb/deployment_instructions.txt
+   * config/platform/m537xevb/linux-2.6.22.config
+   * config/platform/m537xevb/main.lkc
+   * config/platform/m537xevb/packages.lkc
+   * config/platform/m537xevb/pkg_map
+   * config/platform/m537xevb/uclibc.config
+      * New file
+  
+   * config/platform/mcf5445x/busybox.config
+   * config/platform/mcf5445x/defconfig
+   * config/platform/mcf5445x/linux-2.6.x.config
+   * config/platform/mcf5445x/main.lkc
+   * config/platform/mcf5445x/packages.lkc
+   * config/platform/mcf5445x/pkg_map
+      * New file
+
+   * config/platform/mcf547x_8x/defconfig
+   * config/platform/mcf547x_8x/linux-2.6.x.config
+   * config/platform/mcf547x_8x/m5485-2.6.x.config
+      * Updated
+
+   * config/platform/mcf547x_8x/main.lkc
+      * Add ROMFS image build
+      * Change bootloader to u-boot from dBUG
+      * Change toolchain to gcc-4.2
+      * Change kernel from 2.6.10 -> 2.6.24
+  
+   * config/platform/mcf547x_8x/packages.lkc
+      * Update watchdog package reference
+
+   * config/platform/mcf547x_8x/pkg_map
+      * Add watchdog entry (watchdog-m54x5)
+
+   * config/platform/mpc5200/main.lkc
+      * Update toolchain to gcc-4.2-82
+
+   * config/platform/mpc7448hpcii/main.lkc
+      * Change toolchain selection mechanism
+
+   * config/platform/mpc8349emds/main.lkc
+      * Change toolchain to gcc-4.2-82
+
+   * config/platform/mpc8349itx/main.lkc
+      * Change toolchain to gcc-4.2-82
+      * Add cuImage support
+
+   * config/platform/mpc8360epb/defconfig-oib
+      * Remove
+
+   * config/platform/mpc8360epb/main.lkc
+      * Fix indentation
+      * Change toolchain to gcc-4.2-82
+
+   * config/platform/mpc8548cds/defconfig
+      * Updated
+
+   * config/platform/mpc8548cds/linux_2.6.23_mpc8548_cds_def.config
+      * New
+
+   * config/platform/mpc8548cds/main.lkc
+      * Change lintarch to powerpc (this will be put back to ppc)
+      * Change to common toolchain selection mechanism
+      * Update u-boot to 1.3.0
+      * Update the kernel from 2.6.11+ to 2.6.23+
+
+   * config/platform/mpc8548cds/pkg_map
+      * Add mapping for gdb-4.2.82
+
+   * config/platform/mpc8548cds/merge/etc/ipsec.conf
+   * config/platform/mpc8548cds/merge/etc/ipsec.secrets
+   * config/platform/mpc8548cds/merge/root/openswan/README
+   * config/platform/mpc8548cds/merge/root/openswan/home-ipsec-script.sh
+   * config/platform/mpc8548cds/merge/root/openswan/office-ipsec-script.sh
+      * New
+
+   * config/platform/mpc8555cds/main.lkc
+     * Update toolchain to gcc-4.2-82
+
+   * config/platform/mpc8560ads/main.lkc
+      * Update toolchain to gcc-4.2-82
+
+   * config/platform/mpc860fads/main.lkc
+      * Update toolchain to gcc-4.2-82
+
+   * config/platform/mpc8641hpcn/defconfig
+      * Update
+
+   * config/platform/mpc8641hpcn/linux_2.6.23_mpc8641hpcn_asmp_def.config
+   * config/platform/mpc8641hpcn/linux_2.6.23_mpc8641hpcn_def.config
+      * New 
+
+   * config/platform/mpc8641hpcn/main.lkc
+      * Update toolchain to gcc-4.2-82
+      * Update u-boot to 1.3.0
+      * Update the kernel from 2.6.21+ to 2.6.23+
+
+   * config/platform/qs875s/defconfig
+      * Updated
+
+   * config/platform/qs875s/defconfig-min-uc
+   * config/platform/qs875s/defconfig-uc
+      * New
+
+   * config/platform/qs875s/main.lkc
+      * Update toolchain to gcc-4.2-82
+
+   * config/platform/qs875s/preconfigs.lkc
+      * New file: allows menu selection of configs/profiles
+
+   * config/platform/tqm823l/main.lkc
+      * Change the toolchain selection mechanism
+
+   * config/platform/tqm823l/pkg_map
+      * Add mapping for gcc-3.3.2
+
+   * config/profile/swang.profile
+      * New
+
+   * config/userspace/defaults.lkc
+      * Add architecuture type used by toolchain selection
+      * Add u-boot image type (ppc or m68k)
+      * Add CAP_FSL_INT
+      * Update release to 8.1.2
+
+   * config/userspace/kernel-git.lkc
+      * New, support kernel git-tree builds
+
+   * config/userspace/kernel_dir_build.lkc
+      * Update, more flexible
+
+   * config/userspace/libc_type.lkc
+      * Logic fixups
+
+   * config/userspace/packages.lkc
+      * Add more cairo select dependencies
+      * Add evtest
+      * Add faad2
+      * Add zlib as a dependency for fontconfig
+      * Re-do the way gcc is selected (needs to match against toolchain)
+      * Add gdb xml support
+      * Add gstreamer FFmpeg
+      * Add atk, cairo as dependents for gtk2
+      * Add glib2 and cairo as dependents of pango
+      * Add irdadump
+      * Add ncurses as a dependent of krb5
+      * Add libmpeg2
+      * libjpeg now available to nommu platforms
+      * Add libnet
+      * libpng is now available to nommu platforms
+      * netperf available to nommu platforms
+      * add zlib as a dependent of openssh
+      * Change qtopia to support 2 or 4
+      * Add qtopia applications
+      * Add rt-tests
+      * Add procps as a dependent of util-linux
+      * Add watchdog
+
+   * config/userspace/pkg_map
+      * Re-order dev position
+      * Add packages as per packages.lkc
+
+   * config/userspace/pkg_map-mx
+      * Remove qtopia-tslib (qtopia is now common including tslib)
+
+   * config/userspace/pkg_map-nommu
+      * Add mapping for uclibc-nommu
+
+   * config/userspace/sysconfig.lkc
+      * Add watchdog and pme services
+
+   * config/userspace/toolchain.lkc
+      * New common mechanism for controll of toolchain selection
+
+   * config/userspace/u-boot-git.lkc
+      * New, support u-boot git tree builds
+
+   * dist/lfs-5.1/DirectFB/DirectFB.spec
+      * Add ppcasm patch and linux-config-h patch
+
+   * dist/lfs-5.1/axe/axe.spec
+      * New
+
+   * dist/lfs-5.1/base_libs/base_libs.spec
+      * Updates and re-works for later toolchains
+
+   * dist/lfs-5.1/binutils/binutils-cs.spec
+      * Remove
+
+   * dist/lfs-5.1/binutils/binutils.spec
+      * Update from 2.17 -> 2.18
+
+   * dist/lfs-5.1/bluez-utils/bluez-utils.spec
+      * Fix attributes so it can be copied during ramdisk/jffs image generation
+
+   * dist/lfs-5.1/btcs/btcs.spec
+      * Update license field (add GPL)
+
+   * dist/lfs-5.1/busybox/busybox.spec
+      * Add su to busybox.conf
+
+   * dist/lfs-5.1/cracklib/cracklib.spec
+      * Remove .la files more effectively
+
+   * dist/lfs-5.1/dtc/dtc.spec
+      * Update to 20090124
+
+   * dist/lfs-5.1/evtest/evtest.spec
+      * New
+
+   * dist/lfs-5.1/expat/expat.spec
+      * Fix whitespace
+      * Add expat-1.95.8-man1dir.patch
+
+   * dist/lfs-5.1/faad2/faad2.spec
+      * New
+
+   * dist/lfs-5.1/flex/flex.spec
+      * Update from 2.5.4 -> 2.5.33
+
+   * dist/lfs-5.1/fontconfig/fontconfig.spec
+      * Set syscofig directory
+
+   * dist/lfs-5.1/fsl_pme/fsl_pme.spec
+      * New
+
+   * dist/lfs-5.1/fsl_tlu/fsl_tlu.spec
+      * New
+
+   * dist/lfs-5.1/gcc/gcc-3.3.2.spec
+      * Remove
+
+   * dist/lfs-5.1/gcc/gcc-3.3.2.spec.in
+   * dist/lfs-5.1/gcc/gcc-3.4.3.spec.in
+   * dist/lfs-5.1/gcc/gcc-4.1-78.spec.in
+   * dist/lfs-5.1/gcc/gcc-4.2-82.spec.in
+   * dist/lfs-5.1/gcc/gcc.spec.in
+      * New (templatised)
+
+   * dist/lfs-5.1/gcc/gcc-common.tmpl
+      * New common build engine for gcc spec file templates
+
+   * dist/lfs-5.1/gcc/gcc-cs-e500.spec
+   * dist/lfs-5.1/gcc/gcc-e500-dpfp.spec
+   * dist/lfs-5.1/gcc/gcc.spec
+   * 
+      * Remove 
+   * dist/lfs-5.1/gdb/gdb-4.2.82.spec
+   * dist/lfs-5.1/gdb/gdb-6.3.50.spec
+      * New
+
+   * dist/lfs-5.1/gdb/gdb.spec
+      * Remove .la files
+
+   * dist/lfs-5.1/genext2fs/genext2fs.spec
+      * Update from 1.3 to 1.4.1 (needed for later hosts (glibc))
+
+   * dist/lfs-5.1/gst-ffmpeg/gst-ffmpeg.spec
+      * New
+
+   * dist/lfs-5.1/gst-plugins-bad/gst-plugins-bad.spec
+      * Update from 0.10.4 -> 0.10.5
+
+   * dist/lfs-5.1/gst-plugins-base/gst-plugins-base.spec
+      * Update from 0.10.12 -> 0.10.12
+
+   * dist/lfs-5.1/gst-plugins-good/gst-plugins-good.spec
+      * Update from 0.10.5 -> 0.10.6
+
+   * dist/lfs-5.1/gst-plugins-ugly/gst-plugins-ugly.spec
+      * Update from 0.10.5 -> 0.10.6
+
+   * dist/lfs-5.1/gstreamer-core/gstreamer-core.spec
+      * Update from 0.10.12 -> 0.10.15
+
+   * dist/lfs-5.1/gtk2/gtk2.spec
+      * Add no-update-icon-cache patch
+
+   * dist/lfs-5.1/helloworld/hello_mod.spec
+      * Make it find kernels directory trees
+
+   * dist/lfs-5.1/hotplug/hotplug.spec
+      * Fix attributes for /var/run/usb
+
+   * dist/lfs-5.1/ipsec-tools/ipsec-tools.spec
+      * Remove werror
+
+   * dist/lfs-5.1/iptables/iptables.spec
+      * Add patches for forward, pme and u32 issue (later kernels)
+
+   * dist/lfs-5.1/irda-utils/irattach.spec
+      * Update from 0.9.17 -> 0.9.18
+
+   * dist/lfs-5.1/irda-utils/irdadump.spec
+      * New
+
+   * dist/lfs-5.1/kernel/kernel-2.6.11-mpc7448.spec.in
+      * Update, add gcc4 patch and gcc4-lvalue patch
+
+   * dist/lfs-5.1/kernel/kernel-2.6.11-mpc8360epb-rev2.spec.in
+      * Updated, a number of new/changed patches
+
+   * dist/lfs-5.1/kernel/kernel-2.6.11-mpc8360epb.spec.in
+      * Updated, a number of new/changed patches
+
+   * dist/lfs-5.1/kernel/kernel-2.6.11-pq3.spec.in
+      * Whitespace fix and new no-spe patch
+
+   * dist/lfs-5.1/kernel/kernel-2.6.11.spec.in
+      * Add gcc4 and no-spe patch
+
+   * dist/lfs-5.1/kernel/kernel-2.6.19-mpc8360epb.spec.in
+      * Updated, a number of new patches
+
+   * dist/lfs-5.1/kernel/kernel-2.6.20-mpc8313erdb.spec.in
+   * dist/lfs-5.1/kernel/kernel-2.6.21-mpc8544.spec.in
+   * dist/lfs-5.1/kernel/kernel-2.6.21-mpc8568.spec.in
+      * Removed 
+
+   * dist/lfs-5.1/kernel/kernel-2.6.22-mpc8360epb.spec.in
+      * Updated, patches removed
+
+   * dist/lfs-5.1/kernel/kernel-2.6.22-mpc837xemds.spec.in
+      * Removed
+
+   * dist/lfs-5.1/kernel/kernel-2.6.22-uc1.spec.in
+      * Updated, a number of new patches
+
+   * dist/lfs-5.1/kernel/kernel-2.6.22.x-mpc5121.spec.in
+      * Removed 
+
+   * dist/lfs-5.1/kernel/kernel-2.6.23-mpc8548.spec.in
+   * dist/lfs-5.1/kernel/kernel-2.6.23-mpc8641hpcn.spec.in
+   * dist/lfs-5.1/kernel/kernel-2.6.23-uc1.spec.in
+   * dist/lfs-5.1/kernel/kernel-2.6.24-m547x_8x.spec.in
+   * dist/lfs-5.1/kernel/kernel-arm-2.4.20-celf3-imx21ads.spec.in
+      * New
+
+   * dist/lfs-5.1/kernel/kernel-common.tmpl
+      * Updated, out of tree builds etc
+
+   * dist/lfs-5.1/kernel/kernel-git.spec.in
+      * New spec file to build kernels from git trees
+
+   * dist/lfs-5.1/krb5/krb5.spec
+      * Fix configure options
+
+   * dist/lfs-5.1/libedit/libedit.spec
+      * New
+
+   * dist/lfs-5.1/libiconv/libiconv.spec
+      * Remove .la files
+
+   * dist/lfs-5.1/libjpeg/libjpeg-nommu.spec
+      * Install libraries
+
+   * dist/lfs-5.1/libmpeg2/libmpeg2.spec
+   * dist/lfs-5.1/libnet/libnet.spec
+      * New
+
+   * dist/lfs-5.1/libnetfilter_conntrack/libnetfilter_conntrack.spec
+      * Add relink patch
+
+   * dist/lfs-5.1/liboil/liboil.spec
+      * Add noaltivec patch
+
+   * dist/lfs-5.1/lkc/lkc.spec
+      * Add config_title patch
+
+   * dist/lfs-5.1/ltp/ltp.spec
+      * Add open-max patch
+
+   * dist/lfs-5.1/microwindows/microwindows-nommu.spec
+      * Add headers/libraries to install
+
+   * dist/lfs-5.1/mysql/mysql.spec
+      * Add gcc-4.2 patch
+
+   * dist/lfs-5.1/net-snmp/net-snmp.spec
+      * Fix configure options
+
+   * dist/lfs-5.1/netperf/netperf.spec
+      * Update from 2.4.0 -> 2.4.4
+
+   * dist/lfs-5.1/nfs-utils/nfs-utils.spec
+      * Update file attributes so they get into ramdisk/jffs2
+
+   * dist/lfs-5.1/openobex/openobex.spec
+      * Make fully relocatable, remove .la files
+
+   * dist/lfs-5.1/openssh/openssh.spec
+      * Update file attributes so they get into ramdisk/jffs2
+
+   * dist/lfs-5.1/openssl/openssl-0.9.7g.spec
+      * Make fully relocatable
+      * use -j1 (doesn't work reliably otherwise)
+
+   * dist/lfs-5.1/openssl/openssl.spec
+      * Update from 0.9.8a -> 0.9.8g
+
+   * dist/lfs-5.1/openswan/openswan.spec
+      * Update from 2.3.0 -> 3.0.4
+      * Fix install attributes
+
+   * dist/lfs-5.1/patch/patch.spec
+      * Fix cross comile detection
+
+   * dist/lfs-5.1/pciutils/pciutils.spec
+      * Add work-around fro coldfire toolchain
+
+   * dist/lfs-5.1/pcre/pcre.spec
+      * Add relink patch
+
+   * dist/lfs-5.1/perl/perl.spec
+      * Update glob patch
+      * Add gcc-4.2 patch and dash shell patch
+
+   * dist/lfs-5.1/php/php.spec
+      * Fix cross comile detection
+      * Remove dependency on flex-2.5.4
+
+   * dist/lfs-5.1/ppp/ppp.spec
+      * Fix install attributes
+
+   * dist/lfs-5.1/ptpd/ptpd-mpc8360r2.spec
+   * dist/lfs-5.1/ptpd/ptpd.spec
+      * New
+   * dist/lfs-5.1/qtopia/qtopia-4.spec
+      * New
+
+   * dist/lfs-5.1/qtopia/qtopia-tslib.spec
+      * Fixup (now not needed AFAIK, qtopia serves both)
+
+   * dist/lfs-5.1/qtopia/qtopia.spec
+      * Merge to be a common spec to include tslib versions
+
+   * dist/lfs-5.1/rpm/rpm.spec
+      * Include macros file for target
+
+   * dist/lfs-5.1/rt-tests/rt-tests.spec
+      * New
+
+   * dist/lfs-5.1/skell/skell.spec
+      * Fix attributes for /var/ftp/pub
+
+   * dist/lfs-5.1/sysconfig/sysconfig-mcf5445x.spec
+   * dist/lfs-5.1/sysconfig/sysconfig-mx.spec
+   * dist/lfs-5.1/sysconfig/sysconfig-mx21.spec
+   * dist/lfs-5.1/sysconfig/sysconfig.spec
+      * Fix kernel version calculation
+
+   * dist/lfs-5.1/tinyproxy/tinyproxy.spec
+      * Fix attributes
+
+   * dist/lfs-5.1/tslib/tslib.spec
+      * Add directb_link_fix
+
+   * dist/lfs-5.1/u-boot/u-boot-1.1.3-mpc8360epb-rev2.spec
+      * Update to patches
+
+   * dist/lfs-5.1/u-boot/u-boot-1.1.3-mpc8360epb.spec
+      * Add make patch and gcc4 patch
+
+   * dist/lfs-5.1/u-boot/u-boot-1.1.6-mpc8313erdb.spec
+   * dist/lfs-5.1/u-boot/u-boot-1.2.0-mpc5121ads.spec
+   * dist/lfs-5.1/u-boot/u-boot-1.2.0-mpc837xemds.spec
+      * Removed
+
+   * dist/lfs-5.1/u-boot/u-boot-1.3-rc3-uClinux.spec
+   * dist/lfs-5.1/u-boot/u-boot-1.3.0-mpc8548cds.spec
+   * dist/lfs-5.1/u-boot/u-boot-1.3.0-mpc8641hpcn.spec
+   * dist/lfs-5.1/u-boot/u-boot-1.3.1-20080123.spec
+   * dist/lfs-5.1/u-boot/u-boot-1.3.2-m547x_8x.spec
+      * New
+
+   * dist/lfs-5.1/u-boot/u-boot-common.tmpl
+      * New common build engine for u-boot spec.in files
+
+   * dist/lfs-5.1/u-boot/u-boot-fsl-mpc8544ds.spec
+   * dist/lfs-5.1/u-boot/u-boot-fsl-mpc8568mds.spec
+      * Remove
+   
+   * dist/lfs-5.1/u-boot/u-boot-fsl-pq3.spec
+      * Add make patch
+
+   * dist/lfs-5.1/u-boot/u-boot-git.spec.in
+      * Support u-boot git tree builds
+
+   * dist/lfs-5.1/udev/udev.spec
+      * Update make patch
+
+   * dist/lfs-5.1/util-linux/util-linux.spec
+      * Fix autoconfig problems
+
+   * dist/lfs-5.1/valgrind/valgrind.spec
+      * Add 8xx and softfloat patches
+
+   * dist/lfs-5.1/watchdog-tools/watchdog-m54x5.spec
+      * New
+
+   * dist/lfs-5.1/yaffs-utils/yaffs-utils.spec
+      * Add include ordering patch
+
+   * doc/LtibConvertPcsBsp
+      * Make more generic
+
+   * doc/LtibFaq
+      * Updated

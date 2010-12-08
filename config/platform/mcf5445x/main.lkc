@@ -1,0 +1,136 @@
+# constants (forced values)
+config CONFIG_TITLE
+    string
+    default "LTIB: Freescale M5445X Coldfire/M68k (MMU)"
+
+config PLATFORM_COMMENT
+    string
+    default "Freescale M5445X Coldfire/M68k (MMU)"
+
+config VENDOR
+    string
+    default "Freescale"
+
+config PLATFORM
+    string
+    default mcf5445x
+
+config GNUTARCH
+    string
+    default m68k
+
+config LINTARCH
+    string
+    default m68k
+
+config CFGHOST
+    string
+    default m68k-linux
+
+config ERASE_BLOCK_SIZE
+    string
+    default 128 
+
+source ../../userspace/endian.lkc
+source ../../userspace/libc_type.lkc
+source ../../userspace/toolchain.lkc
+
+comment "Bootloader"
+
+config BOOTLOADER1
+    bool "Build a boot loader"
+    default n
+    help
+        Selecting this will build the u-boot boot loader
+
+choice
+    depends BOOTLOADER1
+    prompt "u-boot target board type"
+    default PKG_U_BOOT_1_2_0_MCF5445X_AT33
+    help
+        This menu lets you choose the exact u-boot target to build
+
+    config PKG_U_BOOT_1_2_0_MCF5445X_AT33
+        bool "U-Boot 1.2.0 for MCF5445x Atmel 33Mhz Input Clock"
+    config PKG_U_BOOT_1_2_0_MCF5445X_AT66
+        bool "U-Boot 1.2.0 for MCF5445x Atmel 66Mhz Input Clock"
+    config PKG_U_BOOT_1_2_0_MCF5445X_IN33
+        bool "U-Boot 1.2.0 for MCF5445x Intel 33Mhz Input Clock"
+    config PKG_U_BOOT_1_2_0_MCF5445X_IN66
+        bool "U-Boot 1.2.0 for MCF5445x Intel 66Mhz Input Clock"
+endchoice
+
+config PKG_U_BOOT_CONFIG_TYPE
+    string
+    default "M54455EVB_a33_config"	if PKG_U_BOOT_1_2_0_MCF5445X_AT33
+    default "M54455EVB_a66_config"	if PKG_U_BOOT_1_2_0_MCF5445X_AT66
+    default "M54455EVB_i33_config"	if PKG_U_BOOT_1_2_0_MCF5445X_IN33
+    default "M54455EVB_i66_config"	if PKG_U_BOOT_1_2_0_MCF5445X_IN66
+
+config PKG_U_BOOT
+    string
+    default "u-boot-1.2.0-mcf5445x"  	if BOOTLOADER1
+
+comment "Choose your Kernel"
+choice
+    prompt "kernel"
+    default KERNEL1
+    help
+        This menu will let you choose the kernel to use with your board.
+        If you don't want to build a kernel, unselect this option.
+
+    config KERNEL1
+        bool "Linux 2.6.20"
+        help
+            This is the kernel and patches
+    config KERNEL_DIR_BUILD
+        bool "Local Linux directory build"
+        help
+            Build using a local copy of the kernel sources
+    config KERNEL_NONE
+        bool "Dont build the Linux kernel"
+        help
+            Select this if you dont want to build the kernel or provide your own
+endchoice
+
+
+config PKG_KERNEL
+    string
+    default "kernel-2.6.20-m5445x" if KERNEL1
+    default "kernel26-dir-build" if KERNEL_DIR_BUILD
+
+source ../../userspace/kernel_dir_build.lkc
+
+config PKG_KERNEL_WANT_OBJCOPY
+    bool
+    default y
+
+config PKG_KERNEL_WANT_HEADERS
+    depends ! KERNEL_NONE
+    bool "Include kernel headers"
+    help
+        Selecting this will copy kernel headers to rootfs/usr/src/linux/include
+
+config PKG_KERNEL_PRECONFIG
+    string "kernel preconfig"
+    default "linux-2.6.x.config" if KERNEL1
+    default "linux-2.6.x.config" if KERNEL_DIR_BUILD
+
+config PKG_KERNEL_WANT_CF
+    depends ! KERNEL_NONE
+    bool "Configure the kernel"
+    default n
+
+config PKG_KERNEL_LEAVESRC
+    depends ! KERNEL_NONE
+    bool "Leave the sources after building"
+    default n
+    help
+        This is a one shot option that can be used to build the kernel and
+        leave the build source tree in rpm/BUILD in place
+
+source ../../userspace/distro.lkc
+source ../../userspace/packages.lkc
+source ../../userspace/sysconfig.lkc
+source ../../userspace/deployment.lkc
+source ../../userspace/defaults.lkc

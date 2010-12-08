@@ -1,0 +1,78 @@
+%Build
+PKG_APEX_PRECONFIG=$(eval echo $PKG_APEX_PRECONFIG)
+: ${PKG_APEX_PRECONFIG:?must be set to the name of your .config file}
+
+SRC_DIR=%{_builddir}/%{buildsubdir}
+%{!?showsrcpath: %define showsrcpath 0}
+%if %{showsrcpath}
+%{echo:%(eval echo %{_builddir})}
+%endif
+
+BUILD_DIR=%{_builddir}/%{buildsubdir}
+if [ $SRC_DIR != $BUILD_DIR ]
+then
+    mkdir -p $BUILD_DIR
+fi
+cd $SRC_DIR
+
+export HOSTCC="$BUILDCC"
+export CROSS_COMPILE=$TOOLCHAIN_PREFIX
+export ARCH=arm
+
+if [ -n "$LTIB_FULL_REBUILD" ]
+then
+    make HOSTCC="$BUILDCC" HOSTCXX="$BUILDCXX" CROSS_COMPILE="$TOOLCHAIN_PREFIX" ARCH="$LINTARCH" mrproper
+fi
+
+# Create a local copy of the config and use it instead
+PKG_APEX_PRECONFIG_DEV=${PKG_APEX_PRECONFIG}.dev
+
+if [ -f "$PLATFORM_PATH/$PKG_APEX_PRECONFIG_DEV" ]
+then
+    # Copy file if it exists to Apex directory
+    cp $PLATFORM_PATH/$PKG_APEX_PRECONFIG_DEV .config
+else
+    if [ -f "$PLATFORM_PATH/${PKG_APEX_PRECONFIG}" ]
+    then
+        # Create temporary copy and copy it to Apex directory
+        cp $PLATFORM_PATH/${PKG_APEX_PRECONFIG} $PLATFORM_PATH/$PKG_APEX_PRECONFIG_DEV
+        cp $PLATFORM_PATH/$PKG_APEX_PRECONFIG_DEV .config
+    else
+        # An important configuration file was missing,
+        # We will force build a local copy
+        PKG_APEX_WANT_CF=$(eval echo y)
+    fi
+fi
+
+# Need an Apex configuration menu?
+if [ -n "${PKG_APEX_WANT_CF}" ]
+then
+    make HOSTCC="$BUILDCC" HOSTCXX="$BUILDCXX" CROSS_COMPILE="$TOOLCHAIN_PREFIX" ARCH="$LINTARCH" menuconfig
+fi
+
+# Save configuration changes
+cp .config $PLATFORM_PATH/$PKG_APEX_PRECONFIG_DEV
+
+# Build apex
+make HOSTCC="$BUILDCC" HOSTCXX="$BUILDCXX" CROSS_COMPILE="$TOOLCHAIN_PREFIX" ARCH="$LINTARCH"
+
+%Install
+rm -rf $RPM_BUILD_ROOT
+mkdir -p $RPM_BUILD_ROOT/%{pfx}/boot
+BUILD_DIR=%{_builddir}/%{buildsubdir}
+cd $BUILD_DIR
+for i in apex apex.bin
+do
+    cp $i $RPM_BUILD_ROOT/%{pfx}/boot
+done
+
+%Clean
+if [ -n "$PKG_APEX_LEAVESRC" ]
+then
+    rm -rf $RPM_BUILD_ROOT
+fi
+
+%Files
+%defattr(-,root,root)
+%{pfx}/*
+

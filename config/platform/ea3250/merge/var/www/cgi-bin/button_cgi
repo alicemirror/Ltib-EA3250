@@ -1,0 +1,63 @@
+#!/bin/sh
+
+t=`cat ../../../sys/bus/i2c/devices/0-0060/input0`
+
+let "b1=($t&1) == 0"
+let "b2=($t&2) == 0"
+let "b3=($t&4) == 0"
+let "b4=($t&8) == 0"
+
+
+
+echo "Content-type: text/html
+
+
+
+<html>
+<head>
+    <title>CGI test - Button status</TITLE>
+</head>
+<body>
+<p>
+Press any of the buttons on the base board and reload this page!
+</p>
+"
+
+let "nb=($b1==0 && $b2==0 && $b3==0 && b4==0)"
+
+
+if test $nb -eq 1
+then
+echo "<h3>No buttons are pressed!</h3>"
+fi
+
+
+if test $b1 -eq 1
+then
+echo "<h3>Button #1 is pressed</h3>"
+fi
+
+if test $b2 -eq 1
+then
+echo "<h3>Button #2 is pressed</h3>"
+fi
+
+if test $b3 -eq 1
+then
+echo "<h3>Button #3 is pressed</h3>"
+fi
+
+if test $b4 -eq 1
+then
+echo "<h3>Button #4 is pressed</h3>"
+fi
+
+echo "
+</body>
+</html>
+"
+
+
+
+
+

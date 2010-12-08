@@ -1,0 +1,60 @@
+# Template = gcc-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu} 
+
+Summary         : Various compilers (C, C++, Objective-C, Java, ...)
+Name            : gcc
+Version         : 3.3.2
+Release         : 1
+License         : GPL
+Vendor          : Freescale
+Packager        : Steve Papacharalambous
+Group           : Development/Languages
+Source          : %{name}-%{version}.tar.bz2
+Patch0          : gcc-3.2.3-g++.exp.patch
+Patch1          : gcc-3.3.2-arm-bigendian.patch
+Patch2          : gcc-3.3.2-ccross-syslimits.patch
+Patch3          : gcc-3.3-libstdc++-v3-dg.exp.patch
+Patch4          : pr10392-1-test.patch
+Patch5          : pr10412-1-test.patch
+Patch6          : pr10589-1-test.patch
+Patch7          : pr11162-1-test.patch
+Patch8          : pr11587-1-test.patch
+Patch9          : pr11608-fix.patch
+Patch10         : pr11736-1-test.patch
+Patch11         : pr11864-1-test.patch
+Patch12         : pr13260-test.patch
+Patch13         : pr9365-1-test.patch
+Patch14         : sh-lib1funcs_sizeAndType.patch
+Patch15         : sh-libgcc-hidden.patch
+Patch16         : sh-pic-set_fpscr-gcc-3.3.2.patch
+Patch17         : thunk3.patch
+Patch18         : gcc-3.3.2-obstack_h.patch
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+%Prep
+%setup
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1
+%patch18 -p0
+

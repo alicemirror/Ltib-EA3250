@@ -1,0 +1,12 @@
+source ../../userspace/features.lkc
+
+if BI_ENDIAN
+
+comment "Choose the target endian type"
+config ENDIAN
+    string
+    default "big" if LINTARCH = "ppc" || LINTARCH = "sparc" || LINTARCH = "m68k" || LINTARCH = "m68knommu" || LINTARCH ="ppc64"
+    default "little"
+    string "Target endian (big|little)"
+
+endif

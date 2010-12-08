@@ -1,0 +1,31 @@
+comment 'Platform specific package selection'
+
+config PKG_BTCS
+    bool "BTCS (Boot Time Critical Services)"
+    help
+      BTCS is a combination of lowlevel stand alone drivers,
+      a linux module and linux application that allow very early access to
+      the CAN driver on MPC5200 based platforms.
+      It requires a special kernel and u-boot.
+
+config PKG_BTCS_WANT_SERVICES
+    depends PKG_BTCS
+    bool "BTCS Services"
+    help
+      Choose this for the platform actually running BTCS.
+
+config PKG_BTCS_WANT_TESTAPP
+    depends PKG_BTCS
+    select PKG_PEAKCANLINUX
+    bool "BTCS Remote Test"
+    help
+      Choose this for the platform from which you intend to
+      test BTCS remotely.  The test app needs the peak-can
+      linux driver installed so it is selected automatically.
+
+config PKG_PEAKCANLINUX
+    bool "peak-can-linux"
+    help
+      CAN driver and libraries from Peak systems for MSCAN ports
+      on mpc5200 based platforms.
+

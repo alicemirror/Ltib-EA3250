@@ -1,0 +1,172 @@
+---+ Getting setup
+
+---++ Connecting to the target board
+
+   1. Connect a network cable between the board and your hub/switch.
+   2. Connect a RS232 cable between the board and your host computer
+   3. On the host, run minicom (or a terminal emulator and set the 
+   baud rate to 115200 8N1
+   4. Connect the power supply to the board and switch on,  you should see the
+   the bootloader header and finally the prompt:  dBUG>
+
+---++ Choose IP addresses and set them in up
+
+The client setting is the one for the target.
+The server setting is the one for the host computer.
+
+dBUG> set client <5373_target_ip>
+dBUG> set server <host_ip_addr>
+dBUG> set filename image.bin
+
+Note: The client IP address may change if the target image is setup to run 
+      dhcpc.
+
+---+ ROMFS deploy example
+
+This is the default.  The kernel will encode the default kernel command line as 
+"rootfstype=romfs" if no kernel command line is set in dBUG or in the 
+kernel configuration.
+
+If you build the current default configuration, you'll get 2 images at the top level:
+
+   * image.bin     : an uncompressed kerne+rootfs
+   * image.bin.gz  : a compressed kernel+rootfs
+
+Only the newer bootloader (greater than Firmware v4c.1b.1b) can use the 
+compressed version.
+
+To boot the uncompressed image (after completing the "Getting setup" section 
+steps above)
+
+dBug> dn
+Address:  0x40020000
+Downloading Image 'image.bin' from 192.168.0.9
+TFTP transfer completed
+Read 3522560 bytes (6881 blocks)
+dBUG> go
+Linux version 2.6.22-uc1 (mattw@loa) (gcc version 4.2.0 20070318 (prerelease)
+....
+
+
+---+ NFS deployment example
+
+In this example we assume the following parameters:
+
+Host system's IP address:  192.168.0.9
+Target board's IP address: 192.168.0.254
+
+---++ setup your host and target IP addresses
+
+Change the bootloader parameters (this is persistent and so it only needs to
+be done once):
+
+dBUG> set client 192.168.0.254
+dBUG> set server 192.168.0.9
+dBUG> set filename vmlinux.bin
+
+---++ Configure the target IP and Kernel command line
+
+Next, you need to set the kernel command line for NFS deployment.
+If you have a newer bootloader, you can use the 'set kcl' command.
+If not, you're going to have to configure this into the kernel you build
+
+---+++ Newer bootloaders (v4c.1b.1b) that support 'set kcl'
+
+dBUG> set kcl "console=ttyS0,115200 root=/dev/nfs rw ip=192.168.0.254:192.168.0.9:::::"
+
+---+++ Older bootloaders that don't support 'set kcl'
+
+$ ./ltib --configure
+
+[*] Configure the kernel
+
+--- Target System Configuration
+      Options  --->
+[*] start networking
+      Network setup  --->
+(192.168.0.254) ip address
+
+When the kernel builds and prompts for the configuration, under:
+Kernel hacking  --->
+[*] Compiled-in Kernel Boot Parameter
+ Kernel Boot Parameter: "console=ttyS0,115200 root=/dev/nfs rw ip=192.168.0.254:192.168.0.9:::::"
+
+---++ Copy the kernel to the /tftpboot area
+
+$ cp rootfs/boot/vmlinux.bin /tftpboot
+
+---++ Setup the NFS server area
+As root make a symlink to your root filesystem area in ltib (for example):
+
+# cd /tftpboot
+# ln -s /home/seh/5208/ltib/rootfs 192.168.0.254
+
+As root, edit /etc/exports and enter into this:
+
+/tftpboot/192.168.0.254 *(rw,no_root_squash,sync)
+
+NOTE: the leading '*' is a big gaping potential security hole, using the target
+IP address to make it a little more secure.
+
+re-export the NFS area:
+
+# /usr/sbin/exportfs -rv
+exporting *:/tftpboot/192.168.0.254
+
+Note: make sure your NFS server is running.
+And:  make sure your firewall (iptables) is not blocking 192.168.0.254
+
+---++ Download the built kernel 
+
+dBUG> dn
+Address:  0x40020000
+Downloading Image 'vmlinux.bin' from 192.168.0.9
+TFTP transfer completed
+Read 1519616 bytes (2969 blocks)
+
+---++ Boot the kernel
+
+dBUG> go
+
+---+ Some notes
+
+---++ RAM Memory
+
+Memory available: 28688k/32768k RAM, (1570k kernel code, 299k data)
+
+---++  Configuring the dBUG bootloader
+
+---+++ To see the current bootloader configuration
+
+1.At the dBUG> prompt use the show comand to see the current dBUG configuration.
+This example shows settings for an NFS deploy.
+
+dBUG> show
+         base: 16
+         baud: 115200
+       server: 172.27.163.2
+       client: 172.27.163.3
+      gateway: 172.27.255.254
+      netmask: 255.255.0.0
+     filename: vmlinux.bin
+     filetype: Image
+     autoboot: Stop at prompt
+      ethaddr: 00:CF:53:29:CF:01
+          kcl: root=/dev/nfs rw nfsroot=172.27.163.2:/tftpboot/ltib 
+ip=172.27.163.3:172.27.163.2:172.27.255.254:255.255.0.0::eth0:off
+
+---+++ To change a bootloader configuration value
+
+2.Customize dBUG for your system.  The show command tells you what to type to 
+change the individual fields.  For example, to change the filename type set 
+filename <value>.  These values are automatically written to flash.
+
+set baud 115200
+set server <host IP address>
+set client <target IP address>
+set gateway <gateway IP>
+set netmask <netmask>
+set filename vmlinux.bin
+set filetype Image
+set autoboot <flash, net, stop>
+set kcl <kernel command line>

@@ -1,0 +1,18 @@
+%Build
+make -C ${PKG_DTC_PATH_PRECONFIG:-%{_builddir}/%{buildsubdir}}
+
+%Install
+rm -rf $RPM_BUILD_ROOT
+make -C ${PKG_DTC_PATH_PRECONFIG:-%{_builddir}/%{buildsubdir}} PREFIX=%{_prefix} DESTDIR=$RPM_BUILD_ROOT/%{pfx} install
+
+if [ -z "$PKG_DTC_WANT_FDT" ]
+then
+    rm -rf $RPM_BUILD_ROOT/%{pfx}/%{_prefix}/{include,lib}
+fi
+
+%Clean
+rm -rf $RPM_BUILD_ROOT
+
+%Files
+%defattr(-, root, root)
+%{pfx}/*

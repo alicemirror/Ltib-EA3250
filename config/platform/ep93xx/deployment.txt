@@ -1,0 +1,96 @@
+= Connections/configuration =
+
+Serial port:       Lower 9 way serial connector (need crossover)
+Serial setting:    57600 N81
+Lan connector:     There is only one
+Power connector:   There is only one
+
+= Bootloader =
+
+When you power on, you should see something like:
+
+{{{
+RedBoot(tm) bootstrap and debug environment [ROMRAM]
+Non-certified release, version v2_0 - built 17:48:09, Oct 18 2004
+
+Platform: Cirrus Logic EDB9302 Board (ARM920T) Rev A
+Copyright (C) 2000, 2001, 2002, Red Hat, Inc.
+
+RAM: 0x00000000-0x02000000, 0x00041de8-0x01fdd000 available
+FLASH: 0x60000000 - 0x61000000, 128 blocks of 0x00020000 bytes each.
+RedBoot>
+}}}
+
+= Booting Linux =
+
+Example:
+
+tftp/nfs server  : <host_ip>
+target ip address: <target_ip> 
+
+= booting using a ramdisk =
+
+ * Make a directory /tftpboot/edb and then make sure to:
+ {{{
+cp rootfs/boot/zImage /tftpboot/edb
+cp rootfs.ext2.gz /tftpboot/edb
+ }}}
+
+ * Then at the redboot prompt:
+ {{{
+ip_address -l <target_ip> -h <host_ip>
+load -v -r -b 0x800000 edb/rootfs.ext2.gz
+load -v -r -b 0x200000  edb/zImage
+exec -r 0x800000 -c "root=/dev/ram console=ttyAM0" 0x200000
+ }}}
+
+= booting using nfs =
+
+ * Make a symlink to your rootfs directory
+ {{{
+cd /tftpboot
+ln -s <ltib_dir>/edb9302/rootfs <target_ip>
+ }}}
+
+ * Export the rootfs directory, edit /etc/exports and add the line:
+ {{{
+<ltib_dir>/edb9302/rootfs *(rw,no_root_squash)
+ }}}
+ YES: this is insecure, so if you're worried change appropriately.
+
+ * Re-start/export your nfs server (here's one way)
+ {{{
+sh /etc/rc.d/init.d/nfs restart
+ }}}
+
+ * At the redboot prompt:
+ {{{
+ip_address -l <target_ip> -h <host_ip>
+load -v -r -b 0x218000  edb/zImage
+exec -c "root=/dev/nfs ip=<target_ip>:<host_ip>::::: console=ttyAM0" 0x218000
+ }}}
+alternately:
+{{{
+exec -c "root=/dev/nfs nfsroot=<host_ip>:<host_rootfs_dir> ip=<target_ip>:<host_ip>::::eth0: console=ttyAM0" 0x218000
+}}}
+
+
+= Change Default RedBoot Parameters in Flash. =
+
+ * To list the default RedBoot parameters:
+{{{
+fconfig -l
+}}}
+
+ * To change some/all the parameters:
+{{{
+fconfig
+}}}
+
+ * This returns each of the line items one at a time, and they can be edited.
+   When now editing the variable just hit return to move to the next item.  At
+   the end there will be a prompt to Update the RedBoot non-volatile
+   configuration.  Answer "y" to update the flash memory.
+
+
+

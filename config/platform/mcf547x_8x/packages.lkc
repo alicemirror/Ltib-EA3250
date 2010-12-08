@@ -1,0 +1,25 @@
+comment 'Platform specific package selection'
+
+config PKG_DSPI
+    bool "dspi"
+    help
+      Connect two FireEngine boards using DSPI. Use pins:
+          DSPI_CS0 - DSPI_CS0,
+          DSPISCK - DSPISCK,
+          DSPI_DOUT - DSPI_DIN,
+          DSPI_DIN - DSPI_DOUT,
+          GND - GND.
+      Execute dspi_read on the first board than execute dspi_write on
+      the other board.  dspi_read should return the following result:
+          0 1 2 3 4 5 6 7 8 9
+
+config PKG_WATCHDOG
+    bool "watchdog-m54x5"
+    help
+      A simple program to demonstrate usage of the watchdog timer.  Installs
+      as /root/watchdog.
+          # /root/watchdog
+          Sleeping for 25 sec...
+          Timeout=30
+          Sleeping for 25 sec more...
+

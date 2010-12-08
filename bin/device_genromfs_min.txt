@@ -1,0 +1,1 @@
+tty,c,5,0 console,c,5,1 null,c,1,3

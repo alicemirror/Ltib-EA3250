@@ -1,0 +1,35 @@
+comment 'Platform specific package selection'
+
+config PKG_AXE
+    select PKG_KERNEL_LEAVESRC
+    bool "axe driver/library"
+    default n
+    help
+	This package provides a linux wrapper for the ppc-axe-driver.
+
+config PKG_AXE_BIN
+    bool "axe driver/library binaries"
+    default n
+    help
+	This package provides the binary parts of PKG_AXE to force
+	ltib to include the packages without actually building anything
+	that requires kernel source blown out.
+
+config PKG_COLORKEY
+    bool "colorkey"
+    default n
+    help
+	This package allows testine the colorkey support on the 5121 DIU.
+
+config PKG_GAMMA_SET
+    bool "gamma_set"
+    default n
+    help
+	This package allows setting the gamma_table on the 5121 DIU.
+
+config PKG_VIUTEST
+    bool "viutest"
+    default n
+    help
+	This package allows testing the 5121 VIU driver.
+    

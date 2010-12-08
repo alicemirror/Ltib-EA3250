@@ -1,0 +1,68 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define dversion 2.6.16
+%define pkg_name linux
+
+Summary         : Linux kernel (core of the Linux operating system)
+Name            : kernel
+Version         : 2.6.16
+Release         : 11
+License         : GPL
+Vendor          : kernel.org + freescale patches
+Packager        : John Rigby
+Group           : System Environment/Kernel
+Source          : %{pkg_name}-%{dversion}.tar.bz2
+Patch1          : patch-%{version}.%{release}.bz2
+Patch2		: linux-2.6.16-mpc5200-0002-2.6.16-rt18-28Jun2006.patch
+Patch3		: linux-2.6.16-mpc5200-0003-Lite5200B-28Jun2006.patch
+Patch4		: linux-2.6.16-mpc5200-0004-bestcomm-dma-28Jun2006.patch
+Patch5		: linux-2.6.16-mpc5200-0005-bestcomm-fec-28Jun2006.patch
+Patch6		: linux-2.6.16-mpc5200-0006-fec-28Jun2006.patch
+Patch7		: linux-2.6.16-mpc5200-0007-ata-28Jun2006.patch
+Patch8		: linux-2.6.16-mpc5200-0008-52xx-init-reorg-28Jun2006.patch
+Patch9		: linux-2.6.16-mpc5200-0009-bestcomm-ata-28Jun2006.patch
+Patch10		: linux-2.6.16-mpc5200-0010-Media5200-28Jun2006.patch
+Patch11		: linux-2.6.16-mpc5200-0011-CoralP-28Jun2006.patch
+Patch12		: linux-2.6.16-mpc5200-0012-slicetimer-irq-28Jun2006.patch
+PAtch13		: linux-2.6.16-mpc5200-0013-Media5200-touchscreen-28Jun2006.patch
+Patch14		: linux-2.6.16-mpc5200-0014-MTD-01Nov2006.patch
+Patch15		: linux-2.6.16-mpc5200-0015-I2C-clock-fix-28Jun2006.patch
+Patch16		: linux-2.6.16-mpc5200-0016-ac97sound-28Jun2006.patch
+Patch17		: linux-2.6.16-mpc5200-0017-codetest-support-07Jul2006.patch
+Patch18		: linux-2.6.16-mpc5200-0018-pm-26Jan2007.patch
+Patch19		: linux-2.6.16-mpc5200-0019-btcs-02Feb2007.patch
+Patch20		: linux-2.6.16-mpc5200-0020-btcs-mod-31Jan2007.patch
+Patch21		: linux-2.6.16-mpc5200-0021-touchscreen-misc-device-02Feb2007.patch
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+From kernel.org
+
+%Prep
+%setup -n %{pkg_name}-%{dversion}
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1
+%patch18 -p1
+%patch19 -p1
+%patch20 -p1
+%patch21 -p1
+

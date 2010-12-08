@@ -1,0 +1,205 @@
+# constants (forced values)
+config CONFIG_TITLE
+    string
+    default "LTIB: NXP LH7A404 on the Logic PD LPD7A404 board"
+
+config CPU
+    string
+    default "LH7A404"
+
+config PLATFORM_COMMENT
+    string
+    default "Logic PD LPD7A404 board"
+
+config VENDOR
+    string
+    default "NXP"
+
+config PLATFORM
+    string
+    default "lh7a404"
+
+config GNUTARCH
+    string
+    default arm
+
+config LINTARCH
+    string
+    default arm
+
+config CFGHOST
+    string
+    default arm-linux
+
+# capabilities if different from defaults.lkc
+
+source ../../userspace/endian.lkc
+source ../../userspace/libc_type.lkc
+
+comment "Choose your toolchain"
+choice
+    prompt "Toolchain"
+    default TOOLCHAIN2
+    help
+        This menu will help you choose the cross toolchain to use to build
+        your packages with.  If you choose none, you can enter the
+        path to your toolchain by hand.
+
+    config TOOLCHAIN_ARMEABI_GLIBC1
+        bool "ARMv5te gcc-4.1.2,Multi-lib,gnueabi/glibc-2.5-nptl-3" if GLIBC
+        help
+            gcc-4.1.2  glibc-2.5 multilib armeabi toolchain.
+            Optimized for armv5te cores.
+            Library versions available for:
+              - Soft float       (Default)
+              - Hard float, VFP  (-mfloat-abi=softfp -mfpu=vfp)
+            NPTL threads libraries.
+            Toolchain built by Freescale.
+
+    config TOOLCHAIN2
+        bool "gcc-3.4.5-glibc-2.3.6 (soft-float)" if GLIBC
+
+    config TOOLCHAIN1
+        bool "gcc-4.3.2-glibc-2.7 (VFP with soft-float)" if GLIBC
+
+    config TOOLCHAIN_CUSTOM
+        bool "custom"
+endchoice
+
+config TOOLCHAIN
+    string
+    default tc-fsl-x86lnx-armeabi-nptl-4.1.2-3.i386.rpm if TOOLCHAIN_ARMEABI_GLIBC1
+    default tc-nxp-lnx-arm-3.4.5-1.i386.rpm if TOOLCHAIN2
+    default tc-nxp-lnx-armvfp-4.3.2-1.i386.rpm if TOOLCHAIN1
+
+config TOOLCHAIN_PATH
+    string
+    default "/opt/freescale/usr/local/gcc-4.1.2-glibc-2.5-nptl-3/arm-none-linux-gnueabi" if TOOLCHAIN_ARMEABI_GLIBC1
+    default "/opt/nxp/gcc-3.4.5-glibc-2.3.6/arm-linux-gnu" if TOOLCHAIN2
+    default "/opt/nxp/gcc-4.3.2-glibc-2.7" if TOOLCHAIN1
+    string "Supply your toolchain path" if TOOLCHAIN_CUSTOM
+
+config CUSTOM_TOOLCHAIN_PREFIX
+    depends TOOLCHAIN_CUSTOM
+    default "arm-vfp-linux-gnu-"
+    string  "Enter your cross tools prefix"
+    help
+        For example arm-linux-gnu-
+
+config TOOLCHAIN_PREFIX
+    string
+    default "arm-none-linux-gnueabi-" if TOOLCHAIN_ARMEABI_GLIBC1
+    default "arm-linux-gnu-" if TOOLCHAIN2
+    default "arm-vfp-linux-gnu-" if TOOLCHAIN1
+    default CUSTOM_TOOLCHAIN_PREFIX if TOOLCHAIN_CUSTOM
+
+config TOOLCHAIN_CFLAGS
+    string "Enter any CFLAGS for gcc/g++"
+    default "-O2 -fsigned-char -mfloat-abi=softfp -mfpu=vfp" if TOOLCHAIN_ARMEABI_GLIBC1
+    default "-fsigned-char -msoft-float -O3" if TOOLCHAIN2
+    default "-fsigned-char -mfpu=vfp -mfloat-abi=softfp -O3" if TOOLCHAIN1
+    help
+        This option lets you set flags that will be passed to gcc/g++
+        when you use the specified compiler in your RPM spec files.
+
+comment "Bootloader"
+choice
+    prompt "bootloader choice"
+    default BOOTLOADER1
+
+    config BOOTLOADER1
+        bool "APEX 1.6.8 for the Logic PD 7A404 board"
+
+    config BOOTLOADER_NONE
+        bool "Don't build a bootloader"
+endchoice
+
+config PKG_APEX
+    string
+    default "apex-1.6.8-lpd7a404" if BOOTLOADER1
+
+config PKG_APEX_PRECONFIG
+    string
+    default "apex-1.6.8-lpd7a404.config" if BOOTLOADER1
+
+config PKG_APEX_WANT_CF
+    depends BOOTLOADER1
+    bool "Configure Apex"
+    default n
+    help
+      Enable this option to bring up the Apex configuration menu
+
+config PKG_APEX_LEAVESRC
+    depends BOOTLOADER1
+    bool "Leave the Apex sources after building"
+    default y
+    help
+      This is a one shot option that can be used to build the Apex
+      bootloader and leave the Apex source tree in rpm/BUILD in place
+
+comment "Choose your Kernel"
+choice
+    prompt "kernel"
+    default PHY_KERNEL_2_6_29_6
+    help
+        This menu will let you choose the kernel to use with your board.
+        If you don't want to build a kernel, unselect this option.
+
+    config PHY_KERNEL_2_6_29_6
+        bool "Linux 2.6.29.6 for NXP LH7A404 and Logic PD LPD7A404 board"
+        help
+            This is the 2.6.29.6 kernel with the LH7A404 patches
+
+    config KERNEL_DIR_BUILD
+        bool "Local Linux directory build"
+        help
+            Build using a local copy of the kernel sources
+
+    config KERNEL_NONE
+        bool "Dont build the Linux kernel"
+        help
+            Select this if you dont want to build the kernel
+endchoice
+
+config PKG_KERNEL
+    string
+    default "kernel-2.6.29.6-lh7a404" if PHY_KERNEL_2_6_29_6
+
+source ../../userspace/kernel_dir_build.lkc
+
+config PKG_KERNEL_PRECONFIG
+    string "Kernel preconfig"
+    default "linux-2.6.29.6-lpd7a404.config" if PHY_KERNEL_2_6_29_6
+
+config PKG_KERNEL_WANT_HEADERS
+    depends ! KERNEL_NONE
+    bool "Include kernel headers"
+    help
+        Selecting this will copy kernel headers to rootfs/usr/src/linux/include
+
+config PKG_KERNEL_WANT_CF
+    depends ! KERNEL_NONE
+    bool "Configure the kernel"
+    default n
+ 
+config PKG_KERNEL_LEAVESRC
+    depends ! KERNEL_NONE
+    bool "Leave the kernel sources after building"
+    default n
+    help
+      This is a one shot option that can be used to build the kernel and
+      leave the build source tree in rpm/BUILD in place
+
+config SYSCFG_KTARG
+    string
+    default "zImage"
+
+config SYSCFG_BOOT_KERNEL
+    string
+    default "arch/arm/boot/zImage"
+
+source ../../userspace/distro.lkc
+source ../../userspace/packages.lkc
+source ../../userspace/sysconfig.lkc
+source ../../userspace/deployment.lkc
+source ../../userspace/defaults.lkc

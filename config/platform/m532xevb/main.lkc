@@ -1,0 +1,188 @@
+# constants (forced values)
+config CONFIG_TITLE
+    string
+    default "LTIB: Freescale M532xEVB Coldfire/M68k (noMMU)"
+
+config PLATFORM_COMMENT
+    string
+    default "Freescale M532xEVB Coldfire/M68k (noMMU)"
+
+config VENDOR
+    string
+    default "Freescale"
+
+config PLATFORM
+    string
+    default m532xevb
+
+config GNUTARCH
+    string
+    default m68knommu
+
+config LINTARCH
+    string
+    default m68knommu
+
+config CFGHOST
+    string
+    default m68k-linux
+
+config ERASE_BLOCK_SIZE
+    string
+    default 64 
+
+config SYSCFG_RUNKERNELADDR
+    string
+    default "0x40020000"
+
+config U_BOOT_IMAGE_TYPE
+    string
+    default "m68k"
+
+# capabilities if different from defaults.lkc
+config CAP_GLIBC
+    bool
+    default n
+config CAP_DEPLOYMENT_ROMFS
+    bool
+    default y
+config CAP_HAS_MMU
+    bool
+    default n
+config SYSCFG_TMPFS
+    string
+    default "ramfs"
+
+source ../../userspace/endian.lkc
+source ../../userspace/libc_type.lkc
+source ../../userspace/toolchain.lkc
+
+comment "Bootloader"
+
+config BOOTLOADER
+    bool "Build a boot loader"
+    default n
+    help
+        Selecting this will allow you to build a boot loader
+
+choice
+    depends BOOTLOADER
+    prompt "Bootloader choice"
+    default BOOTLOADER-DBUG
+    help
+        This menus lets you choose the bootloader type
+
+    config BOOTLOADER-DBUG
+        bool "Build dBUG bootloader"
+        help
+            Build the dBUG bootloader.  See platform User's Manual for installation
+            instructions.
+    config BOOTLOADER-U-BOOT
+        bool "Build u-boot bootloader"
+        help
+            Build the u-boot bootloader.  The platform User's Manual has installation
+            instructions.
+    config BOOTLOADER-NONE
+        bool "Dont build the boot loader"
+endchoice
+
+
+config SYSCFG_BOOT_CPU
+    string
+    default "m5329evb"             if BOOTLOADER-DBUG
+    default "M5329BFEE_config"     if BOOTLOADER-U-BOOT
+
+config PKG_DBUG
+    string
+    default "dbug"                 if BOOTLOADER-DBUG
+
+config PKG_U_BOOT
+    string
+    default "u-boot-1.3-rc3-uClinux" if BOOTLOADER-U-BOOT
+
+comment "Choose your Kernel"
+choice
+    prompt "kernel"
+    default KERNEL3
+    help
+        This menu will let you choose the kernel to use with your board.
+        If you don't want to build a kernel, unselect this option.
+
+    config KERNEL1
+        bool "Linux 2.6.16.1-uc0"
+        help
+            This is the kernel and patches from uClinux.org
+    config KERNEL2
+        bool "Linux 2.6.17.7-uc1"
+        help
+            This is the kernel and patches from uClinux.org
+    config KERNEL3
+        bool "Linux 2.6.22-uc1"
+        help
+            This is the kernel and patches from uClinux.org
+    config KERNEL_DIR_BUILD
+        bool "Local Linux directory build"
+        help
+            Build using a local copy of the kernel sources
+    config KERNEL_NONE
+        bool "Dont build the Linux kernel"
+        help
+            Select this if you dont want to build the kernel or provide your own
+endchoice
+
+
+config PKG_KERNEL
+    string
+    default "kernel-2.6.16.1-uc0" if KERNEL1
+    default "kernel-2.6.17.7-uc1" if KERNEL2
+    default "kernel-2.6.22-uc1" if KERNEL3
+    default "kernel26-dir-build"  if KERNEL_DIR_BUILD
+
+# if later someone adds u-boot kernels, then
+# add entries for those kernels before the defaults
+# for SYSCFG_KTARG and SYSCFG_BOOT_KERNEL
+config SYSCFG_KTARG
+    string
+    default "vmlinux"
+
+config SYSCFG_BOOT_KERNEL
+    string
+    default "vmlinux"
+
+source ../../userspace/kernel_dir_build.lkc
+
+config PKG_KERNEL_WANT_OBJCOPY
+    bool
+    default y
+
+config PKG_KERNEL_WANT_HEADERS
+    depends ! KERNEL_NONE
+    bool "Include kernel headers"
+    help
+        Selecting this will copy kernel headers to rootfs/usr/src/linux/include
+
+config PKG_KERNEL_PRECONFIG
+    string "kernel preconfig"
+    default "linux-2.6.x.config" if KERNEL1
+    default "linux-2.6.17.7.config" if KERNEL2
+    default "linux-2.6.22.config" if KERNEL3
+    default "linux-2.6.x.config" if KERNEL_DIR_BUILD
+    
+config PKG_KERNEL_WANT_CF
+    depends ! KERNEL_NONE
+    bool "Configure the kernel"
+    default n
+ 
+config PKG_KERNEL_LEAVESRC
+    depends ! KERNEL_NONE
+    bool "Leave the sources after building"
+    default y
+    help
+        This is a one shot option that can be used to build the kernel and
+        leave the build source tree in rpm/BUILD in place
+
+source ../../userspace/distro.lkc
+source ../../userspace/packages.lkc
+source ../../userspace/sysconfig.lkc
+source ../../userspace/deployment.lkc
+source ../../userspace/defaults.lkc

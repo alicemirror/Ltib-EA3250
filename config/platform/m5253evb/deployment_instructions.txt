@@ -1,0 +1,149 @@
+---+ Getting setup
+
+---++ Connecting to the target board
+
+   1. Connect a RS232 cable between the board and your host computer
+   2. On the host, run minicom (or a terminal emulator and set the 
+   baud rate to 115200 8N1
+   3. Connect the power supply to the board and switch on,  you should see the
+   prompt:  dBUG>
+
+---+ ROMFS deployment example
+
+You will get 2 images at the top level:
+
+   * image.bin     : an uncompressed kerne+rootfs
+   * image.bin.gz  : a compress kernel+rootfs
+
+Only the newer bootloader (version v4c.1b.1a or later) can use the compressed 
+kernel.
+
+There are 3 methods to download an image to the target.  BDI2000, USB-BDM,
+and serial download.  The BDI2000 is the quickest and the serial download
+is the slowest.
+
+To boot an uncompressed image (after following the "Getting setup" steps)
+
+---++ BDI2000
+
+The BDI2000 must be programed for the M5253EVB.  Contact Abatron for more
+information.
+
+$ telnet 172.27.163.124  (IP address assigned to the BDI2000)
+
+MCF5253>config
+    BDI Firmware: 1.08
+    BDI MAC     : 00-0c-01-96-74-72
+    BDI IP      : 172.27.163.124
+    BDI Subnet  : 255.255.0.0
+    BDI Gateway : 172.27.255.254
+    Config IP   : 172.27.163.2
+    Config File : mcf5253.cfg
+
+Copy image.bin to the /tftpboot/ directory and make sure this directory is
+accessible by the BDI2000.
+
+MCF5253>reset run        (You should see the dBUG> prompt in the terminal)
+- TARGET: processing reset request
+- TARGET: resetting target passed
+- TARGET: processing target startup ....
+- TARGET: processing target startup passed
+MCF5253>load 0x20000 image.bin binary
+Loading image.bin , please wait ....
+Loading program file passed
+
+In the terminal type:
+dBUG> go
+Linux version 2.6.17.7-uc1 (mattw@kea) (gcc version 4.1.0 (CodeSourcery Freescal
+e 4.1-14)) #1 Mon Nov 27 15:56:39 MST 2006
+...
+
+
+---++ USB-BDM
+
+tbd
+
+---++ Serial download
+
+Make sure the srec option is selected in the Target Image Generation options.
+
+--- Choose your root filesystem image type
+...
+[*] Create an S-Record of the ROMFS images.
+
+Download srec to target
+
+dBug> dl 0x20000
+Offset: 0x00020000 (-1965740)
+Escape to local host and send S-records now...
+
+In minicom type <cntl>a s
+
+Select image.bin.srec.  (This option takes about 10 minutes.)
+
+dBUG> go
+Linux version 2.6.17.7-uc1 (mattw@kea) (gcc version 4.1.0 (CodeSourcery Freescal
+e 4.1-14)) #1 Mon Nov 27 15:56:39 MST 2006
+....
+
+A quicker option for this method is to download and write the compressed image 
+to flash.  Make sure the compressed image and srec option is selected:
+
+[*] Create a compressed image of the kernel/romfs image
+
+Download the compressed image
+
+dBUG> dnfl 0x20000
+Offset: 0x00020000 (-1964972)
+Escape to local host and send S-records now...
+
+Select image.bin.gz.srec.
+
+download successful!
+................
+Program successfully flashed...
+dBUG>
+
+dBUG> gfl
+Compressed image found. Uncompressing...
+Linux version 2.6.17.7-uc1 (mattw@kea) (gcc version 4.1.0 (CodeSourcery Freescal
+e 4.1-14)) #1 Mon Nov 27 15:56:39 MST 2006
+...
+
+---+ Some notes
+
+---++ RAM Memory
+
+Memory available: 14032k/16384k RAM, (936k kernel code, 205k data)
+
+---++ Flash layout
+
+Creating 3 MTD partitions on "MCF5253EVB Flash Map Info":
+0x00000000-0x00030000 : "dBUG partition"
+0x00030000-0x00040000 : "Date partition"
+0x00040000-0x00200000 : "Kernel partition"
+
+---++  Configuring the dBUG bootloader
+
+---+++ To see the current bootloader configuration
+
+1.  At the dBUG prompt use the show comand to see the current dBUG 
+configuration.
+
+dBUG> show
+         base: 16
+         baud: 115200
+     autoboot: Stop at prompt
+          kcl: rootfstype=romfs
+
+
+---+++ To change a bootloader configuration value
+
+2.  Customize dBUG for your system.  The show command tells you what to type 
+to change the individual fields.  For example, to change the filename type set 
+autoboot <value>.  These values are automatically written to flash.
+
+set autoboot <flash, net, stop>
+set kcl <kernel command line>
+
+

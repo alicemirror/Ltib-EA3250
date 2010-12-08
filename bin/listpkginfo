@@ -1,0 +1,331 @@
+#!/usr/bin/perl -w
+eval 'LANG=C exec perl -w -S $0 ${1+"$@"}'
+    if $running_under_some_shell;
+$running_under_some_shell = 0;
+
+######################################################################
+#
+# Copyright © Freescale Semiconductor, Inc. 2004-2007. All rights reserved.
+#
+# Stuart Hughes, stuarth@freescale.com,  6th May 2005
+#   
+# This file is part of LTIB.
+#
+# LTIB is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# LTIB is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with LTIB; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+#
+#
+# List information about package sources and patches,
+# the stdout is normally redirected to LtibPppInfoSpecXref
+#
+#
+# The internal data structure built is of the form:
+#
+# $specs = {
+#     $sn1 => {
+#           path => rel_path
+#           srcs => [ s1, s2, p1, p2,  ..,],
+#           keys => { $key1 => [ $ref, ...], 
+#                     $key2 ...  
+#           }
+#     },
+#     $sn2 => {....
+#     }, ...
+# };
+#
+# The bkeys hash is used to store boolean key references only
+# $bkeys  = {
+#     $key1 => $ref,
+#      ...
+# };
+#
+#
+######################################################################
+use File::Find;
+use Getopt::Std;
+use Cwd 'realpath';
+use FindBin;
+use lib("$FindBin::Bin");
+use Ltibutils;
+
+$top = "$FindBin::Bin/..";
+$bogs = $remaps = $unsel = $unref = $prvs = '';
+
+$opt_l = '';
+$opt_f = '';
+$opt_r = '';
+$opt_b = 0;
+$opt_p = '';
+$opt_w = 0;
+$opt_h = 0;
+$usage = <<TXT;
+Usage  listpkgs [ -r <ref> -f <file> ] [ options....]
+  Where:
+    -l dir      : ltib directory to scan (hint branches)
+    -f path     : send normal stdout to path and redirect stderr stdout
+    -r pkg.spec : reference (spec) file name (not path)
+    -p          : limit to this platform (e.g mpc7448hpcii)
+    -b          : basic output
+    -w          : list of files (for wget)
+    -h          : show usage
+TXT
+
+# option handling
+getopts('l:f:r:p:bhw') or die($usage);
+die($usage) if $opt_h;
+die("-p option not implemented yet\n") if $opt_p;
+$top    = $opt_l if $opt_l;
+$top    = realpath($top);
+$toplen = length(realpath($top)) + 1;
+
+# build directory list to scan
+@dirs = grep { realpath($_) } ("$top/rpm/SPECS",
+                              "$top/dist/lfs-5.1",
+                              "$top/config/platform/$opt_p");
+push @dirs, realpath("$top/config/userspace") unless $opt_p;
+
+# redirect if opt_f
+redir($opt_f) if $opt_f;
+
+# find all .spec and .spec.in files
+warn("Finding all spec files\n");
+find(\&all_specs, @dirs);
+
+# add an implicit ref to rpm-fs
+push @{$specs->{'rpm-fs'}{keys}{ltib}}, 'ltib';
+
+# build a list of references from map files
+warn("Building a list of references from map files\n");
+find(\&build_map_refs, realpath("$top/config"));
+
+# build a list of references from config files
+warn("Building a list of references from lkc files\n");
+find(\&build_spec_refs, realpath("$top/config"));
+
+# look in spec files for sources and patches
+warn("Building a list of spec file sources and patches\n");
+find(\&spec_sources, @dirs);
+
+# List of unique packages seen
+%pkgs = ();
+
+#
+# output the main results and build warnings
+#
+header() unless $opt_w;
+foreach $lkc (keys %$tcs) {
+    last if $opt_r || $opt_p;
+    $msg  = "\n---++ $lkc\n";
+    foreach $fn (@{$tcs->{$lkc}}) {
+        $pkgs{$fn} = 1;
+        $msg .= "      * $fn\n", next if $opt_b;
+        $esc_fn = unpack("H*", $fn . '.html');
+        $msg .= "[[$esc_fn][$fn]]<br>\n";
+    }
+    print $msg unless $opt_w;
+}
+foreach $sn (sort keys %$specs) {
+    die("null key in specs hash\n") unless $sn;
+    $path = $specs->{$sn}{path};
+    @srcs = ();
+    @srcs = @{$specs->{$sn}{srcs}} if $specs->{$sn}{srcs};
+    @keys = keys %{$specs->{$sn}{keys}};
+    
+    if(! $path) {
+        $bogs .= "$sn:\n";
+        foreach $key (@keys) {
+            $bogs .= "    $key: " . ' ' x (25 - length($key));
+            $bogs .=  join(' ',  @{$specs->{$sn}{keys}{$key}}) . "\n";
+        }
+        next;
+    }
+    $unref .= "$path\n", next unless @keys;
+
+    if(@keys > 1) {
+        $remaps .= "$sn:\n";
+        foreach $key (@keys) {
+            $remaps .= "    $key: " . ' ' x (25 - length($key));
+            $remaps .= join(' ', @{$specs->{$sn}{keys}{$key}}) . "\n";
+        }
+    }
+
+    $has_prvs = 0;
+    $has_maps = 0;
+    $has_lkcs = 0;
+    ($pdir) = $path =~ m,^(config/platform/[^/]+),;
+    $msg  = "\n---++ $path\n";
+
+    foreach $key (@keys) {
+        foreach $ref (@{$specs->{$sn}{keys}{$key}}, $bkeys->{$key}) {
+            next unless $ref;
+            $has_prvs++ if $pdir && $ref !~ m,^$pdir,;
+            $has_maps++ if $ref =~ m,pkg_map[\w-]*$,;
+            $has_lkcs++ if $ref eq 'ltib';
+            $has_lkcs++ if $ref =~ m,\.lkc$,;
+            $msg .= "   * referenced by: $ref\n";
+        }
+    }
+    foreach $fn (@srcs) {
+        last unless $has_lkcs;
+        $pkgs{$fn} = 1;
+        $msg .= "      * $fn\n", next if $opt_b;
+        $esc_fn = unpack("H*", $fn . '.html');
+        $msg .= "[[$esc_fn][$fn]]<br>\n";
+    }
+    $unsel .= $msg unless $has_lkcs;
+    $prvs  .= $msg if $has_prvs;
+    print $msg if $has_lkcs && ! $opt_w;
+}
+
+# Dump package filenames
+if($opt_w)
+{
+    foreach $fn (sort keys %pkgs) {
+        print "$fn\n";
+        print "$fn.md5\n";
+    }
+}
+
+trailer() unless $opt_w;
+
+#
+# output errors and warnings to stderr
+#
+exit(0) if $opt_r || $opt_f;
+if(defined $dups) {
+    warn("\n---++ Error: duplicate spec files\n");
+    foreach $sn (sort keys %$dups) {
+        warn("$sn: ", join(" ", @{$dups->{$sn}}), "\n");
+    }
+}
+warn("\n---+ Error: conflicting keys mappings:\n$remaps")          if $remaps;
+warn("\n---+ Error: private spec with bad refs\n", $prvs, "\n")    if $prvs;
+warn("\n---+ Spec files not in the config system\n", $unsel, "\n") if $unsel;
+warn("\n---+ Unmapped spec files:\n$unref", )                      if $unref; 
+warn("\n---+ Possible bogus spec name references:\n", $bogs)       if $bogs;
+exit(0);
+
+
+###########################
+# functions
+###########################
+
+sub all_specs
+{
+    return if $opt_r && $_ ne $opt_r;
+    return unless m,\.spec(?:\.in)?$,;
+    s,.spec.*$,,;
+    my $rel  = substr($File::Find::name, $toplen);
+    push( @{$dups->{$_}}, ($specs->{$_}{path}, $rel)),
+                                           return if exists $specs->{$_}{path};
+    $specs->{$_}{path} = $rel;
+}
+
+sub build_map_refs
+{
+    return unless m,^pkg_map[\w-]*(?!\.bak),;
+    my $rel = substr($File::Find::name, $toplen);
+    open(FN, $File::Find::name) or die("open $File::Find::name\n");
+    while(<FN>) {
+        if( m,^(PKG_\w+)\s*=\s*([\S]*), ) {
+            next unless $2;
+            push(@{$specs->{$2}{keys}{$1}}, $rel);
+        }
+    }
+    close(FN);
+}
+
+sub build_spec_refs
+{
+    return unless m,\.lkc$,;
+    my (%list, @list, $tok, $tc);
+    my $rel = substr($File::Find::name, $toplen);
+    open(FN, $File::Find::name) or die("open $File::Find::name\n");
+    while(<FN>) {
+        if( my $nr =    /^\s*config\s+(?:TOOLCHAIN\b|PKG_)(?!\w+PRECONFIG\s*$)/ 
+                  ... ! /^\s*(?:string|default)/ ) {
+            if($nr == 1) {
+                ($tok) = /^\s*config\s+(\w+)/;
+                $tc    = /TOOLCHAIN/;
+                %list  = ();
+            }
+            if($nr =~ /E0$/) {
+                @list = keys %list; 
+                $bkeys->{$tok} = $rel if ! @list && ! $bkeys->{$tok};
+                foreach my $sn (@list) {
+                    next if $sn =~ m,(?:_(?:def)?config)$,;
+                    if($tc) {
+                        push(@{$tcs->{$rel}}, $sn);
+                        $sn =~ s,\.i\d86\.rpm$,.src.rpm,;
+                        push(@{$tcs->{$rel}}, $sn);
+                        next;
+                    }
+                    push(@{$specs->{$sn}{keys}{$tok}}, $rel);
+                }
+            }
+            $list{$2} = 1 if /^\s*default\s+("?)([\w.-]+)\1/;
+        }
+    }
+    close(FN);
+    return;
+}
+
+sub spec_sources
+{
+    return if $opt_r && $_ ne $opt_r;
+    return unless m,\.spec(?:\.in)?$,;
+    s,.spec.*$,,;
+    my $rel = substr($File::Find::name, $toplen);
+    return unless exists $specs->{$_}{path} && $specs->{$_}{path} eq $rel; 
+
+    my $tok = parse_spec($File::Find::name) or return;
+    foreach my $url (  split(/\s*\n/, $tok->{sources}),
+                       split(/\s*\n/, $tok->{patches})   ) {
+        (undef, $url) = split(/:\s*/, $url, 2);
+        my ($fn) = $url =~ m-/?([^/]+)$-;
+        push(@{$specs->{$_}{srcs}}, $fn);
+    }
+}
+
+sub header
+{
+    print <<TXT;
+%TOPICTITLE%
+---
+
+%TOC%
+
+---+ LTIB source/patch cross reference
+
+TXT
+}
+
+sub trailer
+{
+    print <<TXT;
+
+---
+Autogenerated by listpkginfo on: ${\  ( scalar gmtime() )}  GMT
+TXT
+}
+
+sub redir
+{
+    my ($of) = @_ or die;
+    open(SAVEOUT, ">&STDOUT");
+    open(STDOUT, ">$of") or die("can't redirect stderr to $of: $!");
+    chmod(0666, $of);
+    $| = 1;
+    $SIG{__WARN__} = sub { print SAVEOUT @_ }; 
+}

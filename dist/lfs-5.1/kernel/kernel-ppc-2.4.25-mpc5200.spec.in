@@ -1,0 +1,39 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define dversion 2.4
+%define pkg_name linuxppc_2_4_devel
+%define pkg_version 20040920
+%define bld_dir_name linuxppc_2_4_devel-20040920
+%define kernel_series 2.4
+
+Summary         : Linux kernel (core of the Linux operating system)
+Name            : kernel
+Version         : 2.4.25
+Release         : mpc5200
+License         : GPL
+Vendor          : kernel.org
+Packager        : Stuart Hughes
+Group           : System Environment/Kernel
+Source          : %{pkg_name}-%{pkg_version}.tgz
+Patch0          : %{pkg_name}-%{pkg_version}-hrtimer.patch
+Patch1          : %{pkg_name}-%{pkg_version}-hrtimer-lowlat.patch
+Patch2          : %{pkg_name}-%{pkg_version}-hrtimer-lowlat-codetest_v4.patch
+Patch3          : %{pkg_name}-%{pkg_version}-hrtimer-lowlat-codetest_v4-lite5200_total5200.patch
+
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+This has been extracted from the PCS mpc5200_lite5200-3.0 BSP
+
+%Prep
+%setup -n %{bld_dir_name}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+
+

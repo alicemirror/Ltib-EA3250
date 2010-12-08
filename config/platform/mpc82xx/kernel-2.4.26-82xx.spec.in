@@ -1,0 +1,28 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define pkg_name linux
+%define kernel_series 2.4
+
+Summary         : Linux kernel (core of the Linux operating system)
+Name            : kernel
+Version         : 2.4.26
+Release         : 1
+License         : GPL
+Vendor          : Freescale
+Packager        : Stuart Hughes
+Group           : System Environment/Kernel
+Source          : %{name}-%{version}-free.tar.gz
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+
+%{summary}
+
+This is from PQ2FADS_non_commercial_BSP_Dec142004-3.0.iso
+
+%Prep
+%setup -n %{name}-%{version}-free
+
+

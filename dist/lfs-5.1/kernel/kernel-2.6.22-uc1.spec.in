@@ -1,0 +1,59 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define dversion linux-2.6.22-uc1.20070808
+%define kernel vmlinux
+%define binary linux.bin
+%define pkg_name linux-2.6.22-uc1.20070808
+
+Summary         : Linux kernel (core of the Linux operating system)
+Name            : kernel
+Version         : 2.6.22
+Release         : uc1
+License         : GPL
+Vendor          : uClinux.org + freescale patches
+Packager        : Matt Waddel
+Group           : System Environment/Kernel
+Source          : %{pkg_name}.tar.bz2
+Patch1          : mcf-qspi.4.patch
+Patch2          : m532x-core.12.patch
+Patch3          : mcf-can.4.patch
+Patch4          : m532x-fb.15.patch
+Patch5          : m532x-max3353.3.patch
+Patch6          : m532x-nand.9.patch
+Patch7          : m532x-ts.2.patch
+Patch8          : mcf-i2c.2.patch
+Patch9          : mcf-aflag.2.patch
+Patch10         : m532x-audio.6.patch
+Patch11         : m532x-usb.12.patch
+Patch12         : linux-2.6.22-uc1.codetest.patch
+Patch13         : m5373-core.1.patch
+Patch14         : kernel-2.6.22-u-boot.patch
+Patch15         : m5373-u-boot.patch
+Patch16         : m52277-core.patch
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+From kernel.org + uClinux + freescale patches
+
+%Prep
+%setup -n %{dversion}
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+#%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1

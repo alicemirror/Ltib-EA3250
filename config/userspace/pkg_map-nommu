@@ -1,0 +1,8 @@
+PKG_STRACE       = strace-nommu
+PKG_LIBJPEG      = libjpeg-nommu
+PKG_LIBPNG       = libpng-nommu
+PKG_MICROWINDOWS = microwindows-nommu
+PKG_APPTRK       = apptrk-m68k
+PKG_UCLIBC       = uclibc-nommu
+PKG_M52277_DEMO  = m52277evb-demo
+PKG_VPLAY        = vplay

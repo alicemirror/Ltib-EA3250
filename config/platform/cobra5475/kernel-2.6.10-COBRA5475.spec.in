@@ -1,0 +1,101 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define dversion 2.6.10
+%define pkg_name linux
+
+Summary         : Linux kernel (core of the Linux operating system)
+Name            : kernel
+Version         : 2.6.10
+Release         : 1
+License         : GPL
+Vendor          : kernel.org + freescale patches
+Packager        : Stuart Hughes
+Group           : System Environment/Kernel
+Source          : %{pkg_name}-%{dversion}.tar.bz2
+Patch1          : linux-2.6.10-cf-core-2.patch
+Patch2          : linux-2.6.10-cf-m68k.patch
+Patch3          : linux-2.6.10-cf-serial-irda.patch
+Patch4          : linux-2.6.10-cf-dma.patch
+Patch5          : linux-2.6.10-cf-fec.patch
+Patch6          : linux-2.6.10-cf-pci-3.patch
+Patch7          : linux-2.6.10-cf-i2c.patch
+Patch8          : linux-2.6.10-cf-flash-2.patch
+Patch9          : linux-2.6.10-cf-crypto.patch
+Patch10         : linux-2.6.10-cf-dspi.patch
+Patch11         : linux-2.6.10-cf-sec.patch
+Patch12         : linux-2.6.10-cf-wireless.patch
+Patch13         : linux-2.6.10-cf-can.patch
+Patch14         : linux-2.6.10-cf-codetest.patch
+Patch15         : linux-2.6.10-cf-rtc.patch
+Patch16         : linux-2.6.10-cf-jffs2.patch
+Patch17         : linux-2.6.10-cf-minix.patch
+Patch18         : linux-2.6.10-cf-sata.patch
+Patch19         : linux-2.6.10-cf-fb-2.patch
+Patch20         : linux-2.6.10-cf-wdt.patch
+Patch21         : linux-2.6.10-cf-usb.patch
+Patch22         : linux-2.6.10-cf-input.patch
+Patch23         : linux-2.6.10-cf-mount.patch
+Patch24         : linux-2.6.10-cf-export.patch
+Patch25         : linux-2.6.10-cf-cache.patch
+Patch26         : linux-2.6.10-cf-smifb.patch
+Patch27         : linux-2.6.10-cf-dmaapi-1.patch
+Patch28         : linux-2.6.10-cf-pcilockup.patch
+Patch29         : linux-2.6.10-cf-mmuregsave.patch
+Patch30         : linux-2.6.10-cf-canbaud.patch
+Patch31         : linux-2.6.10-cf-dmaapi-3.patch
+Patch32         : linux-2.6.10-cf-mmap.patch
+Patch33         : linux-2.6.10-cf-gcc4.1.patch
+Patch34         : linux-2.6.10-cf-m68k-aflags.2.patch
+Patch35         : linux-2.6.10-cf-fb-fix.patch
+Patch36         : linux-2.6.10-cf-COBRA5475.patch
+Patch37         : linux-2.6.10-cf-COBRA5475_M41ST87.patch
+Patch38         : linux-2.6.10-cf-COBRA5475_leds_irq7.patch
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+From kernel.org + freescale patches
+
+%Prep
+%setup -n %{pkg_name}-%{dversion}
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1
+%patch18 -p1
+%patch19 -p1
+%patch20 -p1
+%patch21 -p1
+%patch22 -p1
+%patch23 -p1
+%patch24 -p1
+%patch25 -p1
+%patch26 -p1
+%patch27 -p1
+%patch28 -p1
+%patch29 -p1
+%patch30 -p1
+%patch31 -p1
+%patch32 -p1
+%patch33 -p1
+%patch34 -p1
+%patch35 -p1
+%patch36 -p1
+%patch37 -p1
+%patch38 -p1

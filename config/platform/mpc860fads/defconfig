@@ -1,0 +1,208 @@
+#
+# Automatically generated make config: don't edit
+#
+CONFIG_CONFIG_TITLE="LTIB: Freescale MPC860FADS"
+CONFIG_CPU="MPC860"
+CONFIG_PLATFORM_COMMENT="Freescale MPC860FADS"
+CONFIG_VENDOR="Freescale"
+CONFIG_PLATFORM="mpc860fads"
+CONFIG_GNUTARCH="powerpc"
+CONFIG_LINTARCH="ppc"
+CONFIG_CFGHOST="powerpc-linux"
+CONFIG_ENDIAN="big"
+
+#
+# Choose the target C library type
+#
+# CONFIG_GLIBC is not set
+CONFIG_UCLIBC=y
+
+#
+# Choose your toolchain
+#
+# CONFIG_TOOLCHAIN1 is not set
+CONFIG_TOOLCHAIN2=y
+# CONFIG_TOOLCHAIN_CUSTOM is not set
+CONFIG_TOOLCHAIN="ppc-uclibc-tc-20050308-2.i686.rpm"
+CONFIG_TOOLCHAIN_PATH="/opt/mtwk/usr/local/uclibc/ppc_nofpu"
+CONFIG_TOOLCHAIN_PREFIX="powerpc-linux-uclibc-"
+CONFIG_TOOLCHAIN_CFLAGS=""
+
+#
+# Bootloader
+#
+# CONFIG_BOOTLOADER1 is not set
+CONFIG_PKG_U_BOOT_BUILD_ARGS="OPTFLAGS=-Os"
+
+#
+# Choose your Kernel
+#
+# CONFIG_KERNEL1 is not set
+# CONFIG_KERNEL2 is not set
+# CONFIG_KERNEL3 is not set
+CONFIG_KERNEL_NONE=y
+CONFIG_DISTRO="dist/lfs-5.1"
+
+#
+# Package selection
+#
+
+#
+# Package list
+#
+# CONFIG_PKG_APPTRK_PPCBIN is not set
+# CONFIG_PKG_AUTOCONF is not set
+# CONFIG_PKG_AUTOMAKE is not set
+CONFIG_LIBC_WANTED=y
+# CONFIG_PKG_LIBC_WANT_LOCALES is not set
+# CONFIG_PKG_LIBC_WANT_HEADERS is not set
+# CONFIG_PKG_LIBC_WANT_STATIC_LIBS is not set
+CONFIG_PKG_LIBC="base_libs"
+# CONFIG_PKG_BASH is not set
+# CONFIG_PKG_BINUTILS is not set
+# CONFIG_PKG_BISON is not set
+# CONFIG_PKG_BOA is not set
+CONFIG_PKG_BUSYBOX=y
+CONFIG_PKG_BUSYBOX_PRECONFIG="busybox.config"
+# CONFIG_PKG_BUSYBOX_WANT_CF is not set
+# CONFIG_PKG_BZIP2 is not set
+# CONFIG_PKG_CAN4LINUX is not set
+# CONFIG_PKG_COREUTILS is not set
+# CONFIG_PKG_DB1 is not set
+CONFIG_PKG_DEV=y
+# CONFIG_PKG_DIFFUTILS is not set
+# CONFIG_PKG_DROPBEAR is not set
+# CONFIG_PKG_E2FSPROGS is not set
+# CONFIG_PKG_ED is not set
+# CONFIG_PKG_ETHTOOL is not set
+# CONFIG_PKG_EXPAT is not set
+# CONFIG_PKG_FAKEROOT is not set
+CONFIG_PKG_FAKE_PROVIDES=y
+# CONFIG_PKG_FILE is not set
+# CONFIG_PKG_FINDUTILS is not set
+# CONFIG_PKG_FLEX is not set
+# CONFIG_PKG_FREETYPE is not set
+# CONFIG_PKG_GAWK is not set
+# CONFIG_PKG_GCC is not set
+# CONFIG_PKG_GDB is not set
+# CONFIG_PKG_GENEXT2FS is not set
+# CONFIG_PKG_GETTEXT is not set
+# CONFIG_PKG_GREP is not set
+# CONFIG_PKG_GROFF is not set
+# CONFIG_PKG_GRUB is not set
+# CONFIG_PKG_HDPARM is not set
+# CONFIG_PKG_HELLOWORLD is not set
+# CONFIG_PKG_HOTPLUG is not set
+# CONFIG_PKG_I2C_TOOLS is not set
+# CONFIG_PKG_INETUTILS is not set
+# CONFIG_PKG_IPSEC_TOOLS is not set
+# CONFIG_PKG_IPSECADM is not set
+# CONFIG_PKG_IRATTACH is not set
+# CONFIG_PKG_KBD is not set
+# CONFIG_PKG_LESS is not set
+# CONFIG_PKG_LFS_UTILS is not set
+# CONFIG_PKG_LIBELF is not set
+# CONFIG_PKG_LIBPCAP is not set
+# CONFIG_PKG_LIBTERMCAP is not set
+# CONFIG_PKG_LIBTOOL is not set
+# CONFIG_PKG_LIBUSB is not set
+# CONFIG_PKG_LKC is not set
+# CONFIG_PKG_LTP is not set
+# CONFIG_PKG_M4 is not set
+# CONFIG_PKG_MAKE is not set
+# CONFIG_PKG_MAN is not set
+CONFIG_PKG_MERGE=y
+# CONFIG_PKG_MODUTILS is not set
+# CONFIG_PKG_MODULE_INIT_TOOLS is not set
+CONFIG_MODUTILS_NONE=y
+# CONFIG_PKG_MTD_UTILS is not set
+# CONFIG_PKG_NCURSES is not set
+# CONFIG_PKG_NET_TOOLS is not set
+CONFIG_PKG_NTPCLIENT=y
+# CONFIG_PKG_OPENSSL is not set
+# CONFIG_PKG_OPROFILE is not set
+# CONFIG_PKG_PATCH is not set
+# CONFIG_PKG_PCIUTILS is not set
+# CONFIG_PKG_PERL is not set
+# CONFIG_PKG_POPT is not set
+# CONFIG_PKG_PORTMAP is not set
+# CONFIG_PKG_PROCINFO is not set
+# CONFIG_PKG_PROCPS is not set
+# CONFIG_PKG_PSMISC is not set
+# CONFIG_PKG_RSYNC is not set
+# CONFIG_PKG_SED is not set
+CONFIG_PKG_SKELL=y
+# CONFIG_PKG_SKELL_WANT_TERMINFO is not set
+# CONFIG_PKG_STRACE is not set
+CONFIG_PKG_SYSCONFIG=y
+# CONFIG_PKG_SYSKLOGD is not set
+# CONFIG_PKG_SYSVINIT is not set
+# CONFIG_PKG_TAR is not set
+# CONFIG_PKG_TCPDUMP is not set
+# CONFIG_PKG_TCP_WRAPPERS is not set
+# CONFIG_PKG_TEXINFO is not set
+# CONFIG_PKG_TIME is not set
+# CONFIG_PKG_TINYLOGIN is not set
+# CONFIG_PKG_USBUTILS is not set
+# CONFIG_PKG_UTIL_LINUX is not set
+# CONFIG_PKG_U_BOOT_TOOLS is not set
+# CONFIG_PKG_VIM is not set
+# CONFIG_PKG_VSFTPD is not set
+# CONFIG_PKG_WGET is not set
+# CONFIG_PKG_WHICH is not set
+# CONFIG_PKG_WIRELESS_TOOLS is not set
+# CONFIG_PKG_ZLIB is not set
+
+#
+# Target System Configuration
+#
+
+#
+# Options
+#
+CONFIG_SYSCFG_HOSTNAME="freescale"
+# CONFIG_SYSCFG_WANT_LOGIN_TTY is not set
+CONFIG_SYSCFG_MODLIST=""
+CONFIG_SYSCFG_SETTIME=y
+CONFIG_SYSCFG_START_SYSLOG=y
+CONFIG_SYSCFG_START_NETWORK=y
+
+#
+# Network setup
+#
+# CONFIG_SYSCFG_DHCPC is not set
+CONFIG_SYSCFG_NET_INTERFACE="eth0"
+CONFIG_SYSCFG_IPADDR="192.168.0.254"
+CONFIG_SYSCFG_NET_MASK="255.255.255.0"
+CONFIG_SYSCFG_NET_BROADCAST="192.168.0.255"
+CONFIG_SYSCFG_NET_GATEWAY="192.168.0.1"
+CONFIG_SYSCFG_NAMESERVER="192.168.0.1"
+CONFIG_SYSCFG_NTP_SERVER="ntp.cs.strath.ac.uk"
+CONFIG_SYSCFG_START_INETD=y
+
+#
+# Target Image Generation
+#
+
+#
+# Options
+#
+
+#
+# Target kernel options
+#
+
+#
+# Choose your root filesystem image type
+#
+# CONFIG_DEPLOYMENT_JFFS2 is not set
+# CONFIG_DEPLOYMENT_RAMDISK is not set
+# CONFIG_DEPLOYMENT_CRAMFS is not set
+CONFIG_DEPLOYMENT_NFS=y
+# CONFIG_SYSCFG_READONLY_FS is not set
+CONFIG_SYSCFG_RAM_DIRS=""
+CONFIG_SYSCFG_SYSLOG_SOCKET_FILE=""
+CONFIG_ERASE_BLOCK_SIZE="64"
+CONFIG_CAP_UCLIBC=y
+CONFIG_CAP_GLIBC=y
+CONFIG_CAP_LFS_5_1=y

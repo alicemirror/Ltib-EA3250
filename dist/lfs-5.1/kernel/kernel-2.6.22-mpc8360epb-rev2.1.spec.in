@@ -1,0 +1,70 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define dversion 2.6.22
+%define pkg_name linux
+
+Summary         : Linux kernel for MPC8360 Rev2.1
+Name            : kernel
+Version         : 2.6.22
+Release         : 2
+License         : GPL
+Vendor          : kernel.org
+Packager        : Olivia Yin
+Group           : System Environment/Kernel
+Source          : %{pkg_name}-%{dversion}.tar.bz2
+Patch0          : linux-2.6.22-mpc8360-pre.patch
+Patch1		: linux-2.6.22-mpc8360-ieee1588.patch
+Patch2          : linux-2.6.22-mpc8360-rtc.patch
+Patch3		: linux-2.6.22-mpc8360-usb-keyboard.patch
+Patch4		: linux-2.6.22-mpc8360-usb-host.patch
+Patch5		: linux-2.6.22-mpc8360-udc.patch
+Patch6		: linux-2.6.22-mpc8360-spi-m25p40.patch
+Patch7		: linux-2.6.22-mpc8360-pci-agent-demo.patch
+Patch8		: linux-2.6.22-mpc8360-upc-utopia.patch
+Patch9		: linux-2.6.22-mpc8360-time-stamp-timer.patch
+Patch10		: linux-2.6.22-mpc8360-ucc-atm.patch
+Patch11		: linux-2.6.22-mpc8360-ugeth-notify.patch
+Patch12		: linux-2.6.22-mpc8360-dts.patch
+Patch13		: linux-2.6.22-mpc8360-CodeTEST.patch
+Patch14		: linux-2.6.22-mpc8360-CW.patch
+Patch15         : linux-2.6.20-MPC8313ERDB-OCF-framework.patch
+Patch16         : linux-2.6.20-MPC8313ERDB-OCF-SEC2.patch
+Patch17         : linux-2.6.20-MPC8313ERDB-Openswan-IPsec-1.patch
+Patch18         : linux-2.6.22-mpc8360-ocf-sec.patch
+Patch19         : linux-2.6.22-mpc8360-ucc-geth-performance.patch 
+Patch20         : linux-2.6.22-mpc8360-rev2_1-rgmii-errata.patch
+Patch21         : linux-2.6.22-mpc8360-mtd.patch
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+From kernel.org
+All patches from Freescale
+
+%Prep
+%setup -n %{pkg_name}-%{dversion}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1
+%patch18 -p1
+%patch19 -p1
+%patch20 -p1
+%patch21 -p1

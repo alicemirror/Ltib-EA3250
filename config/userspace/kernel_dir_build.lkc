@@ -1,0 +1,42 @@
+if KERNEL_DIR_BUILD
+
+config PKG_KERNEL_PATH_PRECONFIG
+    string "Enter your Linux source directory"
+    default "/usr/src/linux"
+    help
+       If you are building the Linux kernel using a local Linux
+       source tree, specify the absolute path to the tree here
+
+endif
+
+if KERNEL_DIR_BUILD || KERNEL_GIT
+config PKG_KERNEL_KBOUT
+    bool "Build the kernel out of tree?"
+endif
+
+if PKG_KERNEL_KBOUT
+config PKG_KERNEL_KBUILD_PRECONFIG
+    string "KBUILD_OUTPUT path"
+    default "$PKG_KERNEL_PATH_PRECONFIG/../kbuild/$PLATFORM" if KERNEL_DIR_BUILD
+    default "$RPM_BUILD_DIR/kbuild/$PLATFORM" if KERNEL_GIT
+    help
+       If you are building the Linux kernel using a local Linux
+       tree, specify the absolute path to set KBUILD_OUTPUT to.
+endif
+
+config PKG_KERNEL_FORCE
+    bool "Always rebuild the kernel"
+    help
+       Always attempt building the kernel source tree.  This is
+       useful if you have an unpacked source tree that you are
+       regularly updating and is under autotest
+
+config PKG_KERNEL_WANT_CSCOPE
+    depends ! KERNEL_NONE
+    select PKG_KERNEL_LEAVESRC
+    bool "Produce cscope index"
+    help
+       Enable to produce the cscope index for the kernel.  This requires that
+       cscope be installed on the host.  After the index is generated as part
+       of the kernel build, do 'cscope -d -p3' in the kernel source directory.
+

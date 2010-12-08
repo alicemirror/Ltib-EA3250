@@ -1,0 +1,180 @@
+---+ Connections/configuration
+
+--------------------------------------------
+|------                                    |
+| eth0 |                               ----|
+|------                                |PWR|
+|                                      ----|
+-------                                    |
+| eth1 |                                   |
+|------                                    |
+|                                          |
+|-----                                     |
+| USB |                                    |
+|-----                                     |
+|                                          |
+-------                                    |
+|serial|                                   |
+-------                                    |
+-------------------------------------------
+
+
+Serial port:       Bottom left, use header lead supplied
+Serial settings:   38400 N81
+Lan connector:     eth0
+Power connector:   Top right
+
+---+ Bootloader
+
+When you power on, you should see something like:
+
+<verbatim>
+RedBoot(tm) bootstrap and debug environment [ROMRAM]
+....
+RedBoot>
+</verbatim>
+
+
+---+ Differences between booting 2.4 and 2.6 kernels
+
+
+---++ Console device for 2.4 kernels
+
+NOTE: console=ttyS0,38400  This is the default however, so we
+      don't put it on the command line
+
+---++ Console device for 2.6 kernels
+NOTE: console=ttyCPM0,38400 not ttyS0.  This is the default however, so we
+      don't put it on the command line
+
+---++ Bootable kernel name
+
+We use raw kernels (that have been objcopied as binary).  The names are:
+
+   * 2.4 kernels: zImage.embedded.bin
+   * 2.6 kernels: zImage.elf.bin
+
+
+---+ Example of booting Linux using an NFS root filesystem 
+
+After building your LTIB project, this is how to boot up your board.
+
+---++ Pre-checks
+
+   * Check that your host's firewall is not blocking your target.  If
+   it is, as a temporary check you can disable it using the following
+   as root.
+<verbatim>
+# sh /etc/rc.d/init.d/iptables stop
+<verbatim>
+
+*WARNING: REMEMBER TO RE-ENABLE YOUR FIREWALL*
+
+   * Make sure you have an NFS server running on your LTIB machine:
+
+   * Add your LTIB projects rootfs directory to /etc/exports.  As root,
+   edit /etc/exports and add a line like (change as required):
+<verbatim>
+/home/seh/ltib/rootfs *(rw,no_root_squash,sync)
+</verbatim>
+
+   * Re-start NFS as root
+<verbatim>
+# sh /etc/rc.d/init.d/nfs restart
+<verbatim>
+
+
+   * Determine your LTIB host's IP address, for example:
+<verbatim>
+$ /sbin/ifconfig eth0 | grep 'inet addr'
+          inet addr:10.82.17.182  Bcast:10.82.17.255  Mask:255.255.255.0
+
+
+   * Copy your redboot loadable kernel to /tftpboot
+<verbatim>
+$ cp rootfs/boot/<bootable_kernel> /tftpboot
+<verbatim>
+
+---++ Booting up on a DHCP network
+
+*NOTE* DHCP leases are only valid for 4 days normally, so if you need the
+board up longer than that in a single go, you'll need to get a static
+IP address for both your LTIB host and target.
+
+<verbatim>
+ip_address -h <hosts_ip>
+load -v -r -b 0x100000 <bootable_kernel>
+exec -c "root=/dev/nfs nfsroot=<host_ip>:<host_rootfs_dir> ip=:::::eth0:"
+</verbatim>
+
+Note: you need to press enter twice after the exec command
+
+---++ Booting up on a fixed IP address  network
+
+<verbatim>
+ip_address -l <target_ip> -h <host_ip>
+load -v -r -b 0x100000 <bootable_kernel>
+exec -c "root=/dev/nfs nfsroot=<host_ip>:<host_rootfs_dir> ip=<target_ip>:<host_ip>::::eth0:"
+</verbatim>
+
+---+ Storing changes to reboot to allow reboot example
+
+RedBoot> fconfig
+Run script at boot: true
+Boot script:
+Enter script, terminate with empty line
+>> ip_address -l 192.168.0.253 -h 192.168.0.9
+>> load -v -r -b 0x100000 >bootable_kernel>
+>> exec -c "root=/dev/nfs nfsroot=192.168.0.9:/home/seh/ltib_bsps/875/rootfs ip=192.168.0.253:192.168.0.9::::eth0:"
+>>
+Boot script timeout (1000ms resolution): 2
+Use BOOTP for network configuration: false
+Gateway IP address: 192.168.0.1
+Local IP address: 192.168.0.253
+Local IP address mask: 255.255.255.0
+Default server IP address: 192.168.0.9
+FEC1 Network hardware address [MAC]: 0x00:0x08:0xF4:0x11:0x22:0x33
+FEC0 Network hardware address [MAC]: 0x00:0x08:0xE4:0x11:0x22:0x33
+GDB connection port: 9000
+Force console for special debug messages: false
+Network debug at boot time: false
+Default network device: fec_eth
+Update RedBoot non-volatile configuration - continue (y/n)? y
+
+
+---+ Toolchain testing
+
+This needs rsh/rlogin access.  To enable this, place a single line in 
+/root/.rhosts containing the ip_address of the host that you want to
+allow connnections from.
+
+---+ RAMDISK deployment.
+
+You need to build a small ramdisk for this to work.  I build using a
+uclibc toolchain (therefore library) and the only packages in 
+they systems were:
+
+fake-provides, dev, skell, base_libs, busybox, ntpclient, zlib,
+dropbear, merge & sysconfig
+
+My rootfs.ext2.gz was 798104 and I notice of the ltib build line, it
+says to set the ramdisk_size on the boot line:
+
+<verbatim>
+Your ramdisk exceeds the old default size of 4096k, you may need to
+set the command line argument for ramdisk_size in your bootloader
+to at least 5752k .  For instance, for u-boot:
+
+setenv bootargs root=/dev/ram rw ramdisk_size=5752
+</verbatim>
+
+For the length of the compressed ramdisk.  Get this from doing an
+ls -l of rootfs.ext2.gz. Mine was 798104 => 0xc2de5 so
+I round up to 0xd0000
+
+To boot I used this.  You may know better!
+
+load -r -v -b 0x600000 rootfs.ext2.gz
+load -r -v -b 0x80000 zImage.embedded.bin
+exec -r 0x600000 -c "root=/dev/ram ramdisk_size=5752" -l 0xd0000
+

@@ -1,0 +1,115 @@
+# constants (forced values)
+config CONFIG_TITLE
+    string
+    default PLATFORM_COMMENT
+
+config PLATFORM_COMMENT
+    string
+    default "Cirrus Logic EDB9302 development board" if PLATFORM = "edb9302"
+    default "EP93xx development board"
+
+config VENDOR
+    string
+    default "Cirrus Logic"
+
+config PLATFORM_SUBDIR
+    string
+    default "ep93xx"
+
+config PLATFORM
+    string "Platform"
+    default "edb9302"
+    help
+        Indicates the platform selected from preconfigs if available.
+        Please don't change in this session
+
+config GNUTARCH
+    string
+    default arm
+
+config LINTARCH
+    string
+    default arm
+
+config CFGHOST
+    string
+    default arm-linux
+
+# capabilities if different from defaults.lkc
+config ERASE_BLOCK_SIZE
+    string
+    default 128
+config SYSCFG_LOADKERNELADDR
+    string
+    default "0x200000"
+config SYSCFG_LOADRAMADDR
+    string
+    default "0x800000"
+
+
+source ../../userspace/endian.lkc
+source ../../userspace/libc_type.lkc
+source ../../userspace/toolchain.lkc
+
+
+comment "Choose your Kernel"
+choice
+    prompt "kernel"
+    default KERNEL_NONE
+    help
+        This menu will let you choose the kernel to use with your board.
+        If you don't want to build a kernel, unselect this option.
+
+    config KERNEL1
+        bool "Linux 2.6.15-ep93xx"
+        help
+           From: git/mburian/linux-2.6-ep93xx.git
+    config KERNEL_DIR_BUILD
+        bool "Local Linux directory build"
+        help
+            Build using a local copy of the kernel sources
+    config KERNEL_NONE
+        bool "Dont build the Linux kernel"
+        help
+            Select this if you dont want to build the kernel
+endchoice
+
+config PKG_KERNEL
+    string
+    default "kernel-2.6.15-ep93xx"    if KERNEL1
+    default "kernel26-dir-build"      if KERNEL_DIR_BUILD
+
+config PKG_KERNEL_PRECONFIG
+    string "kernel config"
+    default "linux-2.6.x.config" if KERNEL1 || KERNEL_DIR_BUILD
+    
+source ../../userspace/kernel_dir_build.lkc
+
+config PKG_KERNEL_WANT_HEADERS
+    depends ! KERNEL_NONE
+    bool "Include kernel headers"
+    help
+        Selecting this will copy kernel headers to rootfs/usr/src/linux/include
+
+config PKG_KERNEL_WANT_CF
+    depends ! KERNEL_NONE
+    bool "Configure the kernel"
+    default n
+
+config PKG_KERNEL_LEAVESRC
+    depends ! KERNEL_NONE
+    bool "Leave the sources after building"
+    default n
+    help
+      This is a one shot option that can be used to build the kernel and
+      leave the build source tree in rpm/BUILD in place
+
+config SYSCFG_BOOTLOADER
+    string
+    default "redboot"
+
+source ../../userspace/distro.lkc
+source ../../userspace/packages.lkc
+source ../../userspace/sysconfig.lkc
+source ../../userspace/deployment.lkc
+source ../../userspace/defaults.lkc

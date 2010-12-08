@@ -1,0 +1,193 @@
+%Build
+
+# Temporary hack - stevep
+# For building toolchain components an optimized version of the
+# target is needed.  This should really be defined in the config
+# area of ltib, and not done in the toolchain spec files.
+# For now we assume that the optimised target can be derived by
+# stripping the trailing "-" off the toolchain prefix, but this
+# will not be true for all cases, eg when using uClibc toolchains.
+if [ ${TOOLCHAIN_PREFIX} = "arm_v6_vfp_le-" -o -n "$UCLIBC" ]
+then
+    OPT_CFGHOST=$CFGHOST
+else
+    OPT_CFGHOST=`echo ${TOOLCHAIN_PREFIX} | perl -n -e 's,-$,,;print'`
+fi
+
+
+case "${PLATFORM}" in
+    mpc8544ds|mpc8548cds|mpc8568mds|mpc8572ds)
+        EXTRA_CONFIG="--with-cpu=8548 --enable-e500_double --with-long-double-128"
+        EXTRA_CFLAGS="-O -mcpu=8548 -mspe=yes -mabi=spe -mhard-float -mfloat-gprs=double"
+        ;;
+    e500mc)
+        EXTRA_CONFIG="--with-cpu=e500mc"
+        EXTRA_CFLAGS="-O -mcpu=e500mc"
+        ;;
+    qs875s|tqm823l)
+        EXTRA_CONFIG="-nfp --with-cpu=823"
+        EXTRA_CFLAGS="-O -mcpu=823"
+        ;;
+    mpc7448hpcii)
+        EXTRA_CONFIG="--with-cpu=7400"
+        EXTRA_CFLAGS="-O -mcpu=7400 -maltivec -mabi=altivec"
+        ;;
+    *)
+        EXTRA_CONFIG=""
+        EXTRA_CFLAGS=""
+        ;;
+esac
+
+
+# Ensure that build is never the same as host or target.
+GCC_BUILD=`echo %{_build} | sed s/-/-build_/`
+
+CUR_DIR=`/bin/pwd`
+rm -rf build-gcc
+mkdir build-gcc
+cd build-gcc
+export CPP=$BUILDCPP
+    AR_FOR_TARGET="${OPT_CFGHOST}-ar" \
+    NM_FOR_TARGET="${OPT_CFGHOST}-nm" \
+    OBJDUMP_FOR_TARGET="${OPT_CFGHOST}-objdump" \
+    STRIP_FOR_TARGET="${OPT_CFGHOST}-strip" \
+    CC_FOR_TARGET="${OPT_CFGHOST}-gcc"\
+    LD_FOR_TARGET="${OPT_CFGHOST}-ld" \
+    CC_FOR_BUILD="${BUILDCC}" \
+    RANLIB_FOR_BUILD="${BUILDRANLIB}" \
+    ${RPM_BUILD_DIR}/gcc-%{version}/configure \
+    --host=${OPT_CFGHOST} --build=${GCC_BUILD} --target=${OPT_CFGHOST} \
+    --prefix=%{_prefix}/local --enable-shared --enable-threads \
+    --disable-libmudflap --disable-libssp --disable-libgomp \
+    --disable-libstdcxx-pch --with-gnu-as --with-gnu-ld \
+    --enable-languages=c,c++ --enable-symvers=gnu --enable-__cxa_atexit \
+    --disable-nls --disable-multilib ${EXTRA_CONFIG}
+
+
+# Hack to get documentation to build.  For some reason in the file
+# build-gcc1/gcc/doc/invoke.texi @value{srcdir} is not getting corectly
+# evaluated.  Connected with the version of etex.    Stevep
+# The error is:
+# [snip]
+# /home/stevep/work/ltib/rpm/BUILD/gcc-4.1/gcc/doc/invoke.texi:1069:
+# I can't find file `'.
+# [/snip]
+perl -pi.orig -e 's,^\@include\s+\@value{srcdir},\@include '${RPM_BUILD_DIR}'/gcc-'%{version}'/gcc,;' ${RPM_BUILD_DIR}/gcc-%{version}/gcc/doc/invoke.texi
+
+
+# Need to remove references to /usr/local/lib in ltconfig to prevent libtool
+# looking in /usr/local/lib during the build and picking up wrong libraries
+# which cause the build to fail.  This is for host build machines that have
+# a native compiler installed in /usr/local.  - Stevep
+perl -pi.orig -e 's,\s+\/usr\/local\/lib\",\",;
+                  s,\s+\/usr\/local\/lib\,,\,,;
+                  s,\/usr\/local\/lib\s+,,;
+                  s,\s+\/usr\/local\/lib\s+, ,;
+                  s,\s+\/usr\/local\/lib\$\{libsuff\}\",\",;' ../ltconfig
+
+
+CFLAGS="${EXTRA_CFLAGS}" \
+AR_FOR_TARGET="${OPT_CFGHOST}-ar" \
+NM_FOR_TARGET="${OPT_CFGHOST}-nm" \
+OBJDUMP_FOR_TARGET="${OPT_CFGHOST}-objdump" \
+STRIP_FOR_TARGET="${OPT_CFGHOST}-strip" \
+CC_FOR_TARGET="${OPT_CFGHOST}-gcc" \
+LD_FOR_TARGET="${OPT_CFGHOST}-ar" \
+CC_FOR_BUILD="${BUILDCC}" \
+RANLIB_FOR_BUILD="${BUILDRANLIB}" \
+make -j1
+
+
+%Install
+rm -rf $RPM_BUILD_ROOT
+
+
+if [ ${TOOLCHAIN_PREFIX} = "arm_v6_vfp_le-" -o -n "$UCLIBC" ]
+then
+    OPT_CFGHOST=$CFGHOST
+else
+    OPT_CFGHOST=`echo ${TOOLCHAIN_PREFIX} | perl -n -e 's,-$,,;print'`
+fi
+if [ "$TOOLCHAIN_TYPE" = "64" ]
+then
+   SLIBS="lib64"
+else
+   SLIBS="lib"
+fi
+# Copy the crt files from the toolchain area to rootfs/usr/local/lib
+# These are the crt files built by glibc (I think - stevep).
+CRT_FILES_DIR="`dirname \`${TOOLCHAIN_PREFIX}gcc ${TOOLCHAIN_CFLAGS} -print-file-name=crti.o\``"
+X_DIR=`echo ${OPT_CFGHOST} | sed -e 's,-$,,'`
+mkdir -p ${RPM_BUILD_ROOT}/%{pfx}/%{_prefix}/local/lib/gcc/${X_DIR}/%{version}
+cp ${CRT_FILES_DIR}/*crt*.o ${RPM_BUILD_ROOT}/%{pfx}/%{_prefix}/local/lib
+cp ${CRT_FILES_DIR}/*crt*.o ${RPM_BUILD_ROOT}/%{pfx}/%{_prefix}/local/lib/gcc/${X_DIR}/%{version}
+
+
+# Temporary hack: Don't build lilbiberty pdf.
+# This is to prevent the following error occuring on some build systems:
+# [snip]
+# Doing pdf in powerpc-linux-gnu/libiberty
+# make[3]: Entering directory
+# `/home/stevep/work/ltib/rpm/BUILD/gcc-4.1/build-gcc/powerpc-linux-gnu/libiberty'
+# texi2pdf ../../../libiberty/libiberty.texi
+# pdfetex: error while loading shared libraries:
+# /home/stevep/work/ltib/rpm/BUILD/gcc-4.1/build-gcc/./gcc/libgcc_s.so.1: ELF
+# file data encoding not little-endian
+# /opt/freescale/ltib/usr/bin/texi2dvi: texinfo.tex appears to be broken,
+# quitting.
+# make[3]: *** [libiberty.pdf] Error 1
+# make[3]: Leaving directory
+# `/home/stevep/work/ltib/rpm/BUILD/gcc-4.1/build-gcc/powerpc-linux-gnu/libiberty'
+# make[2]: *** [pdf-target-libiberty] Error 1
+# make[2]: Leaving directory
+# `/home/stevep/work/ltib/rpm/BUILD/gcc-4.1/build-gcc'
+# make[1]: *** [do-install-pdf] Error 2
+# make[1]: Leaving directory
+# `/home/stevep/work/ltib/rpm/BUILD/gcc-4.1/build-gcc'
+# make: *** [install] Error 2
+# [/snip]
+perl -pi.orig -e 's,^LIBIBERTY_PDFFILES\s+=\s+libiberty.pdf,LIBIBERTY_PDFFILES =,;' build-gcc/*/libiberty/Makefile
+
+
+cd build-gcc
+CC_FOR_BUILD="${BUILDCC}" \
+AR_FOR_TARGET="${OPT_CFGHOST}-ar" \
+NM_FOR_TARGET="${OPT_CFGHOST}-nm" \
+OBJDUMP_FOR_TARGET="${OPT_CFGHOST}-objdump" \
+STRIP_FOR_TARGET="${OPT_CFGHOST}-strip" \
+CC_FOR_TARGET="${OPT_CFGHOST}-gcc" \
+LD_FOR_TARGET="${OPT_CFGHOST}-ld" \
+CFLAGS="${EXTRA_CFLAGS}" \
+make -j1 DESTDIR=${RPM_BUILD_ROOT}/%{pfx} install
+
+
+# Remove the c++ pre-compiled header files.
+X_DIR=`echo ${TOOLCHAIN_PREFIX} | sed -e 's,-$,,'`
+rm -f ${RPM_BUILD_ROOT}/%{pfx}/%{_prefix}/local/include/c++/4.1.2/${X_DIR}/bits/stdc++.h.gch/O[02]g
+
+# Remove libtool .la files
+find ${RPM_BUILD_ROOT}/%{pfx} -name \*.la -exec rm {} \;
+
+# add a symlink for cc
+ln -s gcc ${RPM_BUILD_ROOT}/%{pfx}/%{_prefix}/local/bin/cc
+
+# Copy libc_nonshared.a to /usr/lib on the rootfs as this is needed by gcc
+# during the linking process.  This is a hack as really the selection of gccu
+# should force the selection of all the static libs from glibc to the rootfs,
+# but this causes some packages not to build due to symbol version issues
+# (siglongjmp for example) with libc.a.  For some reason if libc.a is on the
+# rootfs it seems to be used for linking which is possibly a problem with the
+# spoofing.
+mkdir -p ${RPM_BUILD_ROOT}/%{pfx}/%{_prefix}/local/lib
+cp `${TOOLCHAIN_PREFIX}gcc ${TOOLCHAIN_CFLAGS} -print-file-name=libc_nonshared.a` ${RPM_BUILD_ROOT}/%{pfx}/%{_prefix}/local/lib
+
+
+%Clean
+rm -rf ${RPM_BUILD_ROOT}
+
+
+%Files
+%defattr(-,root,root)
+%{pfx}/*
+
+

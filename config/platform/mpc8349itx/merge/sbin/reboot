@@ -1,0 +1,5 @@
+#!/bin/sh
+if [ -x /etc/rc.d/rcS ]; then
+  /etc/rc.d/rcS stop reboot
+fi
+busybox reboot -f

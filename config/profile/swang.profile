@@ -1,0 +1,209 @@
+# Platform specific package selection
+# CONFIG_PKG_SWANG_POC is not set
+# CONFIG_PKG_NOTIFY_APP is not set
+# CONFIG_PKG_SPI_TEST is not set
+# CONFIG_PKG_WANGW is not set
+# Common package selection list
+# CONFIG_PKG_APPTRK is not set
+# CONFIG_PKG_ATK is not set
+# CONFIG_PKG_AUTOCONF is not set
+# CONFIG_PKG_AUTOMAKE is not set
+# CONFIG_PKG_ALSA_LIB is not set
+# CONFIG_PKG_ALSA_UTILS is not set
+# CONFIG_PKG_BASH is not set
+# CONFIG_PKG_BIND is not set
+# CONFIG_PKG_BINUTILS is not set
+# CONFIG_PKG_BISON is not set
+# CONFIG_PKG_BLUEZ_HCIDUMP is not set
+# CONFIG_PKG_BLUEZ_LIBS is not set
+# CONFIG_PKG_BLUEZ_UTILS is not set
+# CONFIG_PKG_BOA is not set
+# CONFIG_PKG_BONNIE_PLUS_PLUS is not set
+# CONFIG_PKG_BRIDGE_UTILS is not set
+CONFIG_PKG_BUSYBOX=y
+CONFIG_PKG_BUSYBOX_PRECONFIG="busybox.config"
+# CONFIG_PKG_BUSYBOX_WANT_CF is not set
+# CONFIG_PKG_BZIP2 is not set
+# CONFIG_PKG_CAIRO is not set
+# CONFIG_PKG_CAN4LINUX is not set
+# CONFIG_PKG_CLAMAV is not set
+CONFIG_PKG_CONNTRACK_TOOLS=y
+# CONFIG_PKG_COREUTILS is not set
+# CONFIG_PKG_CPIO is not set
+# CONFIG_PKG_CRACKLIB is not set
+# CONFIG_PKG_CRAMFS is not set
+# CONFIG_PKG_CURL is not set
+# CONFIG_PKG_DAEMONIZER is not set
+# CONFIG_PKG_DEVMEM2 is not set
+# CONFIG_PKG_DHCP is not set
+# CONFIG_PKG_DB1 is not set
+CONFIG_PKG_DEV=y
+# CONFIG_PKG_DEVFSD is not set
+# CONFIG_PKG_DEV_NONE is not set
+# CONFIG_PKG_DIFFUTILS is not set
+# CONFIG_PKG_DIRECTFB is not set
+# CONFIG_PKG_DISTCC is not set
+# CONFIG_PKG_DOSFSTOOLS is not set
+# CONFIG_PKG_DROPBEAR is not set
+# CONFIG_PKG_DTC is not set
+# CONFIG_PKG_E2FSPROGS is not set
+# CONFIG_PKG_ED is not set
+CONFIG_PKG_ETHTOOL=y
+# CONFIG_PKG_EVTEST is not set
+# CONFIG_PKG_EXPAT is not set
+# CONFIG_PKG_FAKEROOT is not set
+CONFIG_PKG_FAKE_PROVIDES=y
+# CONFIG_PKG_FINDUTILS is not set
+# CONFIG_PKG_FLEX is not set
+# CONFIG_PKG_FONTCONFIG is not set
+# CONFIG_PKG_FREETYPE is not set
+# CONFIG_PKG_GAWK is not set
+# CONFIG_PKG_GCC is not set
+# CONFIG_PKG_GDB is not set
+# CONFIG_PKG_GENEXT2FS is not set
+# CONFIG_PKG_GENROMFS is not set
+# CONFIG_PKG_GETTEXT is not set
+# CONFIG_PKG_GLIB2 is not set
+# CONFIG_PKG_GMP is not set
+# CONFIG_PKG_GREP is not set
+# CONFIG_PKG_GROFF is not set
+# CONFIG_PKG_GSTREAMER_CORE is not set
+# CONFIG_PKG_GTK2 is not set
+# CONFIG_PKG_HDPARM is not set
+# CONFIG_PKG_HELLOWORLD is not set
+# CONFIG_PKG_HELLOWORLD_MOD is not set
+# CONFIG_PKG_HESIOD is not set
+# CONFIG_PKG_HOTPLUG is not set
+# CONFIG_PKG_HTTPD is not set
+# CONFIG_PKG_I2C_TOOLS is not set
+# CONFIG_PKG_IOZONE is not set
+CONFIG_PKG_IPROUTE=y
+# CONFIG_PKG_PANGO is not set
+# CONFIG_PKG_PIDENTD is not set
+CONFIG_PKG_INETUTILS=y
+# CONFIG_PKG_IPERF is not set
+# CONFIG_PKG_IPSEC_TOOLS is not set
+# CONFIG_PKG_IPSECADM is not set
+CONFIG_PKG_IPTABLES=y
+# CONFIG_PKG_IPUTILS is not set
+# CONFIG_PKG_IRATTACH is not set
+# CONFIG_PKG_IRDADUMP is not set
+# CONFIG_PKG_KBD is not set
+# CONFIG_PKG_KRB5 is not set
+# CONFIG_PKG_LESS is not set
+# CONFIG_PKG_LFS_UTILS is not set
+# CONFIG_PKG_LIBICONV is not set
+# CONFIG_PKG_LIBID3TAG is not set
+# CONFIG_PKG_LIBMAD is not set
+CONFIG_PKG_LIBNETFILTER_CONNTRACK=y
+CONFIG_PKG_LIBNFNETLINK=y
+# CONFIG_PKG_LIBJPEG is not set
+# CONFIG_PKG_LIBELF is not set
+CONFIG_PKG_LIBPCAP=y
+# CONFIG_PKG_LIBPNG is not set
+# CONFIG_PKG_LIBOIL is not set
+# CONFIG_PKG_LIBTERMCAP is not set
+# CONFIG_PKG_LIBTIFF is not set
+# CONFIG_PKG_LIBTOOL is not set
+# CONFIG_PKG_LIBUSB is not set
+# CONFIG_PKG_LIBXML2 is not set
+# CONFIG_PKG_LINUX_ATM is not set
+# CONFIG_PKG_LINUX_WLAN is not set
+# CONFIG_PKG_LKC is not set
+# CONFIG_PKG_LTP is not set
+# CONFIG_PKG_LMBENCH is not set
+# CONFIG_PKG_LRZSZ is not set
+# CONFIG_PKG_M4 is not set
+# CONFIG_PKG_MADPLAY is not set
+# CONFIG_PKG_MAKE is not set
+# CONFIG_PKG_MAN is not set
+# CONFIG_PKG_MDADM is not set
+CONFIG_PKG_MERGE=y
+# CONFIG_PKG_MICROWINDOWS is not set
+# CONFIG_PKG_MINICOM is not set
+# CONFIG_PKG_MODUTILS is not set
+CONFIG_PKG_MODULE_INIT_TOOLS=y
+# CONFIG_MODUTILS_NONE is not set
+# CONFIG_PKG_MP3PLAY is not set
+# CONFIG_PKG_MTD_UTILS is not set
+# CONFIG_PKG_MYSQL is not set
+# CONFIG_PKG_NCURSES is not set
+# CONFIG_PKG_NET_SNMP is not set
+CONFIG_PKG_NET_TOOLS=y
+# CONFIG_PKG_NETPERF is not set
+# CONFIG_PKG_NFS_UTILS is not set
+# CONFIG_PKG_NSS_MDNS is not set
+# CONFIG_PKG_NTPCLIENT is not set
+# CONFIG_PKG_OPENOBEX is not set
+# CONFIG_PKG_OPENSSH is not set
+# CONFIG_PKG_OPENSSL is not set
+# CONFIG_PKG_OPENSWAN is not set
+# CONFIG_PKG_OPROFILE is not set
+# CONFIG_PKG_PATCH is not set
+# CONFIG_PKG_PCIUTILS is not set
+# CONFIG_PKG_PCMCIAUTILS is not set
+# CONFIG_PKG_PCRE is not set
+# CONFIG_PKG_PERL is not set
+# CONFIG_PKG_PHP is not set
+# CONFIG_PKG_PLAY is not set
+# CONFIG_PKG_POPT is not set
+CONFIG_PKG_PORTMAP=y
+# CONFIG_PKG_PPP is not set
+# CONFIG_PKG_PROCINFO is not set
+# CONFIG_PKG_PROCPS is not set
+# CONFIG_PKG_PSMISC is not set
+# CONFIG_PKG_PYTHON is not set
+# Qtopia
+CONFIG_QTOPIA_NONE=y
+# CONFIG_PKG_QTOPIA is not set
+# CONFIG_PKG_QTOPIA_4 is not set
+# CONFIG_PKG_RPM is not set
+# CONFIG_PKG_RNG_TOOLS is not set
+# CONFIG_PKG_RSYNC is not set
+# CONFIG_PKG_SAMBA is not set
+# CONFIG_PKG_SASH is not set
+# CONFIG_PKG_SCHEDUTILS is not set
+# CONFIG_PKG_SCREEN is not set
+# CONFIG_PKG_SED is not set
+# CONFIG_PKG_SEQ is not set
+# CONFIG_PKG_SETSERIAL is not set
+CONFIG_PKG_SKELL=y
+# CONFIG_PKG_SKELL_WANT_TERMINFO is not set
+# CONFIG_PKG_SPARSE is not set
+CONFIG_PKG_STRACE=y
+CONFIG_PKG_SYSCONFIG=y
+# CONFIG_PKG_SYSFSUTILS is not set
+CONFIG_PKG_SYSKLOGD=y
+# CONFIG_PKG_SYSVINIT is not set
+# CONFIG_PKG_TAR is not set
+CONFIG_PKG_TCPDUMP=y
+CONFIG_PKG_TCP_WRAPPERS=y
+# CONFIG_PKG_TERMCAP is not set
+# CONFIG_PKG_TEXINFO is not set
+# CONFIG_PKG_TIME is not set
+CONFIG_PKG_TIMEZONE=y
+# CONFIG_PKG_TIMEZONE_WANT_TZCODE is not set
+# CONFIG_PKG_TIMEZONE_WANT_LIBTZ is not set
+# CONFIG_PKG_TINYLOGIN is not set
+# CONFIG_PKG_TINYPROXY is not set
+# CONFIG_PKG_TSLIB is not set
+# CONFIG_PKG_UDEV is not set
+# CONFIG_PKG_USBUTILS is not set
+# CONFIG_PKG_UCLINUX_CKSUM is not set
+# CONFIG_PKG_UTIL_LINUX is not set
+# CONFIG_PKG_U_BOOT_TOOLS is not set
+# CONFIG_PKG_UNIFDEF is not set
+# CONFIG_PKG_UNZIP is not set
+# CONFIG_PKG_VALGRIND is not set
+# CONFIG_PKG_VIM is not set
+# CONFIG_PKG_VSFTPD is not set
+# CONFIG_PKG_WATCHDOG is not set
+# CONFIG_PKG_WGET is not set
+# CONFIG_PKG_WHICH is not set
+# CONFIG_PKG_WIRELESS_TOOLS is not set
+# CONFIG_PKG_YAFFS_UTILS is not set
+# CONFIG_PKG_ZLIB is not set
+# Additional Package selection
+# CONFIG_PKG_NBENCH_BYTE is not set
+# CONFIG_PKG_WHETSTONE is not set
+# CONFIG_PKG_DHRYSTONE is not set

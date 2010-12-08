@@ -1,0 +1,74 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define dversion 2.6.10
+%define pkg_name linux
+
+Summary         : Linux kernel for both MPC8349 & MPC8360 
+Name            : kernel
+Version         : 2.6.11
+Release         : 2
+License         : GPL
+Vendor          : kernel.org
+Packager        : Olivia Yin
+Group           : System Environment/Kernel
+Source          : %{pkg_name}-%{dversion}.tar.bz2
+Patch0          : patch-2.6.11.bz2
+Patch1          : linux-2.6.11-mpc8349e-general-20060414.patch
+Patch2          : linux-2.6.11-mpc8349e-pci-3.patch
+Patch3          : linux-2.6.11-mpc8349e-pci-agent.patch
+Patch4          : linux-2.6.11-mpc8349e-watchdog.patch
+Patch5          : linux-2.6.11-mpc83xxe-sec2-1.patch
+Patch6          : linux-2.6.11-mpc8349e-usb-gadget.patch
+Patch7          : linux-2.6.11-mpc8349e-usb-host.patch
+Patch8          : linux-2.6.11-mpc8360e-general-2.patch
+Patch9          : linux-2.6.11-mpc8360-BIT.patch
+Patch10         : linux-2.6.11-mpc8360-pci-agent.patch
+Patch11         : linux-2.6.11-mpc83xx-ct-1.patch
+Patch12         : linux-2.6.11-mpc8360e-uec-mtu-napi-2.patch
+Patch13         : linux-2.6.11-mpc8360e-SPI.patch
+Patch14         : linux-2.6.11-mpc8360e-usbgadget-2.patch
+Patch15         : linux-2.6.11-mpc8360e-atm-3.patch
+Patch16         : linux-2.6.11-mpc8360e-rev2-usb-host.patch
+Patch17         : linux-2.6.11-mpc8360e-usb-kb-test.patch
+Patch18         : linux-2.6.11-mpc8360e-ucc-geth-performance.patch
+Patch19         : linux-2.6.11-mpc8360e-revision2.patch
+Patch20         : linux-2.6.11-mpc83xx-cwdebug.patch
+Patch21         : linux-2.6.11-mpc8360e-ieee1588-2.patch
+Patch22         : linux-2.6.11-mpc8360e-ethtool.patch
+Patch23         : kernel-2.6.11-gcc4.patch
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+From kernel.org
+All patches from Freescale
+
+%Prep
+%setup -n %{pkg_name}-%{dversion}
+%patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
+%patch16 -p1
+%patch17 -p1
+%patch18 -p1
+%patch19 -p1
+%patch20 -p1
+%patch21 -p1
+%patch22 -p1
+%patch23 -p1

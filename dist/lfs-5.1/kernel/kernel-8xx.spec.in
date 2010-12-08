@@ -1,0 +1,24 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define pkg_name linux
+%define dtc_name adder875
+
+Summary         : Linux kernel (core of the Linux operating system)
+Name            : kernel
+Version         : 8xx
+Release         : 1
+License         : GPL
+Vendor          : Freescale Semiconductor, Inc
+Packager        : Stuart Hughes
+Group           : System Environment/Kernel
+Source          : %{pkg_name}-%{version}.tgz
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+%Prep
+%setup -n %{pkg_name}-%{version}.git
+

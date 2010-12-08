@@ -1,0 +1,12 @@
+config WANT_POST_BUILD_SCRIPT
+    bool "Run a command after building the target image"
+
+config POST_BUILD_SCRIPT
+    depends WANT_POST_BUILD_SCRIPT
+    string  "command name/path"
+    default ""
+    help
+      Enter the name of the command you want to run.  This may be a
+      script or other executable.  If this is not an absolute path, it
+      should be in the standard path that LTIB uses.
+

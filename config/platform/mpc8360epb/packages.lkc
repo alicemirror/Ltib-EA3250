@@ -1,0 +1,36 @@
+comment 'Platform specific package selection'
+
+config PKG_SWANG_POC
+    select PKG_KERNEL_LEAVESRC
+    select PKG_WANGW
+    bool "swang-poc - Small Wan Gateway proof-of-concept"
+    help
+      This software is the Small Wan Gateway proof-of-concept package.
+      It's purpose is to demonstrate port-to-port traffic acceleration on
+      Freescale QE based processors controlled by Linux. It is not a product,
+      but only demonstration software.
+      The package includes applications programs, scripts and kernel drivers.
+      The kernel drivers are dependent upon the Wan Gateway Interworking
+      Linux Driver, so it is automatically selected.
+
+config PKG_NOTIFY_APP
+    bool "notify-app"
+    default y
+    help
+      Demo application of the link change notification for MPC8360EBP.
+
+config PKG_SPI_TEST
+    bool "spi-test"
+    default y
+    help
+      This is the test application for MPC836x SPI and ST M25P40 Flash
+
+config PKG_WANGW
+    select PKG_KERNEL_LEAVESRC
+    bool "wangw - Wan Gateway Interworking Linux Driver"
+    help
+      This package is a Linux kernel module which is implementation of the
+      Wan Gateway Ethernet to Ethernet API.
+      The driver also implements a Linux netdevice termination driver and
+      a character device driver for various configuration commands.
+

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# rc.local, Local initialisation tasks
+
+# light COBRA5475 leds, if driver was loaded
+if [ -e /dev/misc/cobra5475_leds ]
+then
+   echo F > /dev/misc/cobra5475_leds
+fi
+          

@@ -1,0 +1,28 @@
+# Template = kernel-common.tmpl
+
+%define pfx /opt/freescale/rootfs/%{_target_cpu}
+%define dversion 2.6.22
+%define pkg_name linux
+%define dtc_name mpc836x_mds
+
+Summary         : Linux kernel for MPC8360 
+Name            : kernel
+Version         : 2.6.22
+Release         : 2
+License         : GPL
+Vendor          : kernel.org
+Packager        : Lee Nipper
+Group           : System Environment/Kernel
+Source          : %{pkg_name}-%{dversion}.tar.bz2
+BuildRoot       : %{_tmppath}/%{name}
+Prefix          : %{pfx}
+
+%Description
+%{summary}
+
+From kernel.org
+All patches from Freescale
+
+%Prep
+%setup -n %{pkg_name}-%{dversion}
+

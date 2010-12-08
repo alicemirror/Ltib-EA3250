@@ -1,0 +1,12 @@
+if U_BOOT_DIR_BUILD
+
+config PKG_U_BOOT_PATH_PRECONFIG
+    string "Enter your U-Boot source directory"
+    default "/usr/src/u-boot"
+    help
+       If you are building the "Das U-Boot" boot-loader using a local source
+       tree, specify the absolute path to the tree here.
+
+config PKG_U_BOOT
+    default "u-boot-dir-build"
+endif

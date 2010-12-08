@@ -1,0 +1,167 @@
+comment "Choose the target C library type"
+choice
+    prompt "Target C library type"
+    default GLIBC
+    help
+        This menu will let you choose the C library for the target
+        this choice affects the list of available toolchains
+
+    config GLIBC
+        bool "glibc" if CAP_GLIBC
+        help
+           Full POSIX C library (larger)
+    config UCLIBC
+        bool "uclibc" if CAP_UCLIBC
+        help
+           Smaller configurable C library for embedded systems
+endchoice
+
+choice
+    prompt "C library package"
+    default LIBC_NONE if PLATFORM = host
+    default CHOICE_BASE_LIBS
+    help
+       Normally the C library components are taken from the currently
+       selected toolchain.  The ensures the highest degree of compatibilty
+       and path of least risk to get your system booting.  However, sometimes
+       during development you may want to build your own C library.  This
+       choice list lets you do that.  The safest is the default base_libs
+       option.
+
+    config CHOICE_BASE_LIBS
+        bool "from toolchain only"
+        help
+           C/C++ components copied pre-built from the toolchain.
+    config CHOICE_GLIBC
+        bool "glibc" if GLIBC
+        help
+           Full POSIX C library (larger)
+    config CHOICE_UCLIBC
+        bool "uclibc" if UCLIBC
+        help
+           Smaller configurable C library for embedded systems
+    config LIBC_NONE
+        bool "Don't install a C library"
+        help
+           If select this option, you will need to manually copy
+           your C library components to the target
+endchoice
+
+config PKG_GLIBC
+    bool 
+    default y if CHOICE_GLIBC
+    default n if ! CHOICE_GLIBC
+
+config GLIBC_WANT_KERNEL_HEADERS
+    depends PKG_GLIBC
+    select PKG_KERNEL_WANT_HEADERS
+    bool "      Use BSP kernel headers."
+    default n
+    help
+        Use the kernel headers from the BSP kernel to build glibc.
+        Default is to use the kernel headers from the toolchain.
+
+config PKG_UCLIBC
+    bool 
+    default y if CHOICE_UCLIBC
+    default n if ! CHOICE_UCLIBC
+
+config  LIBC_HACKING
+    depends ! CHOICE_BASE_LIBS
+    bool "C library hacking (developers only)"
+    help
+       This option allow you to develop C libraries that are different
+       to those contained in your toolchain (e.g. using a glibc based
+       toolchain to develop a uClibc port).  If you do this, you need
+       to know what you're doing.  Also it will not be possible to
+       build c++ packages if the C library in the toolchain does
+       not match the C library you have built.  This is due to the
+       dependency that libstdc++ has on the C library in the toolchain
+       that built it.
+       Normally you can say no
+
+config PKG_LIBC_WANT_CF
+    depends CHOICE_UCLIBC
+    bool "    configure the C library"
+    help
+       Setting this value will let you tune the configuration of your 
+       C library (where applicable)
+
+if ! LIBC_HACKING 
+menu "Toolchain component options"
+
+config PKG_BASE_LIBS
+    depends PLATFORM != host
+    bool 
+    default y
+
+if CHOICE_BASE_LIBS
+config PKG_LIBC_WANT_SHARED_LIBS
+    bool "    libc shared libraries"
+    default y
+config PKG_LIBC_WANT_CRT_FILES
+    bool "    libc crt*.o startup files"
+config PKG_LIBC_WANT_HEADERS1
+    bool "    libc headers"
+config PKG_LIBC_WANT_STATIC_LIBS
+    bool "    libc static libraries"
+config PKG_LIBC_WANT_C_LOCALES
+    bool "    libc locale files"
+config PKG_CXX_WANT_SHARED_LIBS
+    bool "    c++ shared libraries"
+    default y
+config PKG_CXX_WANT_HEADERS
+    bool "    c++ headers"
+config PKG_CXX_WANT_STATIC_LIBS
+    bool "    c++ static libraries"
+config PKG_GCC_WANT_LIBGCC_SHARED
+    bool "    libgcc*.so*"
+    default y
+endif
+
+if ! CHOICE_BASE_LIBS && PKG_BASE_LIBS
+config PKG_CXX_WANT_SHARED_LIBS
+    bool "    c++ shared libraries"
+    default y
+config PKG_CXX_WANT_HEADERS
+    bool "    c++ headers"
+    default y
+config PKG_CXX_WANT_STATIC_LIBS
+    bool "    c++ static libraries"
+config PKG_GCC_WANT_LIBGCC_SHARED
+    bool "    libgcc*.so*"
+    default y
+endif
+
+### this is only used by mkspooflinks and is currently hidden
+##config USE_CUSTOM_DYNAMIC_LINKER
+##    bool "Use custom dynamic linker"
+##    help
+##       Allow the user to set the runtime path for the dynmic linker.
+##       Normally just say no
+##
+##config CUSTOM_DYNAMIC_LINKER
+##    depends USE_CUSTOM_DYNAMIC_LINKER
+##    string "Dynamic linker runtime path"
+##    default ""
+##    help
+##       This sets the path for the target's runtime dynamic linker.
+##       This is encoded into executables.  Normally you should just
+##       leave this empty and let the config system default
+
+endmenu
+endif
+
+config DYNAMIC_LINKER
+    string
+    default UCLIBC_DYNAMIC_LINKER if UCLIBC && ! USE_CUSTOM_DYNAMIC_LINKER
+    default GLIBC_DYNAMIC_LINKER  if GLIBC  && ! USE_CUSTOM_DYNAMIC_LINKER
+    default CUSTOM_DYNAMIC_LINKER if USE_CUSTOM_DYNAMIC_LINKER
+
+config SYS_WANT_MMU
+    bool
+    default y if CAP_HAS_MMU
+config SYS_WANT_SHARED
+    bool
+    default y if CAP_HAS_SHARED
+

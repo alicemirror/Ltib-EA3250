@@ -1,0 +1,147 @@
+#!/usr/bin/perl
+# Copyright © Freescale Semiconductor, Inc. 2008. All rights reserved.
+#
+# Trent Piepho, tpiepho@freescale.com,  22nd Apr 2008
+#
+# This file is part of LTIB.
+#
+# LTIB is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# LTIB is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with LTIB; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+#
+# Generates a list of files for the kernel gen_init_cpio program
+# It can take a device table file that uses the same syntax as used by
+# genext2fs.  The options are similar to genext2fs as well.  It's similar to
+# the kernel's gen_initramfs_list.sh script, but in addition to the device
+# table support, it's far faster.  gen_initramfs_list.sh is quite slow, taking
+# considerably longer than gen_init_cpio does to create the archive.
+
+use strict;
+
+use Getopt::Long;
+use File::Find;
+use Fcntl ':mode';
+
+my $opt_h = 0;
+my $opt_d = '.';
+my $opt_D = undef;
+my $opt_U = 0;
+
+# For keeping track of hardlinked files
+my %hl;
+
+my $usage = <<TXT;
+Usage: geninitramfs [options] [-d root] image
+  -d, --root  <directory>	Use this directory as source
+  -D, --devtable <file>		Use file as device table
+  -U, --squash-uids		Squash owners, making all files owned by root
+  -h, --help			Show this help
+TXT
+
+Getopt::Long::Configure('gnu_getopt');
+GetOptions('d|root=s' => \$opt_d,
+           'D|devtable=s' => \$opt_D,
+           'U|squash-uids' => \$opt_U,
+           'h|help' => \$opt_h) or die $usage;
+if ($opt_h) {
+    print $usage;
+    exit;
+}
+
+print "# Source directory: $opt_d\n";
+print "# Device table: $opt_D\n" if defined $opt_D;
+print "# Generated on: ".localtime()."\n";
+
+find({wanted => \&process, no_chdir => 1}, $opt_d);
+
+print shift @$_, @$_, "\n" foreach (values %hl);
+
+device_table() if $opt_D;
+
+sub process
+{
+    my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev) = lstat;
+
+    # Get relative filename
+    s/^$opt_d//;
+    return if /^$/;
+
+    die "bad filename: $_\ngen_init_cpio can't handle filenames with whitespace" if /\s/;
+
+    $uid = $gid = 0 if ($opt_U);
+    my $pug = sprintf('%03o %d %d', S_IMODE($mode), $uid, $gid);
+    my $str = "$_ $pug";
+    my $out;
+
+    if (S_ISDIR($mode)) {
+        $out = "dir $str";
+    } elsif (S_ISSOCK($mode)) {
+        $out = "sock $str";
+    } elsif (S_ISFIFO($mode)) {
+        $out = "pipe $str";
+    } elsif (S_ISREG($mode)) {
+        $out = "file $_ $File::Find::name $pug";
+    } elsif (S_ISLNK($mode)) {
+        my $link = readlink($File::Find::name);
+        $out = "slink $_ $link $pug";
+    } elsif (S_ISBLK($mode)) {
+        $out = sprintf "nod $str b %d %d", $rdev>>8, $rdev&0xff;
+    } elsif (S_ISCHR($mode)) {
+        $out = sprintf "nod $str c %d %d", $rdev>>8, $rdev&0xff;
+    } else {
+        die "Don't know what $_ is";
+    }
+    if (!S_ISDIR($mode) && $nlink > 1) {
+	# hard link, save for end so we find the links
+	die "Hard links for non-files not supported: $_" if (!S_ISREG($mode));
+	if (exists $hl{$ino}) {
+	    push @{$hl{$ino}}, " $_";
+	} else {
+	    $hl{$ino} = [$out];
+	}
+    } else {
+	print "$out\n";
+    }
+}
+
+sub device_table
+{
+    print "# Entries from device table\n";
+
+    open F, '<', $opt_D or die "Unable to open device table $opt_D";
+    while(<F>) {
+        /^\s*#/ and next;
+        /^\s*$/ and next;
+
+        my ($name,$type,$mode,$uid,$gid,$maj,$min,$start,$inc,$count) = split(/\s+/);
+        my $str = "$name $mode $uid $gid";
+
+        if($type eq 'd') {
+            print "dir $str\n";
+        } elsif($type eq 'p') {
+            print "pipe $str\n";
+        } elsif($type eq 'c' || $type eq 'b') {
+            if ($count > 0) {
+                while($count--) {
+                    print "nod $name$start $mode $uid $gid $type $maj $min\n";
+                    $start++; $min += $inc;
+                }
+            } else {
+                print "nod $str $type $maj $min\n";
+            }
+        } else {
+            print "# Ignoring device table line: $_";
+        }
+    }
+    close F;
+}

@@ -1,0 +1,254 @@
+# constants (forced values)
+config CONFIG_TITLE
+    string
+    default "LTIB: Freescale MPC5121_ADS"
+
+config PLATFORM_COMMENT
+    string
+    default "Freescale MPC512x based boards"
+
+config VENDOR
+    string
+    default "Freescale"
+
+choice
+    prompt "Target Board"
+    default MPC5121ADSRev4
+    help
+       This choice is used to indicate the target board. 
+
+    config MPC5121ADS
+        bool "Freescale/STx ADS5121 Rev3.x with Rev 1.5 silicon"
+
+    config MPC5121ADSRev4
+        bool "Freescale/STx ADS5121 Rev4 with Rev 2 silicon"
+
+    config MPC5121_CUSTOM
+	bool "Custom MPC5121 based board"
+endchoice
+
+config PLATFORM
+    string
+    default mpc5121ads
+
+config TARGET_BOARD
+    string
+    default mpc5121ads if MPC5121ADS
+    default mpc5121adsrev4 if MPC5121ADSRev4
+
+config GNUTARCH
+    string
+    default powerpc
+
+config LINTARCH
+    string
+    default ppc
+
+config CFGHOST
+    string
+    default powerpc-linux
+
+# capabilities if different from defaults.lkc
+
+source ../../userspace/endian.lkc
+source ../../userspace/libc_type.lkc
+
+comment "Choose your toolchain"
+choice
+    prompt "Toolchain"
+    default TOOLCHAIN1
+    help
+        This menu will help you choose the cross toolchain to use to build
+        your packages with.  If you choose none, you can enter the
+        path to your toolchain by hand. 
+
+    config TOOLCHAIN1
+        bool "gcc-4.1.78-eglibc-2.5.78-1 (for e300c3)" if GLIBC || LIBC_NONE || LIBC_HACKING
+    config TOOLCHAIN_CUSTOM
+        bool "custom"
+endchoice
+
+config TOOLCHAIN
+    string
+    default tc-fsl-x86lnx-e300c3-4.1.78-1.i386.rpm if TOOLCHAIN1
+
+config TOOLCHAIN_PATH
+    string
+    default "/opt/freescale/usr/local/gcc-4.1.78-eglibc-2.5.78-1/powerpc-e300c3-linux-gnu" if TOOLCHAIN1
+    string "Supply your toolchain path" if TOOLCHAIN_CUSTOM
+
+config CUSTOM_TOOLCHAIN_PREFIX
+    depends TOOLCHAIN_CUSTOM
+    string  "Enter your cross tools prefix"
+    help
+        For example arm-linux- or powerpc-linux-
+
+config TOOLCHAIN_PREFIX
+    string
+    default "powerpc-e300c3-linux-gnu-" if TOOLCHAIN1
+    default CUSTOM_TOOLCHAIN_PREFIX if TOOLCHAIN_CUSTOM
+
+config TOOLCHAIN_CFLAGS
+    string "Enter any CFLAGS for gcc/g++"
+    default ""
+    help
+        This option lets you set flags that will be passed to gcc/g++
+        These will be injected by the spoofing mechanism, so they
+        only work if you reference the compiler as gcc/g++ in your
+        rpm spec files (you cannot say for instance powerpc-linux-gcc)
+
+config CUSTOM_DTC_NAME
+    depends MPC5121_CUSTOM
+    string "Enter your device tree filename"
+
+config SYSCFG_DTC_NAME
+    string
+    default "mpc5121ads" if TARGET_BOARD = "mpc5121ads"
+    default "mpc5121adsrev4" if TARGET_BOARD = "mpc5121adsrev4"
+    default CUSTOM_DTC_NAME if MPC5121_CUSTOM
+
+comment "Bootloader"
+
+config BOOTLOADER1
+    bool "Build a boot loader"
+    default n
+    help
+        Selecting this will build the u-boot boot loader
+
+choice
+    depends BOOTLOADER1
+    prompt "U-Boot target board type"
+    default PKG_U_BOOT_2008_10_MPC5121ADS
+    help
+        This menu lets you choose the exact u-boot target to build
+
+    config PKG_U_BOOT_2008_10_MPC5121ADS
+        bool "U-Boot 2008.10 for ADS512101 Rev 4"
+        help
+            This option is for ADS512101 Rev 4 boards with 512MB of
+            memory and silicon rev M36P or Rev 3 boards with 512MB of
+	    memory and silicon rev 2M34K.
+    config PKG_U_BOOT_1_3_2_MPC5121ADS
+        bool "U-Boot 1.3.2 for ADS512101 Rev 3"
+        help
+            This option is for ADS512101 Rev 3 boards with 512MB of
+            memory and silicon rev 2M34K.
+    config PKG_U_BOOT_1_3_2_MPC5121ADS_256
+        bool "U-Boot 1.3.2 for ADS512101 Rev 1 or Rev 2"
+        help
+            This option is for early rev 1 and rev 2 boards with
+            256MB of memory and no support in silicon or board for PCI.
+    config PKG_U_BOOT_1_2_0_MPC5121ADS
+        bool "U-Boot 1.2.0 for MPC5121ADS"
+        help
+            This option is only for compatibilty with old ltib installations.
+            You should probably use a newer version of u-boot as this version
+            will not work with 2.6.24 MPC5121e kernels.
+endchoice
+
+menu "U-Boot options"
+    depends BOOTLOADER1
+    config PKG_U_BOOT_CW
+        bool "CodeWarrior support"
+        default n
+        help
+        Select this to enable CodeWarrior debugging support in U-Boot
+endmenu
+
+config PKG_U_BOOT_CONFIG_TYPE
+    string
+    default "ads5121_config"              if PKG_U_BOOT_2008_10_MPC5121ADS
+    default "ads5121_config"              if PKG_U_BOOT_1_3_2_MPC5121ADS
+    default "ads5121_256_config"          if PKG_U_BOOT_1_3_2_MPC5121ADS_256
+    default "ads5121_config"              if PKG_U_BOOT_1_2_0_MPC5121ADS
+
+config PKG_U_BOOT
+    string
+    default "u-boot-2008.10-mpc5121"      if PKG_U_BOOT_2008_10_MPC5121ADS
+    default "u-boot-1.3.2-mpc5121"        if PKG_U_BOOT_1_3_2_MPC5121ADS
+    default "u-boot-1.3.2-mpc5121"        if PKG_U_BOOT_1_3_2_MPC5121ADS_256
+    default "u-boot-1.2.0-mpc5121ads"     if PKG_U_BOOT_1_2_0_MPC5121ADS
+
+config PKG_U_BOOT_BUILD_ARGS
+    string "u-boot flags"
+    default "OPTFLAGS=-Os" if !PKG_U_BOOT_CW
+    default "OPTFLAGS=-Os CONFIG_CW=1" if PKG_U_BOOT_CW
+
+comment "Choose your Kernel"
+choice
+    prompt "Kernel"
+    default KERNEL2
+    help
+        This menu will let you choose the kernel to use with your board.
+        If you don't want to build a kernel, unselect this option.
+    config KERNEL2
+        bool "Linux 2.6.24.6 for MPC5121ADS"
+        help
+            This is linux 2.6.24.6 kernel plus patches
+            from Freescale that add MPC5121ADS support. 
+    config KERNEL3
+        bool "Linux 2.6.24.7-rt21 (realtime) for MPC5121ADS"
+        help
+            This is linux 2.6.24.7-rt21 kernel plus patches
+            from Freescale that add MPC5121ADS support. 
+    config KERNEL1
+        bool "Linux 2.6.22 for MPC5121ADS"
+        help
+            This is linux 2.6.22.x kernel plus patches
+            from Freescale that add MPC5121ADS support. 
+    config KERNEL_DIR_BUILD
+        bool "Local Linux directory build"
+        help
+            Build using a local copy of the kernel sources
+    config KERNEL_NONE
+        bool "Dont build the Linux kernel"
+        help
+            Select this if you dont want to build the kernel or provide your own
+endchoice
+
+
+config PKG_KERNEL
+    string
+    default "kernel-2.6.22.x-mpc5121" if KERNEL1
+    default "kernel-2.6.24.6-mpc5121" if KERNEL2
+    default "kernel-2.6.24.7-rt21-mpc5121" if KERNEL3
+    default "kernel26-dir-build" if KERNEL_DIR_BUILD
+
+source ../../userspace/kernel_dir_build.lkc
+
+config PKG_KERNEL_PRECONFIG
+    string "kernel preconfig"
+    default "linux-2.6.22-mpc5121ads.config" if KERNEL1
+    default "linux-2.6.24-mpc5121ads.config" if KERNEL2
+    default "linux-2.6.24.7-rt21-mpc5121ads.config" if KERNEL3
+    default "linux-2.6.24-mpc5121ads.config" if KERNEL_DIR_BUILD
+
+config PKG_KERNEL_WANT_HEADERS
+    depends ! KERNEL_NONE
+    bool "Include kernel headers"
+    help
+        Selecting this will copy kernel headers to rootfs/usr/src/linux/include
+
+config PKG_KERNEL_WANT_CF
+    depends ! KERNEL_NONE
+    bool "Configure the kernel"
+    default n
+
+config PKG_KERNEL_LEAVESRC
+    depends ! KERNEL_NONE
+    bool "Leave the sources after building"
+    default n
+    help
+        This is a one shot option that can be used to build the kernel and
+        leave the build source tree in rpm/BUILD in place
+
+config DEPLOYMENT_ERASE_BLOCK_SIZE
+    string
+    default 256
+    
+source ../../userspace/distro.lkc
+source ../../userspace/packages.lkc
+source ../../userspace/sysconfig.lkc
+source ../../userspace/deployment.lkc
+source ../../userspace/defaults.lkc
+
