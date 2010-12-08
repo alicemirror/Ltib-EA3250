@@ -1,0 +1,46 @@
+# stgit generated dirs
+patches-*
+
+# CVS dirsa
+CVS/
+
+# quilt's files
+patches
+series
+
+*.orig
+*.rej
+*~
+\#*#
+
+# Local configuration
+# SAVE History of local configuration
+#.*
+
+# Do track the ltibrc, or not?
+# commented, this means TRACK
+#!/.ltibrc
+
+# rootfs and temp staging area
+/rootfs
+/rootfs.tmp
+
+# RPM storage and build area
+# If needed, saved apart: very expansive
+/rpm
+
+# temp dir
+/tmp
+
+# output files
+/host_config.log
+/initramfs.cpio.gz*
+/rootfs.ext2.gz*
+/cramfs.big
+/cramfs.little
+/rootfs.jffs2
+/RELEASE_INFO
+/RELEASE_COPY_CONTENT
+/*.patch
+/*.iso
+/rootfs_image

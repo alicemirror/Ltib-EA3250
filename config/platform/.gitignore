@@ -1,0 +1,7 @@
+# include everything in merge directories
+!*/merge/*
+!*/merge/*/*
+!*/merge/*/*/*
+!*/merge/*/*/*/*
+!*/merge/*/*/*/*/*
+!*/merge/*/*/*/*/*/*
